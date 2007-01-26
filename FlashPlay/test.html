@@ -1,0 +1,282 @@
+Version:0.9
+StartHTML:0000000105
+EndHTML:0000033471
+StartFragment:0000001150
+EndFragment:0000033455
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>HTML exporter</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="Smart Web Builder HTML exporter" />
+<style type="text/css">
+<!--
+body { color: #000000; background-color: #FFFFFF; }
+.cpp1-assembler { color: #000000; }
+.cpp1-character { color: #000080; }
+.cpp1-comment { color: #000080; font-style: italic; }
+.cpp1-float { color: #000080; }
+.cpp1-hexadecimal { color: #000080; }
+.cpp1-identifier { color: #000000; }
+.cpp1-illegalchar { color: #000000; }
+.cpp1-number { color: #000080; }
+.cpp1-octal { color: #000080; }
+.cpp1-preprocessor { color: #008000; }
+.cpp1-reservedword { color: #000000; font-weight: bold; }
+.cpp1-space { color: #0000FF; }
+.cpp1-string { color: #000080; }
+.cpp1-symbol { color: #000000; }
+-->
+</style>
+</head>
+<body>
+<!--StartFragment--><pre><code><span class="cpp1-comment">/******************************************************************
+***
+***
+***				FREE WINDOWLESS FLASH CONTROL
+***
+***					   by Makarov Igor
+***
+***		for questions and remarks mailto: mak_july@list.ru
+***
+***
+*******************************************************************/
+// flash.cpp : Defines the entry point for the application.
+//
+
+</span><span class="cpp1-preprocessor">#include &quot;stdafx.h&quot;
+#include &quot;resource.h&quot;
+#include &quot;FlashWnd.h&quot;
+
+#define MAX_LOADSTRING 100
+
+</span><span class="cpp1-comment">// Global Variables:
+</span><span class="cpp1-identifier">HINSTANCE</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hInst;</span><span class="cpp1-space">								</span><span class="cpp1-comment">// current instance
+</span><span class="cpp1-identifier">TCHAR</span><span class="cpp1-space"> </span><span class="cpp1-identifier">szTitle[MAX_LOADSTRING];</span><span class="cpp1-space">								</span><span class="cpp1-comment">// The title bar text
+</span><span class="cpp1-identifier">TCHAR</span><span class="cpp1-space"> </span><span class="cpp1-identifier">szWindowClass[MAX_LOADSTRING];</span><span class="cpp1-space">								</span><span class="cpp1-comment">// The title bar text
+
+// Foward declarations of functions included in this code module:
+</span><span class="cpp1-identifier">ATOM</span><span class="cpp1-space">				</span><span class="cpp1-identifier">MyRegisterClass(HINSTANCE</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hInstance);
+BOOL</span><span class="cpp1-space">				</span><span class="cpp1-identifier">InitInstance(HINSTANCE,</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">int</span><span class="cpp1-symbol">);
+LRESULT</span><span class="cpp1-space"> </span><span class="cpp1-identifier">CALLBACK</span><span class="cpp1-space">	</span><span class="cpp1-identifier">WndProc(HWND,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">UINT,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WPARAM,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LPARAM);
+LRESULT</span><span class="cpp1-space"> </span><span class="cpp1-identifier">CALLBACK</span><span class="cpp1-space">	</span><span class="cpp1-identifier">About(HWND,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">UINT,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WPARAM,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LPARAM);
+
+HWND</span><span class="cpp1-space"> </span><span class="cpp1-identifier">g_hWnd</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">NULL;
+HINSTANCE</span><span class="cpp1-space"> </span><span class="cpp1-identifier">g_hInst</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">NULL;
+CFlashWnd</span><span class="cpp1-space"> </span><span class="cpp1-symbol">*g_flashWnd</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">NULL;
+
+
+</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> </span><span class="cpp1-identifier">APIENTRY</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WinMain(HINSTANCE</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hInstance,
+</span><span class="cpp1-space">                     </span><span class="cpp1-identifier">HINSTANCE</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hPrevInstance,
+</span><span class="cpp1-space">                     </span><span class="cpp1-identifier">LPSTR</span><span class="cpp1-space">     </span><span class="cpp1-identifier">lpCmdLine,
+</span><span class="cpp1-space">                     </span><span class="cpp1-reservedword">int</span><span class="cpp1-space">       </span><span class="cpp1-identifier">nCmdShow)
+{
+</span><span class="cpp1-space"> 	</span><span class="cpp1-comment">// TODO: Place code here.
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">MSG</span><span class="cpp1-space"> </span><span class="cpp1-identifier">msg;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">HACCEL</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hAccelTable;
+
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Initialize global strings
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">LoadString(hInstance,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">IDS_APP_TITLE,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">szTitle,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">MAX_LOADSTRING);
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">LoadString(hInstance,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">IDC_FLASH,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">szWindowClass,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">MAX_LOADSTRING);
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">MyRegisterClass(hInstance);
+
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Perform application initialization:
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(!InitInstance</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(hInstance,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">nCmdShow))</span><span class="cpp1-space"> 
+	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-identifier">FALSE;
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">g_hInst</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hInst;
+
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">hAccelTable</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LoadAccelerators(hInstance,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(LPCTSTR)IDC_FLASH);
+
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">OleInitialize(NULL);
+
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">g_flashWnd</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">new</span><span class="cpp1-space"> </span><span class="cpp1-identifier">CFlashWnd;
+
+</span><span class="cpp1-comment">//create windowless control
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">g_flashWnd-&gt;Create(ShockwaveFlashObjects::CLSID_ShockwaveFlash,
+</span><span class="cpp1-space">		</span><span class="cpp1-identifier">WS_EX_LAYERED,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WS_POPUP</span><span class="cpp1-space"> </span><span class="cpp1-symbol">|</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WS_VISIBLE</span><span class="cpp1-space"> </span><span class="cpp1-symbol">|</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WS_CLIPSIBLINGS,
+</span><span class="cpp1-space">		</span><span class="cpp1-identifier">g_hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">g_hInst);
+
+</span><span class="cpp1-comment">//to create a windowed control uncomment this
+//	g_flashWnd-&gt;Create(ShockwaveFlashObjects::CLSID_ShockwaveFlash,
+//		0, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
+//		g_hWnd, g_hInst);
+
+</span><span class="cpp1-space">	</span><span class="cpp1-comment">// Main message loop:
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">while</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(GetMessage(&amp;msg,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">NULL,</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">,</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">))</span><span class="cpp1-space"> 
+	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(!TranslateAccelerator(msg.hwnd,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hAccelTable,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">&amp;msg))</span><span class="cpp1-space"> 
+		</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">			</span><span class="cpp1-identifier">TranslateMessage(&amp;msg);
+</span><span class="cpp1-space">			</span><span class="cpp1-identifier">DispatchMessage(&amp;msg);
+</span><span class="cpp1-space">		</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">delete</span><span class="cpp1-space"> </span><span class="cpp1-identifier">g_flashWnd;
+
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">OleUninitialize();
+
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-identifier">msg.wParam;
+}
+
+
+
+</span><span class="cpp1-comment">//
+//  FUNCTION: MyRegisterClass()
+//
+//  PURPOSE: Registers the window class.
+//
+//  COMMENTS:
+//
+//    This function and its usage is only necessary if you want this code
+//    to be compatible with Win32 systems prior to the 'RegisterClassEx'
+//    function that was added to Windows 95. It is important to call this function
+//    so that the application will get 'well formed' small icons associated
+//    with it.
+//
+</span><span class="cpp1-identifier">ATOM</span><span class="cpp1-space"> </span><span class="cpp1-identifier">MyRegisterClass(HINSTANCE</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hInstance)
+{
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">WNDCLASSEX</span><span class="cpp1-space"> </span><span class="cpp1-identifier">wcex;
+
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.cbSize</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">sizeof</span><span class="cpp1-symbol">(WNDCLASSEX);</span><span class="cpp1-space"> 
+
+	</span><span class="cpp1-identifier">wcex.style</span><span class="cpp1-space">			</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">CS_HREDRAW</span><span class="cpp1-space"> </span><span class="cpp1-symbol">|</span><span class="cpp1-space"> </span><span class="cpp1-identifier">CS_VREDRAW;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.lpfnWndProc</span><span class="cpp1-space">	</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(WNDPROC)WndProc;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.cbClsExtra</span><span class="cpp1-space">		</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.cbWndExtra</span><span class="cpp1-space">		</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.hInstance</span><span class="cpp1-space">		</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hInstance;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.hIcon</span><span class="cpp1-space">			</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LoadIcon(hInstance,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(LPCTSTR)IDI_FLASH);
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.hCursor</span><span class="cpp1-space">		</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LoadCursor(NULL,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">IDC_ARROW);
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.hbrBackground</span><span class="cpp1-space">	</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(HBRUSH)(COLOR_WINDOW+</span><span class="cpp1-number">1</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.lpszMenuName</span><span class="cpp1-space">	</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(LPCSTR)IDC_FLASH;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.lpszClassName</span><span class="cpp1-space">	</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">szWindowClass;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">wcex.hIconSm</span><span class="cpp1-space">		</span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LoadIcon(wcex.hInstance,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(LPCTSTR)IDI_SMALL);
+
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-identifier">RegisterClassEx(&amp;wcex);
+}
+
+</span><span class="cpp1-comment">//
+//   FUNCTION: InitInstance(HANDLE, int)
+//
+//   PURPOSE: Saves instance handle and creates main window
+//
+//   COMMENTS:
+//
+//        In this function, we save the instance handle in a global variable and
+//        create and display the main program window.
+//
+</span><span class="cpp1-identifier">BOOL</span><span class="cpp1-space"> </span><span class="cpp1-identifier">InitInstance(HINSTANCE</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hInstance,</span><span class="cpp1-space"> </span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> </span><span class="cpp1-identifier">nCmdShow)
+{
+</span><span class="cpp1-space">   </span><span class="cpp1-identifier">HWND</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hWnd;
+
+</span><span class="cpp1-space">   </span><span class="cpp1-identifier">hInst</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hInstance;</span><span class="cpp1-space"> </span><span class="cpp1-comment">// Store instance handle in our global variable
+
+</span><span class="cpp1-space">   </span><span class="cpp1-identifier">hWnd</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">CreateWindow(szWindowClass,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">szTitle,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WS_OVERLAPPEDWINDOW</span><span class="cpp1-space"> </span><span class="cpp1-symbol">|</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WS_CLIPCHILDREN,
+</span><span class="cpp1-space">      </span><span class="cpp1-identifier">CW_USEDEFAULT,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">CW_USEDEFAULT,</span><span class="cpp1-space"> </span><span class="cpp1-number">300</span><span class="cpp1-symbol">,</span><span class="cpp1-space"> </span><span class="cpp1-number">200</span><span class="cpp1-symbol">,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">NULL,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">NULL,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hInstance,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">NULL);
+
+</span><span class="cpp1-space">   </span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(!hWnd)
+</span><span class="cpp1-space">   </span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">      </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-identifier">FALSE;
+</span><span class="cpp1-space">   </span><span class="cpp1-symbol">}
+
+</span><span class="cpp1-space">   </span><span class="cpp1-identifier">ShowWindow(hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">nCmdShow);
+</span><span class="cpp1-space">   </span><span class="cpp1-identifier">UpdateWindow(hWnd);
+
+</span><span class="cpp1-space">   </span><span class="cpp1-identifier">g_hWnd</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hWnd;
+
+</span><span class="cpp1-space">   </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-identifier">TRUE;
+}
+
+</span><span class="cpp1-comment">//
+//  FUNCTION: WndProc(HWND, unsigned, WORD, LONG)
+//
+//  PURPOSE:  Processes messages for the main window.
+//
+//  WM_COMMAND	- process the application menu
+//  WM_PAINT	- Paint the main window
+//  WM_DESTROY	- post a quit message and return
+//
+//
+</span><span class="cpp1-identifier">LRESULT</span><span class="cpp1-space"> </span><span class="cpp1-identifier">CALLBACK</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WndProc(HWND</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">UINT</span><span class="cpp1-space"> </span><span class="cpp1-identifier">message,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WPARAM</span><span class="cpp1-space"> </span><span class="cpp1-identifier">wParam,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LPARAM</span><span class="cpp1-space"> </span><span class="cpp1-identifier">lParam)
+{
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">int</span><span class="cpp1-space"> </span><span class="cpp1-identifier">wmId,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">wmEvent;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">PAINTSTRUCT</span><span class="cpp1-space"> </span><span class="cpp1-identifier">ps;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">HDC</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hdc;
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">TCHAR</span><span class="cpp1-space"> </span><span class="cpp1-identifier">szHello[MAX_LOADSTRING];
+</span><span class="cpp1-space">	</span><span class="cpp1-identifier">LoadString(hInst,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">IDS_HELLO,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">szHello,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">MAX_LOADSTRING);
+
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">switch</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(message)</span><span class="cpp1-space"> 
+	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WM_COMMAND:
+</span><span class="cpp1-space">			</span><span class="cpp1-identifier">wmId</span><span class="cpp1-space">    </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LOWORD(wParam);</span><span class="cpp1-space"> 
+			</span><span class="cpp1-identifier">wmEvent</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">HIWORD(wParam);</span><span class="cpp1-space"> 
+			</span><span class="cpp1-comment">// Parse the menu selections:
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">switch</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(wmId)
+</span><span class="cpp1-space">			</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">				</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-identifier">IDM_ABOUT:
+</span><span class="cpp1-space">				   </span><span class="cpp1-identifier">DialogBox(hInst,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(LPCTSTR)IDD_ABOUTBOX,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(DLGPROC)About);
+</span><span class="cpp1-space">				   </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">				</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-identifier">IDM_EXIT:
+</span><span class="cpp1-space">				   </span><span class="cpp1-identifier">DestroyWindow(hWnd);
+</span><span class="cpp1-space">				   </span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">				</span><span class="cpp1-reservedword">default</span><span class="cpp1-symbol">:
+</span><span class="cpp1-space">				   </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-identifier">DefWindowProc(hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">message,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">wParam,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">lParam);
+</span><span class="cpp1-space">			</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WM_PAINT:
+</span><span class="cpp1-space">			</span><span class="cpp1-identifier">hdc</span><span class="cpp1-space"> </span><span class="cpp1-symbol">=</span><span class="cpp1-space"> </span><span class="cpp1-identifier">BeginPaint(hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">&amp;ps);
+</span><span class="cpp1-space">			</span><span class="cpp1-comment">// TODO: Add any drawing code here...
+</span><span class="cpp1-space">			</span><span class="cpp1-identifier">RECT</span><span class="cpp1-space"> </span><span class="cpp1-identifier">rt;
+</span><span class="cpp1-space">			</span><span class="cpp1-identifier">GetClientRect(hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">&amp;rt);
+</span><span class="cpp1-space">			</span><span class="cpp1-identifier">DrawText(hdc,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">szHello,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">strlen(szHello),</span><span class="cpp1-space"> </span><span class="cpp1-symbol">&amp;rt,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">DT_CENTER</span><span class="cpp1-space"> </span><span class="cpp1-symbol">|</span><span class="cpp1-space"> </span><span class="cpp1-identifier">DT_VCENTER</span><span class="cpp1-space"> </span><span class="cpp1-symbol">|</span><span class="cpp1-space"> </span><span class="cpp1-identifier">DT_SINGLELINE);
+</span><span class="cpp1-space">			</span><span class="cpp1-identifier">EndPaint(hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">&amp;ps);
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WM_DESTROY:
+</span><span class="cpp1-space">			</span><span class="cpp1-identifier">PostQuitMessage(</span><span class="cpp1-number">0</span><span class="cpp1-symbol">);
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WM_MOVE:
+</span><span class="cpp1-space">			</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">				</span><span class="cpp1-identifier">RECT</span><span class="cpp1-space"> </span><span class="cpp1-identifier">r;
+</span><span class="cpp1-space">				</span><span class="cpp1-identifier">GetWindowRect(hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">&amp;r);
+</span><span class="cpp1-space">				</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(g_flashWnd)
+</span><span class="cpp1-space">					</span><span class="cpp1-identifier">SetWindowPos(g_flashWnd-&gt;GetHWND(),</span><span class="cpp1-space"> </span><span class="cpp1-identifier">NULL,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">r.left,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">r.top,</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">,</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">SWP_NOSIZE</span><span class="cpp1-space"> </span><span class="cpp1-symbol">|</span><span class="cpp1-space"> </span><span class="cpp1-identifier">SWP_NOZORDER);
+</span><span class="cpp1-space">			</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WM_SIZE:
+</span><span class="cpp1-space">			</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">				</span><span class="cpp1-identifier">RECT</span><span class="cpp1-space"> </span><span class="cpp1-identifier">r;
+</span><span class="cpp1-space">				</span><span class="cpp1-identifier">GetWindowRect(hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">&amp;r);
+</span><span class="cpp1-space">				</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(g_flashWnd)
+</span><span class="cpp1-space">					</span><span class="cpp1-identifier">SetWindowPos(g_flashWnd-&gt;GetHWND(),</span><span class="cpp1-space"> </span><span class="cpp1-identifier">NULL,</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">,</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">,</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(r.right-r.left),</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(r.bottom-r.top),</span><span class="cpp1-space"> </span><span class="cpp1-identifier">SWP_NOMOVE</span><span class="cpp1-space"> </span><span class="cpp1-symbol">|</span><span class="cpp1-space"> </span><span class="cpp1-identifier">SWP_NOZORDER);
+</span><span class="cpp1-space">			</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">default</span><span class="cpp1-symbol">:
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-identifier">DefWindowProc(hWnd,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">message,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">wParam,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">lParam);
+</span><span class="cpp1-space">   </span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">   </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-number">0</span><span class="cpp1-symbol">;
+}
+
+</span><span class="cpp1-comment">// Mesage handler for about box.
+</span><span class="cpp1-identifier">LRESULT</span><span class="cpp1-space"> </span><span class="cpp1-identifier">CALLBACK</span><span class="cpp1-space"> </span><span class="cpp1-identifier">About(HWND</span><span class="cpp1-space"> </span><span class="cpp1-identifier">hDlg,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">UINT</span><span class="cpp1-space"> </span><span class="cpp1-identifier">message,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WPARAM</span><span class="cpp1-space"> </span><span class="cpp1-identifier">wParam,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LPARAM</span><span class="cpp1-space"> </span><span class="cpp1-identifier">lParam)
+{
+</span><span class="cpp1-space">	</span><span class="cpp1-reservedword">switch</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(message)
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WM_INITDIALOG:
+</span><span class="cpp1-space">				</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-identifier">TRUE;
+
+</span><span class="cpp1-space">		</span><span class="cpp1-reservedword">case</span><span class="cpp1-space"> </span><span class="cpp1-identifier">WM_COMMAND:
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">if</span><span class="cpp1-space"> </span><span class="cpp1-symbol">(LOWORD(wParam)</span><span class="cpp1-space"> </span><span class="cpp1-symbol">==</span><span class="cpp1-space"> </span><span class="cpp1-identifier">IDOK</span><span class="cpp1-space"> </span><span class="cpp1-symbol">||</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LOWORD(wParam)</span><span class="cpp1-space"> </span><span class="cpp1-symbol">==</span><span class="cpp1-space"> </span><span class="cpp1-identifier">IDCANCEL)</span><span class="cpp1-space"> 
+			</span><span class="cpp1-symbol">{
+</span><span class="cpp1-space">				</span><span class="cpp1-identifier">EndDialog(hDlg,</span><span class="cpp1-space"> </span><span class="cpp1-identifier">LOWORD(wParam));
+</span><span class="cpp1-space">				</span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-identifier">TRUE;
+</span><span class="cpp1-space">			</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">			</span><span class="cpp1-reservedword">break</span><span class="cpp1-symbol">;
+</span><span class="cpp1-space">	</span><span class="cpp1-symbol">}
+</span><span class="cpp1-space">    </span><span class="cpp1-reservedword">return</span><span class="cpp1-space"> </span><span class="cpp1-identifier">FALSE;
+}
+
+</span></code></pre><!--EndFragment--></body>
+</html>

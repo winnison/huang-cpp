@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "flash", "flash.vcproj", "{65441855-D97C-43E4-847F-011C72155094}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wtest", "wtest\wtest.vcproj", "{F3F55223-7926-4E45-AFCE-34F59273B36A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{65441855-D97C-43E4-847F-011C72155094}.Debug.ActiveCfg = Debug|Win32
+		{65441855-D97C-43E4-847F-011C72155094}.Debug.Build.0 = Debug|Win32
+		{65441855-D97C-43E4-847F-011C72155094}.Release.ActiveCfg = Release|Win32
+		{65441855-D97C-43E4-847F-011C72155094}.Release.Build.0 = Release|Win32
+		{F3F55223-7926-4E45-AFCE-34F59273B36A}.Debug.ActiveCfg = Debug|Win32
+		{F3F55223-7926-4E45-AFCE-34F59273B36A}.Debug.Build.0 = Debug|Win32
+		{F3F55223-7926-4E45-AFCE-34F59273B36A}.Release.ActiveCfg = Release|Win32
+		{F3F55223-7926-4E45-AFCE-34F59273B36A}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
