@@ -14,7 +14,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
-			ConfigurationType="1"
+			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
@@ -30,13 +30,7 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/Gif.exe"
-				LinkIncremental="2"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/Gif.pdb"
-				SubSystem="1"
-				TargetMachine="1"/>
+				Name="VCLibrarianTool"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -51,8 +45,6 @@
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
 			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
@@ -118,12 +110,6 @@
 			<File
 				RelativePath=".\defines.cpp">
 			</File>
-			<File
-				RelativePath=".\MotionFonts.cpp">
-			</File>
-			<File
-				RelativePath=".\test.cpp">
-			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
@@ -137,9 +123,6 @@
 			</File>
 			<File
 				RelativePath=".\LZWEncoder.h">
-			</File>
-			<File
-				RelativePath=".\MotionFonts.h">
 			</File>
 			<File
 				RelativePath=".\NeuQuant.h">
