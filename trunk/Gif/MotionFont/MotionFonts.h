@@ -19,6 +19,7 @@ bool EdgedMFont(string filename, string text, HFONT hFont, COLORREF transparent,
 bool DisappearingMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr);
 bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr);
 bool TriangleMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr);
+bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr);
 
 
 
