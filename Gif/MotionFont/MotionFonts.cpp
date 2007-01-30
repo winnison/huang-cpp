@@ -2,10 +2,39 @@
 #include "AnimatedGifEncoder.h"
 #include <math.h>
 
-inline void RectToEllipse(CDC& dc, RECT& rc, COLORREF transparent)
+
+//////////////////////////////////////////////////////////////////////////
+////All color calculating in DIB32COLOR 4bytes 0RGB
+//////////////////////////////////////////////////////////////////////////
+#define DIB32COLOR unsigned int
+#define GetPos(x, y, width, height)  4*(((height)-(y)-1)*(width)+(x))
+#define DIB32COLORAT(p) (*((DIB32COLOR*)(p)))
+#define GetDIBPixel(clr, p, x, y, width, height) clr = DIB32COLORAT( (LPBYTE)p+GetPos(x,y,width,height) )
+#define SetDIBPixel(clr, p, x, y, width, height) DIB32COLORAT( (LPBYTE)p+GetPos(x,y,width,height) ) = clr
+#define GetB(rgb)      ((BYTE)(rgb))
+#define GetG(rgb)      ((BYTE)(((WORD)(rgb)) >> 8))
+#define GetR(rgb)      ((BYTE)((rgb)>>16))
+#define DIB32RGB(r,g,b) ((((r) & 0xff)<<16) | (((g) & 0xff)<<8) | ((b) & 0xff) )
+
+inline HBITMAP CreateDIB(HDC hdc,int cx,int cy, LPBYTE &lpData)
+{
+	BITMAPINFO bmpInfo = {
+		sizeof(bmpInfo.bmiHeader),		//biSize
+			cx,							//biWidth
+			cy,							//biHeight
+			1,							//biPlanes
+			4*8				//biBitCount
+	};
+
+	return CreateDIBSection(hdc,&bmpInfo,DIB_RGB_COLORS,(void**)&lpData,NULL,0);
+}
+
+
+inline void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 {
 	int dx = rc.right-rc.left, dy = rc.bottom-rc.top, dx1 = dx/2, dx2 = dx -dx1, dy1=dy/2, dy2=dy-dy1;
 
+	DIB32COLOR clr;
 	for (int y=dy1; y<dy; y++)
 	{
 		double d = (double)(y)/(double)(dy-1);
@@ -20,28 +49,28 @@ inline void RectToEllipse(CDC& dc, RECT& rc, COLORREF transparent)
 			{
 				for(int yy=(y-dy1)*dy2/db2, yend = (y-dy1+1)*dy2/db2; yy<yend; yy++)
 				{
-					COLORREF clr = dc.GetPixel(rc.left+dx1+xx, rc.top+dy1+yy);
-					if (clr != transparent)
+					GetDIBPixel(clr, lpData, rc.left+dx1+xx, rc.top+dy1+yy, cx, cy);
+					if (clr != trans)
 					{
 						n++;
-						r+=GetRValue(clr);
-						g+=GetGValue(clr);
-						b+=GetBValue(clr);
+						r+=GetR(clr);
+						g+=GetG(clr);
+						b+=GetB(clr);
 					}
 				}
 			}
 			if (n)
 			{
-				dc.SetPixel(rc.left+dx1+x, rc.top+y, RGB(r/n,g/n,b/n));
+				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1+x, rc.top+y, cx, cy);
 			}
 			else
 			{
-				dc.SetPixel(rc.left+dx1+x, rc.top+y, transparent);
+				SetDIBPixel(trans, lpData, rc.left+dx1+x, rc.top+y, cx, cy);
 			}
 		}
 		for (int x=da2; x<dx2; x++)
 		{
-			dc.SetPixel(rc.left+dx1+x,rc.top+y, transparent);
+			SetDIBPixel(trans, lpData, rc.left+dx1+x,rc.top+y, cx, cy);
 		}
 
 		for (int x=0; x<da1; x++)
@@ -53,28 +82,28 @@ inline void RectToEllipse(CDC& dc, RECT& rc, COLORREF transparent)
 			{
 				for(int yy=(y-dy1)*dy2/db2, yend = (y-dy1+1)*dy2/db2; yy<yend; yy++)
 				{
-					COLORREF clr = dc.GetPixel(rc.left+dx1-xx-1, rc.top+dy1+yy);
-					if (clr != transparent)
+					GetDIBPixel(clr, lpData, rc.left+dx1-xx-1, rc.top+dy1+yy, cx, cy);
+					if (clr != trans)
 					{
 						n++;
-						r+=GetRValue(clr);
-						g+=GetGValue(clr);
-						b+=GetBValue(clr);
+						r+=GetR(clr);
+						g+=GetG(clr);
+						b+=GetB(clr);
 					}
 				}
 			}
 			if (n)
 			{
-				dc.SetPixel(rc.left+dx1-x-1, rc.top+y, RGB(r/n,g/n,b/n));
+				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
 			}
 			else
 			{
-				dc.SetPixel(rc.left+dx1-x-1, rc.top+y, transparent);
+				SetDIBPixel(trans, lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
 			}
 		}
 		for (int x=da1; x<dx1; x++)
 		{
-			dc.SetPixel(rc.left+dx1-x-1,rc.top+y, transparent);
+			SetDIBPixel(trans, lpData, rc.left+dx1-x-1,rc.top+y, cx, cy);
 		}
 	}
 	for (int y=dy1-1; y>=0; y--)
@@ -91,28 +120,28 @@ inline void RectToEllipse(CDC& dc, RECT& rc, COLORREF transparent)
 			{
 				for(int yy=(dy1-1-y)*dy1/db1, yend = (dy1-y)*dy1/db1; yy<yend; yy++)
 				{
-					COLORREF clr = dc.GetPixel(rc.left+dx1+xx, rc.top+dy1-yy-1);
-					if (clr != transparent)
+					GetDIBPixel(clr, lpData, rc.left+dx1+xx, rc.top+dy1-yy-1, cx, cy);
+					if (clr != trans)
 					{
 						n++;
-						r+=GetRValue(clr);
-						g+=GetGValue(clr);
-						b+=GetBValue(clr);
+						r+=GetR(clr);
+						g+=GetG(clr);
+						b+=GetB(clr);
 					}
 				}
 			}
 			if (n)
 			{
-				dc.SetPixel(rc.left+dx1+x, rc.top+y, RGB(r/n,g/n,b/n));
+				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1+x, rc.top+y, cx, cy);
 			}
 			else
 			{
-				dc.SetPixel(rc.left+dx1+x, rc.top+y, transparent);
+				SetDIBPixel(trans, lpData, rc.left+dx1+x, rc.top+y, cx, cy);
 			}
 		}
 		for (int x=da2; x<dx2; x++)
 		{
-			dc.SetPixel(rc.left+dx1+x,rc.top+y, transparent);
+			SetDIBPixel(trans, lpData, rc.left+dx1+x,rc.top+y, cx, cy);
 		}
 
 		for (int x=0; x<da1; x++)
@@ -124,36 +153,36 @@ inline void RectToEllipse(CDC& dc, RECT& rc, COLORREF transparent)
 			{
 				for(int yy=(dy1-y-1)*dy1/db1, yend = (dy1-y)*dy1/db1; yy<yend; yy++)
 				{
-					COLORREF clr = dc.GetPixel(rc.left+dx1-xx-1, rc.top+dy1-yy-1);
-					if (clr != transparent)
+					GetDIBPixel(clr, lpData, rc.left+dx1-xx-1, rc.top+dy1-yy-1, cx, cy);
+					if (clr != trans)
 					{
 						n++;
-						r+=GetRValue(clr);
-						g+=GetGValue(clr);
-						b+=GetBValue(clr);
+						r+=GetR(clr);
+						g+=GetG(clr);
+						b+=GetB(clr);
 					}
 				}
 			}
 			if (n)
 			{
-				dc.SetPixel(rc.left+dx1-x-1, rc.top+y, RGB(r/n,g/n,b/n));
+				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
 			}
 			else
 			{
-				dc.SetPixel(rc.left+dx1-x-1, rc.top+y, transparent);
+				SetDIBPixel(trans, lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
 			}
 		}
 		for (int x=da1; x<dx1; x++)
 		{
-			dc.SetPixel(rc.left+dx1-x-1,rc.top+y, transparent);
+			SetDIBPixel(trans, lpData, rc.left+dx1-x-1,rc.top+y, cx, cy);
 		}
 	}
 }
 
-inline void RectToTriangle(CDC& dc, RECT& rc, COLORREF transparent)
+inline void RectToTriangle(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 {
 	int dx = rc.right-rc.left, dy = rc.bottom-rc.top, dx1 = dx/2, dx2 = dx -dx1;
-
+	DIB32COLOR clr;
 	for (int y=0; y<dy; y++)
 	{
 		double d = (double)(y)/(double)(dy-1);
@@ -163,27 +192,27 @@ inline void RectToTriangle(CDC& dc, RECT& rc, COLORREF transparent)
 			int r=0,g=0,b=0,n=0;
 			for (int xx=x*dx2/da2, end = (x+1)*dx2/da2; xx<end; xx++)
 			{
-				COLORREF clr = dc.GetPixel(rc.left+dx1+xx, rc.top+y);
-				if (clr != transparent)
+				GetDIBPixel(clr, lpData, rc.left+dx1+xx, rc.top+y, cx, cy);
+				if (clr != trans)
 				{
 					n++;
-					r+=GetRValue(clr);
-					g+=GetGValue(clr);
-					b+=GetBValue(clr);
+					r+=GetR(clr);
+					g+=GetG(clr);
+					b+=GetB(clr);
 				}
 			}
 			if (n)
 			{
-				dc.SetPixel(rc.left+dx1+x, rc.top+y, RGB(r/n,g/n,b/n));
+				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1+x, rc.top+y, cx, cy);
 			}
 			else
 			{
-				dc.SetPixel(rc.left+dx1+x, rc.top+y, transparent);
+				SetDIBPixel(trans, lpData, rc.left+dx1+x, rc.top+y, cx, cy);
 			}
 		}
 		for (int x=da2; x<dx2; x++)
 		{
-			dc.SetPixel(rc.left+dx1+x,rc.top+y, transparent);
+			SetDIBPixel(trans, lpData, rc.left+dx1+x,rc.top+y, cx, cy);
 		}
 
 		for (int x=0; x<da1; x++)
@@ -191,27 +220,27 @@ inline void RectToTriangle(CDC& dc, RECT& rc, COLORREF transparent)
 			int r=0,g=0,b=0,n=0;
 			for (int xx=x*dx1/da1, end = (x+1)*dx1/da1; xx<end; xx++)
 			{
-				COLORREF clr = dc.GetPixel(rc.left+dx1-xx-1, rc.top+y);
-				if (clr != transparent)
+				GetDIBPixel(clr, lpData, rc.left+dx1-xx-1, rc.top+y, cx, cy);
+				if (clr != trans)
 				{
 					n++;
-					r+=GetRValue(clr);
-					g+=GetGValue(clr);
-					b+=GetBValue(clr);
+					r+=GetR(clr);
+					g+=GetG(clr);
+					b+=GetB(clr);
 				}
 			}
 			if (n)
 			{
-				dc.SetPixel(rc.left+dx1-x-1, rc.top+y, RGB(r/n,g/n,b/n));
+				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
 			}
 			else
 			{
-				dc.SetPixel(rc.left+dx1-x-1, rc.top+y, transparent);
+				SetDIBPixel(trans, lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
 			}
 		}
 		for (int x=da1; x<dx1; x++)
 		{
-			dc.SetPixel(rc.left+dx1-x-1,rc.top+y, transparent);
+			SetDIBPixel(trans, lpData, rc.left+dx1-x-1,rc.top+y, cx, cy);
 		}
 	}
 }
@@ -515,16 +544,21 @@ bool DisappearingMFont(string filename, string text, HFONT hFont, COLORREF trans
 	HBITMAP bms[4];
 
 	CDCHandle dcScreen = GetDC(NULL);
-	CDC dc;
+	CDC dc, dc1;
 	dc.CreateCompatibleDC(dcScreen);
+	dc1.CreateCompatibleDC(dcScreen);
 	dc.SetBkMode(TRANSPARENT);
 	dc.SelectFont(hFont);
 	CSize size;
 	dc.GetTextExtent(text.c_str(), text.length(), &size);
 	int w = size.cx+2, h = size.cy+2;
-	CBitmap bmp;
-	bmp.CreateCompatibleBitmap(dcScreen,size.cx+2,size.cy+2);
-	HBITMAP hBm = dc.SelectBitmap(bmp);
+	//CBitmap bmp;
+	//bmp.CreateCompatibleBitmap(dcScreen,size.cx+2,size.cy+2);
+	//HBITMAP hBm = dc.SelectBitmap(bmp);
+	LPBYTE lpData = NULL, lpData1 = NULL;
+	HBITMAP 
+		hBm = CreateDIB(dcScreen, w, h, lpData),
+		hBmp = dc.SelectBitmap(hBm), hBmp1;
 	r.left = 0;
 	r.top = 0;
 	r.right = w;
@@ -536,16 +570,13 @@ bool DisappearingMFont(string filename, string text, HFONT hFont, COLORREF trans
 
 	DrawTextEx(dc, text, size, 0, 0, primaryClr, secondaryClr);
 
-
+	DIB32COLOR clr, trans = DIB32RGB(GetRValue(transparent), GetGValue(transparent), GetBValue(transparent));
 
 
 	for (int i=0,d=1; i<4; i++, d<<=1)
 	{
-		CDC dc1;
-		dc1.CreateCompatibleDC(dcScreen);
-		CBitmap bmp1;
-		bmp1.CreateCompatibleBitmap(dcScreen,w,h);
-		bms[i] = dc1.SelectBitmap(bmp1);
+		bms[i] = CreateDIB(dcScreen, w, h, lpData1);
+		hBmp1 = dc1.SelectBitmap(bms[i]);
 		r.left = 0;
 		r.top = 0;
 		r.right = w;
@@ -556,20 +587,22 @@ bool DisappearingMFont(string filename, string text, HFONT hFont, COLORREF trans
 		{
 			for (int tw=0; tw<w; tw++)
 			{
-				COLORREF clr = dc.GetPixel(tw, th);
-				if(clr != transparent && (rand()%3)>=i)
+				GetDIBPixel(clr, lpData, tw, th, w, h);
+				if(clr != trans && (rand()%3)>=i)
 				{
-					dc1.SetPixel(tw-i-1+(rand()%(2*i+3)), th-i-1+(rand()%(2*i+3)),clr);
+					int x = tw-i-1+(rand()%(2*i+3)), y = th-i-1+(rand()%(2*i+3));
+					if (x>=0&&x<w&&y>=0&&y<h)
+					{
+						SetDIBPixel(clr, lpData1, x, y, w, h);
+					}
 				}
 			}
 		}
-
-		dc1.SelectBitmap(bms[i]);
-		bms[i] = bmp1.Detach();
+		dc1.SelectBitmap(hBmp1);
 	}
-	dc.SelectBitmap(hBm);
-	hBm = bmp.Detach();
+	dc.SelectBitmap(hBmp);
 	age.AddFrame(hBm);
+	DeleteObject(hBm);
 	//0,1,2
 	for (int i=0; i<3; i++)
 	{
@@ -581,7 +614,6 @@ bool DisappearingMFont(string filename, string text, HFONT hFont, COLORREF trans
 		age.AddFrame(bms[i]);
 		DeleteObject(bms[i]);
 	}
-	DeleteObject(hBm);
 	::ReleaseDC(NULL,dcScreen.m_hDC);
 
 	return age.Finish();
@@ -597,8 +629,8 @@ bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparen
 	age.Start(filename);
 	age.SetQuality(1);
 	age.SetTransparent(transparent);
-	age.SetRepeat(0);
-	age.SetDelay(20);
+	//age.SetRepeat(0);
+	//age.SetDelay(20);
 	RECT r;
 	int len = text.length();
 	const char* pc = text.c_str();
@@ -609,10 +641,13 @@ bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparen
 	dc.SelectFont(hFont);
 	CSize size;
 	dc.GetTextExtent(pc, text.length(), &size);
-	int w = size.cx+shadowD+2*len-2, h = size.cy+shadowD+2;
-	CBitmap bmp;
-	bmp.CreateCompatibleBitmap(dcScreen, w, h);
-	HBITMAP hBm = dc.SelectBitmap(bmp);
+	int w = size.cx+shadowD+2*len, h = size.cy+shadowD+2;
+	//CBitmap bmp;
+	//bmp.CreateCompatibleBitmap(dcScreen, w, h);
+	LPBYTE lpData = NULL;
+	HBITMAP 
+		hBm = CreateDIB(dcScreen, w, h, lpData),
+		hBmp = dc.SelectBitmap(hBm);
 
 	r.left = 0;
 	r.top = 0;
@@ -622,6 +657,7 @@ bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparen
 	brush.CreateSolidBrush(transparent);
 	dc.FillRect(&r, brush);
 
+	DIB32COLOR trans = DIB32RGB(GetRValue(transparent), GetGValue(transparent), GetBValue(transparent));
 	int x = 0;
 	for (int j=0; j<len; )
 	{
@@ -636,19 +672,16 @@ bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparen
 
 		x = r.right+1;
 
-		r.left-=1;
-		r.right+=shadowD+2;
-		r.top-=1;
-		r.bottom+=shadowD+2;
-		RectToEllipse(dc, r, transparent);
+		//r.left-=1;
+		//r.top-=1;
+		r.right+=shadowD+1;
+		r.bottom+=shadowD+1;
+		RectToEllipse(lpData, w, h, r, trans);
 		j+=cn;
 	}
 
 
-	dc.SelectBitmap(hBm);
-
-	hBm = bmp.Detach();
-
+	dc.SelectBitmap(hBmp);
 	age.AddFrame(hBm);
 	DeleteObject(hBm);
 	::ReleaseDC(NULL,dcScreen.m_hDC);
@@ -674,9 +707,15 @@ bool TriangleMFont(string filename, string text, HFONT hFont, COLORREF transpare
 	CSize size;
 	dc.GetTextExtent(pc, text.length(), &size);
 	int w = size.cx+shadowD+2*len-2, h = size.cy+shadowD+2;
-	CBitmap bmp;
-	bmp.CreateCompatibleBitmap(dcScreen, w, h);
-	HBITMAP hBm = dc.SelectBitmap(bmp);
+	size.cx = w;
+	size.cy = h;
+	//CBitmap bmp;
+	//bmp.CreateCompatibleBitmap(dcScreen, w, h);
+	//HBITMAP hBm = dc.SelectBitmap(bmp);
+	LPBYTE lpData = NULL;
+	HBITMAP 
+		hBm = CreateDIB(dcScreen, w, h, lpData),
+		hBmp = dc.SelectBitmap(hBm);
 
 	r.left = 0;
 	r.top = 0;
@@ -686,6 +725,7 @@ bool TriangleMFont(string filename, string text, HFONT hFont, COLORREF transpare
 	brush.CreateSolidBrush(transparent);
 	dc.FillRect(&r, brush);
 
+	DIB32COLOR trans = DIB32RGB(GetRValue(transparent), GetGValue(transparent), GetBValue(transparent));
 	int x = 0;
 	for (int j=0; j<len; )
 	{
@@ -701,21 +741,335 @@ bool TriangleMFont(string filename, string text, HFONT hFont, COLORREF transpare
 		x = r.right+1;
 
 		r.left-=1;
-		r.right+=shadowD+2;
+		r.right+=shadowD+1;
 		r.top-=1;
-		r.bottom+=shadowD+2;
-		RectToTriangle(dc, r, transparent);
+		r.bottom+=shadowD+1;
+		RectToTriangle(lpData, w, h, r, trans);
 		j+=cn;
 	}
 
 
-	dc.SelectBitmap(hBm);
-
-	hBm = bmp.Detach();
-
+	dc.SelectBitmap(hBmp);
 	age.AddFrame(hBm);
 	DeleteObject(hBm);
 	::ReleaseDC(NULL,dcScreen.m_hDC);
 	return age.Finish();
 }
+
+
+//bool ScrollMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
+//{
+//	CAnimatedGifEncoder age;
+//	age.Start(filename);
+//	age.SetQuality(1);
+//	age.SetTransparent(transparent);
+//	age.SetRepeat(0);
+//	age.SetDelay(500);
+//	RECT r;
+//
+//	CDCHandle dcScreen = GetDC(NULL);
+//	CDC dc;
+//	dc.CreateCompatibleDC(dcScreen);
+//	dc.SetBkMode(TRANSPARENT);
+//	dc.SelectFont(hFont);
+//	CSize size;
+//	dc.GetTextExtent(text.c_str(), text.length(), &size);
+//	size.cx+=2;
+//	size.cy+=2;
+//	CBitmap bmp;
+//	bmp.CreateCompatibleBitmap(dcScreen,size.cx,size.cy);
+//	HBITMAP hBm = dc.SelectBitmap(bmp);
+//	r.left = 0;
+//	r.top = 0;
+//	r.right = size.cx;
+//	r.bottom = size.cy;
+//	CBrush brush;
+//	brush.CreateSolidBrush(transparent);
+//	dc.FillRect(&r, brush);
+//
+//	size.cx-=2;
+//	size.cy-=2;
+//
+//	DrawTextEx(dc, text, size, 0, 0, primaryClr, secondaryClr);
+//	size.cx+=2;
+//	size.cy+=2;
+//
+//
+//	for (double pos = 0; pos<=1; pos+=.05)
+//	{
+//		CDC dc1;
+//		dc1.CreateCompatibleDC(dcScreen);
+//		CBitmap bmp1;
+//		bmp1.CreateCompatibleBitmap(dcScreen, size.cx, size.cy);
+//		HBITMAP hBm1 = dc1.SelectBitmap(bmp1);
+//
+//		for (int y=size.cy-1; y>=0; y--)
+//		{
+//			double py = (double)y/(size.cy), py1 = (double)(y+1)/(size.cy);
+//			py = 2 * (pos + acos(1-2*py)/(2 * M_PI));
+//			py1 = 2 * (pos + acos(1-2*py1)/(2 * M_PI));
+//			py1 = (py1 - floor(py));
+//			py = (py - floor(py));
+//			for (int x = size.cx-1; x>=0; x--)
+//			{
+//				int r = 0, g = 0, b = 0, n = 0;
+//				for (int istart=(int)(py*size.cy), iend = (int)(py1*size.cy), i=istart; i<iend||i==istart; i++)
+//				{
+//					COLORREF clr = dc.GetPixel(x,i%size.cy);
+//					if (clr != transparent)
+//					{
+//						n++;
+//						r += GetRValue(clr);
+//						g += GetGValue(clr);
+//						b += GetBValue(clr);
+//					}
+//				}
+//				if (n)
+//				{
+//					dc1.SetPixel(x, y,RGB(r/n,g/n,b/n));
+//				}
+//				else
+//				{
+//					dc1.SetPixel(x,y, transparent);
+//				}
+//			}
+//		}
+//
+//
+//
+//		dc1.SelectBitmap(hBm1);
+//
+//		hBm1 = bmp1.Detach();
+//
+//		age.AddFrame(hBm1);
+//		DeleteObject(hBm1);
+//	}
+//
+//
+//
+//
+//	dc.SelectBitmap(hBm);
+//
+//	hBm = bmp.Detach();
+//
+//	DeleteObject(hBm);
+//	::ReleaseDC(NULL,dcScreen.m_hDC);
+//
+//
+//	return age.Finish();
+//
+//
+//}
+//
+//
+//
+//
+//
+//
+//
+bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
+{
+	CAnimatedGifEncoder age;
+	age.Start(filename);
+	age.SetQuality(1);
+	age.SetTransparent(transparent);
+	age.SetRepeat(0);
+	age.SetDelay(500);
+	RECT r;
+
+	CDCHandle dcScreen = GetDC(NULL);
+	CDC dc, dc0, dc1;
+	dc.CreateCompatibleDC(dcScreen);
+	dc0.CreateCompatibleDC(dcScreen);
+	dc1.CreateCompatibleDC(dcScreen);
+	dc.SetBkMode(TRANSPARENT);
+	dc0.SetBkMode(TRANSPARENT);
+	dc.SelectFont(hFont);
+	dc0.SelectFont(hFont);
+	CSize size;
+	dc.GetTextExtent(text.c_str(), text.length(), &size);
+	size.cx+=2;
+	size.cy+=2;
+	//CBitmap bmp, bmp0;
+	//bmp.CreateDIB(dcScreen,size.cx,size.cy);
+	//bmp0.CreateCompatibleBitmap(dcScreen,size.cx,size.cy);
+	//HBITMAP hBm = dc.SelectBitmap(bmp), hBm0 = dc0.SelectBitmap(bmp0);
+	LPBYTE lpData = NULL, lpData0 = NULL, lpData1 = NULL;
+	HBITMAP 
+		hBm = CreateDIB(dcScreen.m_hDC, size.cx, size.cy, lpData), 
+		hBm0 = CreateDIB(dcScreen.m_hDC, size.cx, size.cy, lpData0),
+		hBm1 = CreateDIB(dcScreen.m_hDC, size.cx, size.cy, lpData1),
+		hBmp = dc.SelectBitmap(hBm),
+		hBmp0 = dc0.SelectBitmap(hBm0),
+		hBmp1 = dc1.SelectBitmap(hBm1);
+	r.left = 0;
+	r.top = 0;
+	r.right = size.cx;
+	r.bottom = size.cy;
+	CBrush brush, brush0;
+	brush.CreateSolidBrush(transparent);
+	brush0.CreateSolidBrush(primaryClr);
+	dc.FillRect(&r, brush);
+	dc0.FillRect(&r, brush0);
+
+	size.cx-=2;
+	size.cy-=2;
+
+	DrawTextEx(dc, text, size, 0, 0, primaryClr, secondaryClr);
+	DrawTextEx(dc0, text, size, 0, 0, transparent, secondaryClr);
+	size.cx+=2;
+	size.cy+=2;
+
+	DIB32COLOR clr, trans = DIB32RGB(GetRValue(transparent), GetGValue(transparent), GetBValue(transparent));
+
+	for (double pos = 0; pos<=1; pos+=.1)
+	{
+		int py = (int)(size.cy*pos);
+		for (int y=0; y<py; y++)
+		{
+			for (int x=0; x<size.cx; x++)
+			{
+				int r = 0, g = 0, b = 0, n = 0;
+				for (int yy=y*size.cy/py, yend = (y+1)*size.cy/py; yy<yend; yy++)
+				{
+					GetDIBPixel(clr, lpData, x,yy, size.cx, size.cy);
+					if (clr != trans)
+					{
+						n++;
+						r += GetR(clr);
+						g += GetG(clr);
+						b += GetB(clr);
+					}
+				}
+				if (n)
+				{
+					SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData1, x, y, size.cx, size.cy);
+				}
+				else
+				{
+					SetDIBPixel(trans, lpData1, x, y, size.cx, size.cy);
+				}
+			}
+		}
+		for (int y=py; y<size.cy; y++)
+		{
+			for (int x=0; x<size.cx; x++)
+			{
+				int r = 0, g = 0, b = 0, n = 0;
+				for (int yy=(y-py)*size.cy/(size.cy-py), yend = (y+1-py)*size.cy/(size.cy-py); yy<yend; yy++)
+				{
+					GetDIBPixel(clr, lpData0, x,yy, size.cx, size.cy);
+					if (clr != trans)
+					{
+						n++;
+						r += GetR(clr);
+						g += GetG(clr);
+						b += GetB(clr);
+					}
+				}
+				if (n)
+				{
+					SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData1, x, y, size.cx, size.cy);
+				}
+				else
+				{
+					SetDIBPixel(trans, lpData1, x, y, size.cx, size.cy);
+				}
+			}
+		}
+
+		dc1.SelectBitmap(hBmp1);
+		age.AddFrame(hBm1);
+		dc1.SelectBitmap(hBm1);
+	}
+
+
+
+
+	for (double pos = 0; pos<=1; pos+=.1)
+	{
+
+		int py = (int)(size.cy*pos);
+		for (int y=0; y<py; y++)
+		{
+			for (int x=0; x<size.cx; x++)
+			{
+				int r = 0, g = 0, b = 0, n = 0;
+				for (int yy=y*size.cy/py, yend = (y+1)*size.cy/py; yy<yend; yy++)
+				{
+					GetDIBPixel(clr, lpData0, x,yy, size.cx, size.cy);
+					if (clr != trans)
+					{
+						n++;
+						r += GetR(clr);
+						g += GetG(clr);
+						b += GetB(clr);
+					}
+				}
+				if (n)
+				{
+					SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData1, x, y, size.cx, size.cy);
+				}
+				else
+				{
+					SetDIBPixel(trans, lpData1, x, y, size.cx, size.cy);
+				}
+			}
+		}
+		for (int y=py; y<size.cy; y++)
+		{
+			for (int x=0; x<size.cx; x++)
+			{
+				int r = 0, g = 0, b = 0, n = 0;
+				for (int yy=(y-py)*size.cy/(size.cy-py), yend = (y+1-py)*size.cy/(size.cy-py); yy<yend; yy++)
+				{
+					GetDIBPixel(clr, lpData, x,yy, size.cx, size.cy);
+					if (clr != trans)
+					{
+						n++;
+						r += GetR(clr);
+						g += GetG(clr);
+						b += GetB(clr);
+					}
+				}
+				if (n)
+				{
+					SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData1, x, y, size.cx, size.cy);
+				}
+				else
+				{
+					SetDIBPixel(trans, lpData1, x, y, size.cx, size.cy);
+				}
+
+			}
+		}
+
+
+		dc1.SelectBitmap(hBmp1);
+		age.AddFrame(hBm1);
+		dc1.SelectBitmap(hBm1);
+	}
+
+
+
+	dc.SelectBitmap(hBmp);
+	dc0.SelectBitmap(hBmp0);
+	dc1.SelectBitmap(hBmp1);
+	DeleteObject(hBm);
+	DeleteObject(hBm0);
+	DeleteObject(hBm1);
+
+	::ReleaseDC(NULL,dcScreen.m_hDC);
+
+
+	return age.Finish();
+
+
+}
+
+
+
+
+
+
 

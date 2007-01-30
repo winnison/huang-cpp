@@ -207,24 +207,24 @@ int main(int argc ,char * argv[])
 	//HBITMAP bm0 = LoadPictureFile(argv[10]);
 	//SaveBmp(Transform(bm0, m), argv[11]);
 
-	float matrix[3][3]={{-1,-2,-1},{-2,9,-2},{-1,-2,-1}};
-	char sz[100];
-	for (int i=1; i<70; i++)
-	{
-		_snprintf(sz, 100, "%d.jpg", i);
-		HBITMAP bm0 = LoadPictureFile(sz);
-		if(bm0==NULL)
-			continue;
-		HBITMAP bm1 = StretchBitmap(bm0, 40, 40);
-		_snprintf(sz, 100, "%d.bmp", i);
-		SaveBmp(bm1, sz);
-		for(int j=13; j<25; j++)
-		{
-			matrix[1][1] = j;
-			_snprintf(sz, 100, "%d-%d.bmp", i, j);
-			SaveBmp(Transform(bm1, matrix), sz);
-		}
-	}
+	//float matrix[3][3]={{-1,-2,-1},{-2,9,-2},{-1,-2,-1}};
+	//char sz[100];
+	//for (int i=1; i<70; i++)
+	//{
+	//	_snprintf(sz, 100, "%d.jpg", i);
+	//	HBITMAP bm0 = LoadPictureFile(sz);
+	//	if(bm0==NULL)
+	//		continue;
+	//	HBITMAP bm1 = StretchBitmap(bm0, 40, 40);
+	//	_snprintf(sz, 100, "%d.bmp", i);
+	//	SaveBmp(bm1, sz);
+	//	for(int j=13; j<25; j++)
+	//	{
+	//		matrix[1][1] = j;
+	//		_snprintf(sz, 100, "%d-%d.bmp", i, j);
+	//		SaveBmp(Transform(bm1, matrix), sz);
+	//	}
+	//}
 	//float matrix0[3][3]={{1,1,1},{1,1,1},{1,1,1}};
 	//float matrix1[3][3]={{1,2,1},{2,4,2},{1,2,1}};
 	//float matrix2[3][3]={{1,4,1},{4,-20,4},{1,4,1}};
@@ -278,13 +278,13 @@ int main(int argc ,char * argv[])
 	//		SaveBmp(Transform(bm3, matrix5),sz);
 	//}
 
-	//CFont font;
-	//bool b = font.CreatePointFont(300, _T("ËÎÌå"));
-	//if (b)
-	//{
-	//	b = EllipseMFont(argv[1], argv[2], font.m_hFont, 0xf0f0f0, 0xff0000, 0xffc0c0);
-	//}
-	//printf("%d", b);
+	CFont font;
+	bool b = font.CreatePointFont(300, _T("Ó×Ô²"));
+	if (b)
+	{
+		b = EllipseMFont(argv[1], argv[2], font.m_hFont, 0xf0f0f0, 0xff0000, 0xffc0c0);
+	}
+	printf("%d", b);
 
 
 	//printf("Begin\n");
