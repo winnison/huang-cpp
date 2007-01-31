@@ -1,6 +1,6 @@
 #include "AnimatedGifEncoder.h"
 #include "MotionFonts.h"
-
+#include "dib.h"
 HBITMAP LoadPictureFile(LPCTSTR pszFile)
 {
 	ATLASSERT(pszFile != NULL);
@@ -282,7 +282,7 @@ int main(int argc ,char * argv[])
 	bool b = font.CreatePointFont(300, _T("свт╡"));
 	if (b)
 	{
-		b = EllipseMFont(argv[1], argv[2], font.m_hFont, 0xf0f0f0, 0xff0000, 0xffc0c0);
+		b = TriangleMFont(argv[1], argv[2], font.m_hFont, 0xf0f0f0, 0xff0000, 0xffc0c0);
 	}
 	printf("%d", b);
 
