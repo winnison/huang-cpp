@@ -434,7 +434,7 @@ bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparen
 		r.top-=1;
 		r.right+=shadowD+1;
 		r.bottom+=shadowD+1;
-		RectToSShape(lpData, w, h, r, trans);
+		RectToEllipse(lpData, w, h, r, trans);
 		j+=cn;
 	}
 

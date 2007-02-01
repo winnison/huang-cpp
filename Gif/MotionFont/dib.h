@@ -16,7 +16,10 @@
 DIB32COLOR GetAvg(int r, int g, int b, int n);
 
 HBITMAP CreateDIB(HDC hdc,int cx,int cy, LPBYTE &lpData);
-void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, float matrix[3][3]);
+
+static const int SMOOTH_TRANSFORM_MATRIX[3][3] = {{1,2,1},{2,4,2},{1,2,1}};
+void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, const int matrix[3][3]);
+void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, RECT& rc, const int matrix[3][3]);
 
 void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);
 void RectToTriangle(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);

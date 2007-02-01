@@ -7,7 +7,15 @@
 #define NETSIZE 256
 #define SAVEDEL(p) if(p){delete p;p=0;}
 #define MAX(a, b)  (((a)>(b))?(a):(b))
-
+#define CHECKRANGE(a, left, right) \
+	if ((a)<(left))\
+	{\
+		(a) = (left);\
+	}\
+	else if((a)>(right))\
+	{\
+		(a) = (right);\
+	}
 
 
 
