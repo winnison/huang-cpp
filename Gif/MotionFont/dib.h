@@ -1,8 +1,6 @@
+#include "define.h"
+#include "common.h"
 #include <math.h>
-#include <atlbase.h>
-#include <atlapp.h>
-#include <atlgdi.h>
-#include <atltypes.h>
 
 #define DIB32COLOR unsigned int
 #define GetPos(x, y, width, height)  4*(((height)-(y)-1)*(width)+(x))
@@ -17,7 +15,6 @@ DIB32COLOR GetAvg(int r, int g, int b, int n);
 
 HBITMAP CreateDIB(HDC hdc,int cx,int cy, LPBYTE &lpData);
 
-static const int SMOOTH_TRANSFORM_MATRIX[3][3] = {{1,2,1},{2,4,2},{1,2,1}};
 void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, const int matrix[3][3]);
 void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, RECT& rc, const int matrix[3][3]);
 
