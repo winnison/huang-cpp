@@ -18,6 +18,11 @@ HBITMAP CreateDIB(HDC hdc,int cx,int cy, LPBYTE &lpData);
 void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, const int matrix[3][3]);
 void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, RECT& rc, const int matrix[3][3]);
 
+
+typedef void (*RectTransformMethod)(
+	LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans
+	);
+
 void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);
 void RectToTriangle(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);
 void RectToDiamond(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);

@@ -1,39 +1,9 @@
 #include "MotionFonts.h"
 #include "AnimatedGifEncoder.h"
 #include <math.h>
+#include "drawing.h"
 
 
-
-inline void DrawTextOuter(CDC& dc, string text, CSize& size, int x, int y, COLORREF outer)
-{
-	RECT r;
-	//  1
-	// 402
-	//  3
-	const int xs[4]={1,2,1,0}, ys[4]={0,1,2,1};
-	dc.SetTextColor(outer);
-	for (int i=3; i>=0; i--)
-	{
-		r.left = x+xs[i];
-		r.top = y+ys[i];
-		r.right = x+size.cx+xs[i];
-		r.bottom = y+size.cy+ys[i];
-		dc.DrawText(text.c_str(), text.length(), &r, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
-	}
-
-}
-
-inline void DrawTextEx(CDC& dc, string text, CSize& size, int x, int y, COLORREF clr, COLORREF outer)
-{
-	DrawTextOuter(dc, text, size, x, y, outer);
-	RECT r;
-	dc.SetTextColor(clr);
-	r.left = x+1;
-	r.top = y+1;
-	r.right = x+size.cx+1;
-	r.bottom = y+size.cy+1;
-	dc.DrawText(text.c_str(), text.length(), &r, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
-};
 
 
 bool HueFloatMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
@@ -80,8 +50,8 @@ bool HueFloatMFont(string filename, string text, HFONT hFont, COLORREF transpare
 				clr = GetRGBbyHSB(1+h+(float)j/(float)len-(float)i/(float)12, s, v),
 				clr2 = GetRGBbyHSB(1+h+(float)j/(float)len-(float)i/(float)12, s2/2, v2);
 			int cn = (text[j]<0)?2:1;
-			DrawTextEx(dc, text.substr(j,cn), size, x+shadowD, shadowD, 0xb0b0b0, 0xdddddd);
-			DrawTextEx(dc, text.substr(j,cn), size, x+1, 1, clr, clr2);
+			DrawTextWithOuter(dc, text.substr(j,cn), size, x+shadowD, shadowD, 0xb0b0b0, 0xdddddd);
+			DrawTextWithOuter(dc, text.substr(j,cn), size, x+1, 1, clr, clr2);
 			r.left = x+1;
 			r.top = 1;
 			r.right = w;
@@ -224,9 +194,9 @@ bool ShapeShadowedMFont(string filename, string text, HFONT hFont, COLORREF tran
 
 		
 		//Shadow
-		DrawTextEx(dc, text, size, shadowD, shadowD, 0xb0b0b0, 0xdddddd);
+		DrawTextWithOuter(dc, text, size, shadowD, shadowD, 0xb0b0b0, 0xdddddd);
 		//TEXT
-		DrawTextEx(dc, text, size, 0, 0, primaryClr, secondaryClr);
+		DrawTextWithOuter(dc, text, size, 0, 0, primaryClr, secondaryClr);
 
 
 
@@ -273,7 +243,7 @@ bool EdgedMFont(string filename, string text, HFONT hFont, COLORREF transparent,
 	dc.FillRect(&r, brush);
 
 
-	DrawTextEx(dc, text, size, 0, 0, primaryClr, secondaryClr);
+	DrawTextWithOuter(dc, text, size, 0, 0, primaryClr, secondaryClr);
 
 
 
@@ -326,7 +296,7 @@ bool DisappearingMFont(string filename, string text, HFONT hFont, COLORREF trans
 	dc.FillRect(&r, brush);
 
 
-	DrawTextEx(dc, text, size, 0, 0, primaryClr, secondaryClr);
+	DrawTextWithOuter(dc, text, size, 0, 0, primaryClr, secondaryClr);
 
 	DIB32COLOR clr, trans = DIB32RGB(GetRValue(transparent), GetGValue(transparent), GetBValue(transparent));
 
@@ -420,8 +390,8 @@ bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparen
 	for (int j=0; j<len; )
 	{
 		int cn = (text[j]<0)?2:1;
-		DrawTextEx(dc, text.substr(j,cn), size, x+shadowD, shadowD, 0xb0b0b0, 0xdddddd);
-		DrawTextEx(dc, text.substr(j,cn), size, x+1, 1, primaryClr, secondaryClr);
+		DrawTextWithOuter(dc, text.substr(j,cn), size, x+shadowD, shadowD, 0xb0b0b0, 0xdddddd);
+		DrawTextWithOuter(dc, text.substr(j,cn), size, x+1, 1, primaryClr, secondaryClr);
 		r.left = x+1;
 		r.top = 1;
 		r.right = w;
@@ -488,8 +458,8 @@ bool TriangleMFont(string filename, string text, HFONT hFont, COLORREF transpare
 	for (int j=0; j<len; )
 	{
 		int cn = (text[j]<0)?2:1;
-		DrawTextEx(dc, text.substr(j,cn), size, x+shadowD, shadowD, 0xb0b0b0, 0xdddddd);
-		DrawTextEx(dc, text.substr(j,cn), size, x+1, 1, primaryClr, secondaryClr);
+		DrawTextWithOuter(dc, text.substr(j,cn), size, x+shadowD, shadowD, 0xb0b0b0, 0xdddddd);
+		DrawTextWithOuter(dc, text.substr(j,cn), size, x+1, 1, primaryClr, secondaryClr);
 		r.left = x+1;
 		r.top = 1;
 		r.right = w;
@@ -548,7 +518,7 @@ bool TriangleMFont(string filename, string text, HFONT hFont, COLORREF transpare
 //	size.cx-=2;
 //	size.cy-=2;
 //
-//	DrawTextEx(dc, text, size, 0, 0, primaryClr, secondaryClr);
+//	DrawTextWithOuter(dc, text, size, 0, 0, primaryClr, secondaryClr);
 //	size.cx+=2;
 //	size.cy+=2;
 //
@@ -673,8 +643,8 @@ bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF tran
 	size.cx-=2;
 	size.cy-=2;
 
-	DrawTextEx(dc, text, size, 0, 0, primaryClr, secondaryClr);
-	DrawTextEx(dc0, text, size, 0, 0, transparent, secondaryClr);
+	DrawTextWithOuter(dc, text, size, 0, 0, primaryClr, secondaryClr);
+	DrawTextWithOuter(dc0, text, size, 0, 0, transparent, secondaryClr);
 	size.cx+=2;
 	size.cy+=2;
 

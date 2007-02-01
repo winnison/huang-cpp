@@ -9,12 +9,12 @@ COLORREF GetRGBbyHSB(float hue, float saturation, float brightness)
 	int r, g, b;
 	HSBtoRGB(hue, saturation, brightness, r, g, b);
 	return RGB(r,g,b);
-};
+}
 
 void GetHSBbyRGB(COLORREF rgb, float& hue, float& saturation, float& brightness)
 {
 	RGBtoHSB(GetRValue(rgb), GetGValue(rgb), GetBValue(rgb), hue, saturation, brightness);
-};
+}
 
 /**
 * Converts the components of a color, as specified by the HSB 
@@ -43,7 +43,7 @@ void GetHSBbyRGB(COLORREF rgb, float& hue, float& saturation, float& brightness)
 * @see       java.awt.image.ColorModel#getRGBdefault()
 * @since     JDK1.0
 */
-void HSBtoRGB(float hue, float saturation, float brightness, int& r, int& g, int& b) {
+inline void HSBtoRGB(float hue, float saturation, float brightness, int& r, int& g, int& b) {
 	r = 0; g = 0; b = 0;
 	if (saturation == 0) {
 		r = g = b = (int) (brightness * 255.0f + 0.5f);
@@ -110,7 +110,7 @@ void HSBtoRGB(float hue, float saturation, float brightness, int& r, int& g, int
 * @see       java.awt.image.ColorModel#getRGBdefault()
 * @since     JDK1.0
 */
-void RGBtoHSB(int r, int g, int b, float& hue, float& saturation, float& brightness) {
+inline void RGBtoHSB(int r, int g, int b, float& hue, float& saturation, float& brightness) {
 	int cmax = (r > g) ? r : g;
 	if (b > cmax) cmax = b;
 	int cmin = (r < g) ? r : g;
@@ -410,3 +410,36 @@ HBITMAP Transform( HBITMAP hBitmap , float matrix[3][3])
 
 
 
+
+
+
+void DrawTextOuter(CDC& dc, string& text, CSize& size, int x, int y, COLORREF outer)
+{
+	RECT r;
+	//  1
+	// 402
+	//  3
+	const int xs[4]={1,2,1,0}, ys[4]={0,1,2,1};
+	dc.SetTextColor(outer);
+	for (int i=3; i>=0; i--)
+	{
+		r.left = x+xs[i];
+		r.top = y+ys[i];
+		r.right = x+size.cx+xs[i];
+		r.bottom = y+size.cy+ys[i];
+		dc.DrawText(text.c_str(), text.length(), &r, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
+	}
+
+}
+
+void DrawTextWithOuter(CDC& dc, string& text, CSize& size, int x, int y, COLORREF clr, COLORREF outer)
+{
+	DrawTextOuter(dc, text, size, x, y, outer);
+	RECT r;
+	dc.SetTextColor(clr);
+	r.left = x+1;
+	r.top = y+1;
+	r.right = x+size.cx+1;
+	r.bottom = y+size.cy+1;
+	dc.DrawText(text.c_str(), text.length(), &r, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
+};
