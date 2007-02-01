@@ -21,11 +21,81 @@ HBITMAP CreateDIB(HDC hdc,int cx,int cy, LPBYTE &lpData)
 }
 
 
-
-
-void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, float matrix[3][3])
+void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, const int matrix[3][3])
 {
+	RECT rc;
+	rc.left = 0;
+	rc.top = 0;
+	rc.right = cx;
+	rc.bottom = cy;
+	Transform(lpDataSrc, lpDataDst, cx, cy, rc, matrix);
+}
+void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, RECT& rc, const int m[3][3])
+{
+	int base = 0, base2;
+	base = m[0][0]+m[0][1]+m[0][2]+m[1][0]+m[1][1]+m[1][2]+m[2][0]+m[2][1]+m[2][2];
+	if (base == 0)
+	{
+		return;
+	}
+	base2 = (base+1)/2;
+	int right1 =rc.right-1, bottom1 = rc.bottom-1;
+	for (int x=rc.left; x<=right1; x++)
+	{
+		for (int y=rc.top; y<=bottom1; y++)
+		{
+			int r = 0, g = 0, b = 0;
+			DIB32COLOR rgb;
+			BOOL istop = y == 0, isbottom = y == bottom1;
+#define ADDRGB(x, y, f)\
+	rgb = DIBPixel(lpDataSrc, x, y, cx, cy);\
+	r += f*GetR(rgb);\
+	g += f*GetG(rgb);\
+	b += f*GetB(rgb);
+			if (x != 0)
+			{
+				if (!istop)
+				{
+					ADDRGB(x-1, y-1,m[0][0]);
+				}
+				ADDRGB(x-1,y, m[0][1]);
+				if (!isbottom)
+				{
+					ADDRGB(x-1,y+1,m[0][2]);
+				}
+			}
+			if (!istop)
+			{
+				ADDRGB(x,y-1,m[1][0]);
+			}
+			ADDRGB(x,y,m[1][1]);
+			if (!isbottom)
+			{
+				ADDRGB(x,y+1,m[1][2])
+			}
+			if (x != right1)
+			{
+				if (!istop)
+				{
+					ADDRGB(x+1, y-1,m[2][0]);
+				}
+				ADDRGB(x+1,y, m[2][1]);
+				if (!isbottom)
+				{
+					ADDRGB(x+1,y+1,m[2][2]);
+				}
+			}
+#undef ADDRGB
+			r = (r+base2)/base;
+			g = (g+base2)/base;
+			b = (b+base2)/base;
 
+			CHECKRANGE(r, 0, 255);
+			CHECKRANGE(g, 0, 255);
+			CHECKRANGE(b, 0, 255);
+			DIBPixel(lpDataDst, x, y, cx, cy) = DIB32RGB(r,g,b);
+		}
+	}
 }
 void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 {

@@ -139,6 +139,18 @@ void RGBtoHSB(int r, int g, int b, float& hue, float& saturation, float& brightn
 }
 
 
+inline void check0to255(int& a)
+{
+	if(a<0)
+	{
+		a = 0;
+	}
+	else if (a>255)
+	{
+		a = 255;
+	}
+}
+
 void myStrechConvert(CDC& dcDst,int cxDst,int cyDst,CDC& dcSrc,int cxSrc,int cySrc)
 {
 	int w1 = cxSrc, h1 = cySrc, wd = 0, hd = 0;
@@ -271,18 +283,6 @@ HBITMAP StretchBitmap(HBITMAP hbmpSrc,int cxDst,int cyDst)
 	return bmpRet.Detach();
 }
 
-
-inline void check0to255(int& a)
-{
-	if(a<0)
-	{
-		a = 0;
-	}
-	else if (a>255)
-	{
-		a = 255;
-	}
-}
 
 void GrayAdjust(HBITMAP hBitmap)
 {
