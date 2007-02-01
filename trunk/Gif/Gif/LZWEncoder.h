@@ -311,7 +311,7 @@ public:
 		:imgW(width), 
 		imgH(height),
 		pixAry(pixels),
-		initCodeSize(MAX(2, color_depth)),
+		initCodeSize(max(2, color_depth)),
 		remaining(0),
 		curPixel(0),
 

@@ -461,3 +461,109 @@ bool CAnimatedGifEncoder::Start(string file)
 	return started = ok;
 }
 
+/**
+* Sets the delay time between each frame, or changes it
+* for subsequent frames (applies to last frame added).
+*
+* @param ms int delay time in milliseconds
+*/
+void CAnimatedGifEncoder::SetDelay(int ms) 
+{
+	delay = ( int ) ((ms+5) / 10.0f);
+}
+
+/**
+* Sets the GIF frame disposal code for the last added frame
+* and any subsequent frames.  Default is 0 if no transparent
+* color has been set, otherwise 2.
+* @param code int disposal code.
+*/
+void CAnimatedGifEncoder::SetDispose(int code) 
+{
+	if (code >= 0) 
+	{
+		dispose = code;
+	}
+}
+
+/**
+* Sets the number of times the set of GIF frames
+* should be played.  Default is 1; 0 means play
+* indefinitely.  Must be invoked before the first
+* image is added.
+*
+* @param iter int number of iterations.
+* @return
+*/
+void CAnimatedGifEncoder::SetRepeat(int iter) 
+{
+	if (iter >= 0) 
+	{
+		repeat = iter;
+	}
+}
+
+/**
+* Sets the transparent color for the last added frame
+* and any subsequent frames.
+* Since all colors are subject to modification
+* in the quantization process, the color in the final
+* palette for each frame closest to the given color
+* becomes the transparent color for that frame.
+* May be set to NULL to indicate no transparent color.
+*
+* @param c COLOR to be treated as transparent on display.
+*/
+void CAnimatedGifEncoder::SetTransparent(COLORREF c) 
+{
+	transparent = c & 0x00ffffff;
+}
+
+/**
+* Sets frame rate in frames per second.  Equivalent to
+* <code>setDelay(1000/fps)</code>.
+*
+* @param fps float frame rate (frames per second)
+*/
+void CAnimatedGifEncoder::SetFrameRate(float fps) 
+{
+	if (fps != 0) 
+	{
+		delay = ( int ) ((100 / fps)+0.5);
+	}
+}
+
+/**
+* Sets quality of color quantization (conversion of images
+* to the maximum 256 colors allowed by the GIF specification).
+* Lower values (minimum = 1) produce better colors, but slow
+* processing significantly.  10 is the default, and produces
+* good color mapping at reasonable speeds.  Values greater
+* than 20 do not yield significant improvements in speed.
+*
+* @param quality int greater than 0.
+* @return
+*/
+void CAnimatedGifEncoder::SetQuality(int quality) 
+{
+	if (quality < 1) quality = 1;
+	sample = quality;
+}
+
+/**
+* Sets the GIF frame size.  The default size is the
+* size of the first frame added if this method is
+* not invoked.
+*
+* @param w int frame width.
+* @param h int frame width.
+*/
+void CAnimatedGifEncoder::SetSize(int w, int h) 
+{
+	if (started && !firstFrame) return;
+	width = w;
+	height = h;
+	if (width < 1) width = 320;
+	if (height < 1) height = 240;
+	sizeSet = true;
+}
