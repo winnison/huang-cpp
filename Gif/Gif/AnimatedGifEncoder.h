@@ -103,10 +103,7 @@ public:
 	*
 	* @param ms int delay time in milliseconds
 	*/
-	void SetDelay(int ms) 
-	{
-		delay = ( int ) ((ms+5) / 10.0f);
-	}
+	void SetDelay(int ms) ;
 
 	/**
 	* Sets the GIF frame disposal code for the last added frame
@@ -114,13 +111,7 @@ public:
 	* color has been set, otherwise 2.
 	* @param code int disposal code.
 	*/
-	void SetDispose(int code) 
-	{
-		if (code >= 0) 
-		{
-			dispose = code;
-		}
-	}
+	void SetDispose(int code) ;
 
 	/**
 	* Sets the number of times the set of GIF frames
@@ -131,13 +122,7 @@ public:
 	* @param iter int number of iterations.
 	* @return
 	*/
-	void SetRepeat(int iter) 
-	{
-		if (iter >= 0) 
-		{
-			repeat = iter;
-		}
-	}
+	void SetRepeat(int iter) ;
 
 	/**
 	* Sets the transparent color for the last added frame
@@ -150,10 +135,7 @@ public:
 	*
 	* @param c COLOR to be treated as transparent on display.
 	*/
-	void SetTransparent(COLORREF c) 
-	{
-		transparent = c;
-	}
+	void SetTransparent(COLORREF c) ;
 
 	/**
 	* Sets frame rate in frames per second.  Equivalent to
@@ -161,13 +143,7 @@ public:
 	*
 	* @param fps float frame rate (frames per second)
 	*/
-	void SetFrameRate(float fps) 
-	{
-		if (fps != 0) 
-		{
-			delay = ( int ) ((100 / fps)+0.5);
-		}
-	}
+	void SetFrameRate(float fps) ;
 
 	/**
 	* Sets quality of color quantization (conversion of images
@@ -180,11 +156,7 @@ public:
 	* @param quality int greater than 0.
 	* @return
 	*/
-	void SetQuality(int quality) 
-	{
-		if (quality < 1) quality = 1;
-		sample = quality;
-	}
+	void SetQuality(int quality) ;
 
 	/**
 	* Sets the GIF frame size.  The default size is the
@@ -194,15 +166,7 @@ public:
 	* @param w int frame width.
 	* @param h int frame width.
 	*/
-	void SetSize(int w, int h) 
-	{
-		if (started && !firstFrame) return;
-		width = w;
-		height = h;
-		if (width < 1) width = 320;
-		if (height < 1) height = 240;
-		sizeSet = true;
-	}
+	void SetSize(int w, int h) ;
 
 	/**
 	* Adds next GIF frame.  The frame is not written immediately, but is

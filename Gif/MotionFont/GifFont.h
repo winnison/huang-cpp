@@ -9,8 +9,6 @@ class CGifFont
 	BEAN(COLORREF, FontColor)
 	BEAN(COLORREF, Transparent)
 	BEAN(int, Quality)
-	BEAN(int, FramesCount)
-	BEAN(int, Interval)
 
 //Individuate
 	//Edge
@@ -30,6 +28,8 @@ enum ShapeType{NormalShape = 0, EllipseShape = 1, TriangleShape = 2, DiamondShap
 public:
 enum MotionType{Nomotion = 0, Disappearing = 1, Shake = 2};
 	BEAN(MotionType, Motion)
+	BEAN(int, FramesCount)
+	BEAN(int, Interval)
 
 
 private:
