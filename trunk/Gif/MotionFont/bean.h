@@ -1,3 +1,5 @@
+
+
 #define BEAN(type, name) \
 private:\
 	type m_##name;\
@@ -6,7 +8,8 @@ public:\
 	virtual type Get##name(){return m_##name;}\
 private:
 
-#define BEANC(name, type) \
+
+#define BEANC(type, name) \
 private:\
 	type m_##name;\
 public:\
@@ -25,3 +28,9 @@ public:\
 	}\
 private:
 
+
+#define BEANBIND(type, name, bindmember, bname) \
+public:\
+	virtual bool Set##name(type name){return bindmember.Set##bname(name);}\
+	virtual type Get##name(){return bindmember.Get##bname(name);}\
+private:
