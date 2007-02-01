@@ -3,248 +3,6 @@
 #include <math.h>
 
 
-//////////////////////////////////////////////////////////////////////////
-////All color calculating in DIB32COLOR 4bytes 0RGB
-//////////////////////////////////////////////////////////////////////////
-#define DIB32COLOR unsigned int
-#define GetPos(x, y, width, height)  4*(((height)-(y)-1)*(width)+(x))
-#define DIB32COLORAT(p) (*((DIB32COLOR*)(p)))
-#define GetDIBPixel(clr, p, x, y, width, height) clr = DIB32COLORAT( (LPBYTE)p+GetPos(x,y,width,height) )
-#define SetDIBPixel(clr, p, x, y, width, height) DIB32COLORAT( (LPBYTE)p+GetPos(x,y,width,height) ) = clr
-#define GetB(rgb)      ((BYTE)(rgb))
-#define GetG(rgb)      ((BYTE)(((WORD)(rgb)) >> 8))
-#define GetR(rgb)      ((BYTE)((rgb)>>16))
-#define DIB32RGB(r,g,b) ((((r) & 0xff)<<16) | (((g) & 0xff)<<8) | ((b) & 0xff) )
-
-inline HBITMAP CreateDIB(HDC hdc,int cx,int cy, LPBYTE &lpData)
-{
-	BITMAPINFO bmpInfo = {
-		sizeof(bmpInfo.bmiHeader),		//biSize
-			cx,							//biWidth
-			cy,							//biHeight
-			1,							//biPlanes
-			4*8				//biBitCount
-	};
-
-	return CreateDIBSection(hdc,&bmpInfo,DIB_RGB_COLORS,(void**)&lpData,NULL,0);
-}
-
-
-inline void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
-{
-	int dx = rc.right-rc.left, dy = rc.bottom-rc.top, dx1 = dx/2, dx2 = dx -dx1, dy1=dy/2, dy2=dy-dy1;
-
-	DIB32COLOR clr;
-	for (int y=dy1; y<dy; y++)
-	{
-		double d = (double)(y)/(double)(dy-1);
-		d = 1 - 2* d;
-		int da = (int)(sqrt(1-d*d)*dx), da1 = da/2, da2 = da - da1;
-		for (int x=0; x<da2; x++)
-		{
-			int r=0,g=0,b=0,n=0;
-			double dd = (double)(x+1)/(double)(dx2+1);
-			int db = (int)(sqrt(1-dd*dd)*dy), db1 = db/2, db2 = db - db1;
-			for (int xx=x*dx2/da2, end = (x+1)*dx2/da2; xx<end; xx++)
-			{
-				for(int yy=(y-dy1)*dy2/db2, yend = (y-dy1+1)*dy2/db2; yy<yend; yy++)
-				{
-					GetDIBPixel(clr, lpData, rc.left+dx1+xx, rc.top+dy1+yy, cx, cy);
-					if (clr != trans)
-					{
-						n++;
-						r+=GetR(clr);
-						g+=GetG(clr);
-						b+=GetB(clr);
-					}
-				}
-			}
-			if (n)
-			{
-				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1+x, rc.top+y, cx, cy);
-			}
-			else
-			{
-				SetDIBPixel(trans, lpData, rc.left+dx1+x, rc.top+y, cx, cy);
-			}
-		}
-		for (int x=da2; x<dx2; x++)
-		{
-			SetDIBPixel(trans, lpData, rc.left+dx1+x,rc.top+y, cx, cy);
-		}
-
-		for (int x=0; x<da1; x++)
-		{
-			int r=0,g=0,b=0,n=0;
-			double dd = (double)(x+1)/(double)(dx1+1);
-			int db = (int)(sqrt(1-dd*dd)*dy), db1 = db/2, db2 = db - db1;
-			for (int xx=x*dx1/da1, end = (x+1)*dx1/da1; xx<end; xx++)
-			{
-				for(int yy=(y-dy1)*dy2/db2, yend = (y-dy1+1)*dy2/db2; yy<yend; yy++)
-				{
-					GetDIBPixel(clr, lpData, rc.left+dx1-xx-1, rc.top+dy1+yy, cx, cy);
-					if (clr != trans)
-					{
-						n++;
-						r+=GetR(clr);
-						g+=GetG(clr);
-						b+=GetB(clr);
-					}
-				}
-			}
-			if (n)
-			{
-				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
-			}
-			else
-			{
-				SetDIBPixel(trans, lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
-			}
-		}
-		for (int x=da1; x<dx1; x++)
-		{
-			SetDIBPixel(trans, lpData, rc.left+dx1-x-1,rc.top+y, cx, cy);
-		}
-	}
-	for (int y=dy1-1; y>=0; y--)
-	{
-		double d = (double)(y)/(double)(dy-1);
-		d = 1 - 2* d;
-		int da = (int)(sqrt(1-d*d)*dx), da1 = da/2, da2 = da - da1;
-		for (int x=0; x<da2; x++)
-		{
-			int r=0,g=0,b=0,n=0;
-			double dd = (double)(x+1)/(double)(dx2+1);
-			int db = (int)(sqrt(1-dd*dd)*dy), db1 = db/2, db2 = db - db1;
-			for (int xx=x*dx2/da2, end = (x+1)*dx2/da2; xx<end; xx++)
-			{
-				for(int yy=(dy1-1-y)*dy1/db1, yend = (dy1-y)*dy1/db1; yy<yend; yy++)
-				{
-					GetDIBPixel(clr, lpData, rc.left+dx1+xx, rc.top+dy1-yy-1, cx, cy);
-					if (clr != trans)
-					{
-						n++;
-						r+=GetR(clr);
-						g+=GetG(clr);
-						b+=GetB(clr);
-					}
-				}
-			}
-			if (n)
-			{
-				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1+x, rc.top+y, cx, cy);
-			}
-			else
-			{
-				SetDIBPixel(trans, lpData, rc.left+dx1+x, rc.top+y, cx, cy);
-			}
-		}
-		for (int x=da2; x<dx2; x++)
-		{
-			SetDIBPixel(trans, lpData, rc.left+dx1+x,rc.top+y, cx, cy);
-		}
-
-		for (int x=0; x<da1; x++)
-		{
-			int r=0,g=0,b=0,n=0;
-			double dd = (double)(x+1)/(double)(dx1+1);
-			int db = (int)(sqrt(1-dd*dd)*dy), db1 = db/2, db2 = db - db1;
-			for (int xx=x*dx1/da1, end = (x+1)*dx1/da1; xx<end; xx++)
-			{
-				for(int yy=(dy1-y-1)*dy1/db1, yend = (dy1-y)*dy1/db1; yy<yend; yy++)
-				{
-					GetDIBPixel(clr, lpData, rc.left+dx1-xx-1, rc.top+dy1-yy-1, cx, cy);
-					if (clr != trans)
-					{
-						n++;
-						r+=GetR(clr);
-						g+=GetG(clr);
-						b+=GetB(clr);
-					}
-				}
-			}
-			if (n)
-			{
-				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
-			}
-			else
-			{
-				SetDIBPixel(trans, lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
-			}
-		}
-		for (int x=da1; x<dx1; x++)
-		{
-			SetDIBPixel(trans, lpData, rc.left+dx1-x-1,rc.top+y, cx, cy);
-		}
-	}
-}
-
-inline void RectToTriangle(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
-{
-	int dx = rc.right-rc.left, dy = rc.bottom-rc.top, dx1 = dx/2, dx2 = dx -dx1;
-	DIB32COLOR clr;
-	for (int y=0; y<dy; y++)
-	{
-		double d = (double)(y)/(double)(dy-1);
-		int da = (int)(d*dx), da1 = da/2, da2 = da - da1;
-		for (int x=0; x<da2; x++)
-		{
-			int r=0,g=0,b=0,n=0;
-			for (int xx=x*dx2/da2, end = (x+1)*dx2/da2; xx<end; xx++)
-			{
-				GetDIBPixel(clr, lpData, rc.left+dx1+xx, rc.top+y, cx, cy);
-				if (clr != trans)
-				{
-					n++;
-					r+=GetR(clr);
-					g+=GetG(clr);
-					b+=GetB(clr);
-				}
-			}
-			if (n)
-			{
-				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1+x, rc.top+y, cx, cy);
-			}
-			else
-			{
-				SetDIBPixel(trans, lpData, rc.left+dx1+x, rc.top+y, cx, cy);
-			}
-		}
-		for (int x=da2; x<dx2; x++)
-		{
-			SetDIBPixel(trans, lpData, rc.left+dx1+x,rc.top+y, cx, cy);
-		}
-
-		for (int x=0; x<da1; x++)
-		{
-			int r=0,g=0,b=0,n=0;
-			for (int xx=x*dx1/da1, end = (x+1)*dx1/da1; xx<end; xx++)
-			{
-				GetDIBPixel(clr, lpData, rc.left+dx1-xx-1, rc.top+y, cx, cy);
-				if (clr != trans)
-				{
-					n++;
-					r+=GetR(clr);
-					g+=GetG(clr);
-					b+=GetB(clr);
-				}
-			}
-			if (n)
-			{
-				SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
-			}
-			else
-			{
-				SetDIBPixel(trans, lpData, rc.left+dx1-x-1, rc.top+y, cx, cy);
-			}
-		}
-		for (int x=da1; x<dx1; x++)
-		{
-			SetDIBPixel(trans, lpData, rc.left+dx1-x-1,rc.top+y, cx, cy);
-		}
-	}
-}
-
 
 inline void DrawTextOuter(CDC& dc, string text, CSize& size, int x, int y, COLORREF outer)
 {
@@ -587,13 +345,13 @@ bool DisappearingMFont(string filename, string text, HFONT hFont, COLORREF trans
 		{
 			for (int tw=0; tw<w; tw++)
 			{
-				GetDIBPixel(clr, lpData, tw, th, w, h);
+				clr = DIBPixel(lpData, tw, th, w, h);
 				if(clr != trans && (rand()%3)>=i)
 				{
 					int x = tw-i-1+(rand()%(2*i+3)), y = th-i-1+(rand()%(2*i+3));
 					if (x>=0&&x<w&&y>=0&&y<h)
 					{
-						SetDIBPixel(clr, lpData1, x, y, w, h);
+						DIBPixel(lpData1, x, y, w, h) = clr;
 					}
 				}
 			}
@@ -672,11 +430,11 @@ bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparen
 
 		x = r.right+1;
 
-		//r.left-=1;
-		//r.top-=1;
+		r.left-=1;
+		r.top-=1;
 		r.right+=shadowD+1;
 		r.bottom+=shadowD+1;
-		RectToEllipse(lpData, w, h, r, trans);
+		RectToSShape(lpData, w, h, r, trans);
 		j+=cn;
 	}
 
@@ -932,7 +690,7 @@ bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF tran
 				int r = 0, g = 0, b = 0, n = 0;
 				for (int yy=y*size.cy/py, yend = (y+1)*size.cy/py; yy<yend; yy++)
 				{
-					GetDIBPixel(clr, lpData, x,yy, size.cx, size.cy);
+					clr = DIBPixel(lpData, x,yy, size.cx, size.cy);
 					if (clr != trans)
 					{
 						n++;
@@ -943,11 +701,11 @@ bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF tran
 				}
 				if (n)
 				{
-					SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData1, x, y, size.cx, size.cy);
+					DIBPixel(lpData1, x, y, size.cx, size.cy) = DIB32RGB(r/n,g/n,b/n);
 				}
 				else
 				{
-					SetDIBPixel(trans, lpData1, x, y, size.cx, size.cy);
+					DIBPixel(lpData1, x, y, size.cx, size.cy) = trans;
 				}
 			}
 		}
@@ -958,7 +716,7 @@ bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF tran
 				int r = 0, g = 0, b = 0, n = 0;
 				for (int yy=(y-py)*size.cy/(size.cy-py), yend = (y+1-py)*size.cy/(size.cy-py); yy<yend; yy++)
 				{
-					GetDIBPixel(clr, lpData0, x,yy, size.cx, size.cy);
+					clr = DIBPixel(lpData0, x,yy, size.cx, size.cy);
 					if (clr != trans)
 					{
 						n++;
@@ -969,11 +727,11 @@ bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF tran
 				}
 				if (n)
 				{
-					SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData1, x, y, size.cx, size.cy);
+					DIBPixel(lpData1, x, y, size.cx, size.cy) = DIB32RGB(r/n,g/n,b/n);
 				}
 				else
 				{
-					SetDIBPixel(trans, lpData1, x, y, size.cx, size.cy);
+					DIBPixel(lpData1, x, y, size.cx, size.cy) = trans;
 				}
 			}
 		}
@@ -997,7 +755,7 @@ bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF tran
 				int r = 0, g = 0, b = 0, n = 0;
 				for (int yy=y*size.cy/py, yend = (y+1)*size.cy/py; yy<yend; yy++)
 				{
-					GetDIBPixel(clr, lpData0, x,yy, size.cx, size.cy);
+					clr = DIBPixel(lpData0, x,yy, size.cx, size.cy);
 					if (clr != trans)
 					{
 						n++;
@@ -1008,11 +766,11 @@ bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF tran
 				}
 				if (n)
 				{
-					SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData1, x, y, size.cx, size.cy);
+					DIBPixel(lpData1, x, y, size.cx, size.cy) = DIB32RGB(r/n,g/n,b/n);
 				}
 				else
 				{
-					SetDIBPixel(trans, lpData1, x, y, size.cx, size.cy);
+					DIBPixel(lpData1, x, y, size.cx, size.cy) = trans;
 				}
 			}
 		}
@@ -1023,7 +781,7 @@ bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF tran
 				int r = 0, g = 0, b = 0, n = 0;
 				for (int yy=(y-py)*size.cy/(size.cy-py), yend = (y+1-py)*size.cy/(size.cy-py); yy<yend; yy++)
 				{
-					GetDIBPixel(clr, lpData, x,yy, size.cx, size.cy);
+					clr = DIBPixel(lpData, x,yy, size.cx, size.cy);
 					if (clr != trans)
 					{
 						n++;
@@ -1034,11 +792,11 @@ bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF tran
 				}
 				if (n)
 				{
-					SetDIBPixel(DIB32RGB(r/n,g/n,b/n), lpData1, x, y, size.cx, size.cy);
+					DIBPixel(lpData1, x, y, size.cx, size.cy) = DIB32RGB(r/n,g/n,b/n);
 				}
 				else
 				{
-					SetDIBPixel(trans, lpData1, x, y, size.cx, size.cy);
+					DIBPixel(lpData1, x, y, size.cx, size.cy) = trans;
 				}
 
 			}

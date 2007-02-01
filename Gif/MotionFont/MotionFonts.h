@@ -1,5 +1,5 @@
-#include "defines.h"
 #include <string>
+#include "dib.h"
 
 using namespace std;
 
