@@ -1,6 +1,7 @@
 #include "bean.h"
 #include "dib.h"
 #include <string>
+#include <vector>
 using namespace std;
 
 class CGifFont
@@ -26,17 +27,12 @@ enum ShapeType{NormalShape = 0, EllipseShape = 1, TriangleShape = 2, DiamondShap
 
 //Motion
 public:
-enum MotionType{Nomotion = 0, Disappearing = 1, Shake = 2};
+enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2};
 	BEAN(MotionType, Motion)
 	BEAN(int, FramesCount)
 	BEAN(int, Interval)
 
-
-private:
-	UINT MotionExtraSize();
-	UINT EdgeExtraSize();
-	UINT ShadowExtraSize();
-
+	
 public:
 	CGifFont()
 	: 
@@ -54,5 +50,9 @@ public:
 	m_Quality(1)
 	{}
 	virtual bool Generate(string giffile, string text, HFONT hFont);
+
+protected:
+	void DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height);
+	RECT DrawOneChar(CDC& dc, LPBYTE lpData, string& text, int x, int y, int width, int height);
 };
 
