@@ -1,7 +1,6 @@
 #include "GifFont.h"
 #include "drawing.h"
-#include "AnimatedGifEncoder.h"
-#include <vector>
+
 
 inline void GetChars(vector<string>& chars, string& text)
 {
@@ -21,26 +20,49 @@ inline void GetChars(vector<string>& chars, string& text)
 	}
 }
 
-bool CGifFont::Generate(string giffile, string text, HFONT hFont)
+bool CGifFont::Generate(string& giffile, string& text, HFONT hFont)
 {
+	if (!IsValid())
+	{
+		return false;
+	}
 	CAnimatedGifEncoder age;
 	age.Start(giffile);
 	age.SetQuality(m_Quality);
 	age.SetTransparent(m_Transparent);
 	age.SetRepeat(0);
 	age.SetDelay(m_Interval);
-	RECT r;
+	vector<string> chars;
+	GetChars(chars, text);
 
+	AddFrames(age, chars, hFont);
+
+	age.Finish();
+
+
+	return true;
+}
+bool CGifFont::IsValid()
+{
+	//TODO:
+	return true;
+}
+
+HBITMAP CGifFont::GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& r)
+{
 	CDCHandle dcScreen = GetDC(NULL);
 	CDC dc;
 	dc.CreateCompatibleDC(dcScreen);
 	dc.SetBkMode(TRANSPARENT);
 	dc.SelectFont(hFont);
+	int w = 0, h = 0;
 	CSize size;
-	vector<string> chars;
-	GetChars(chars, text);
-	dc.GetTextExtent(text.c_str(), text.length(), &size);
-	int w = size.cx, h = size.cy;
+	for (int i=0; i<chars.size(); i++)
+	{
+		dc.GetTextExtent(chars[i].c_str(), chars[i].length(), &size);
+		w += size.cx;
+		h += size.cy;
+	}
 	if (m_HasShadow)
 	{
 		h += m_ShadowDis;
@@ -62,7 +84,7 @@ bool CGifFont::Generate(string giffile, string text, HFONT hFont)
 	r.top = 0;
 	r.right = w;
 	r.bottom = h;
-	LPBYTE lpData = NULL;
+	lpData = NULL;
 	HBITMAP 
 		hBm = CreateDIB(dcScreen, w, h, lpData),
 		hBmp = dc.SelectBitmap(hBm);
@@ -71,25 +93,36 @@ bool CGifFont::Generate(string giffile, string text, HFONT hFont)
 	dc.FillRect(&r, brush);
 
 
+	DrawAllChars(dc,lpData,chars,0,0,w,h);
+	dc.SelectBitmap(hBmp);
+	::ReleaseDC(NULL,dcScreen.m_hDC);
+	return hBm;
+}
+
+void CGifFont::AddFrames(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont)
+{
 	switch(m_Motion)
 	{
 	case Nomotion:
-		DrawAllChars(dc,lpData,chars,0,0,w,h);
-		dc.SelectBitmap(hBmp);
-		age.AddFrame(hBm);
-		DeleteObject(hBm);
+		DoNomotion(ge, chars, hFont);
 		break;
 	case DisappearingMotion:
-	    break;
+		DoDisappearingMotion(ge, chars, hFont);
+		break;
 	case ShakeMotion:
-	    break;
+		DoDisappearingMotion(ge, chars, hFont);
+		break;
 	}
+}
 
-	age.Finish();
-	::ReleaseDC(NULL,dcScreen.m_hDC);
-
-
-	return true;
+void CGifFont::DoNomotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont)
+{
+}
+void CGifFont::DoDisappearingMotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont)
+{
+}
+void CGifFont::DoShakeMotion( CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont)
+{
 }
 
 void RectNoTransform(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
