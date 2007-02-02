@@ -1,4 +1,3 @@
-#include "AnimatedGifEncoder.h"
 #include "MotionFonts.h"
 #include "GifFont.h"
 HBITMAP LoadPictureFile(LPCTSTR pszFile)

@@ -1,8 +1,13 @@
-#include "bean.h"
-#include "dib.h"
 #include <string>
 #include <vector>
 using namespace std;
+
+#include "AnimatedGifEncoder.h"
+
+#include "bean.h"
+#include "dib.h"
+
+
 
 class CGifFont
 {
@@ -49,9 +54,16 @@ public:
 	m_Interval(200),
 	m_Quality(1)
 	{}
-	virtual bool Generate(string giffile, string text, HFONT hFont);
-
+	bool Generate(string& giffile, string& text, HFONT hFont);
+	
+private:
+	HBITMAP GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& rc);
 protected:
+	virtual bool IsValid();
+	virtual void AddFrames(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoNomotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoDisappearingMotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoShakeMotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height);
 	RECT DrawOneChar(CDC& dc, LPBYTE lpData, string& text, int x, int y, int width, int height);
 };
