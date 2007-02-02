@@ -4,8 +4,8 @@
 private:\
 	type m_##name;\
 public:\
-	virtual bool Set##name(type name){m_##name = name;return true;}\
-	virtual type Get##name(){return m_##name;}\
+	virtual bool Set##name (type value){m_##name = value;return true;}\
+	virtual type Get##name (){return m_##name;}\
 private:
 
 
@@ -13,16 +13,16 @@ private:
 private:\
 	type m_##name;\
 public:\
-	virtual bool Set##name(type name)\
+	virtual bool Set##name (type value)\
 	{\
-		if(Check##name(name))\
+		if(Check##name (value))\
 		{\
-			m_##name = name;\
+			m_##name = value;\
 			return true;\
 		}\
 		return false;\
 	}\
-	virtual type Get##name()\
+	virtual type Get##name ()\
 	{\
 		return m_##name;\
 	}\

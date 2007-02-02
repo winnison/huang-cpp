@@ -278,12 +278,23 @@ int main(int argc ,char * argv[])
 	//}
 
 	CFont font;
-	bool b = font.CreatePointFont(300, _T("свт╡"));
-	if (b)
-	{
-		b = EllipseMFont(argv[1], argv[2], font.m_hFont, 0xf0f0f0, 0xff0000, 0xffc0c0);
-	}
-	printf("%d", b);
+	font.CreatePointFont(300, _T("свт╡"));
+	CGifFont g;
+	g.SetHasEdge(TRUE);
+	g.SetHasShadow(TRUE);
+	g.SetShadowDis(4);
+	g.SetShape((CGifFont::ShapeType)atoi(argv[2]));
+	g.SetMotion((CGifFont::MotionType)atoi(argv[3]));
+	g.SetFontColor(0xff0000);
+	g.SetEdgeColor(0xf0f0f0);
+	g.SetTransparent(0xffffff);
+	string file = argv[3], text = argv[1];
+	g.Generate(argv[2]+file+".gif", text, font);
+	//if (b)
+	//{
+	//	b = EllipseMFont(argv[1], argv[2], font.m_hFont, 0xf0f0f0, 0xff0000, 0xffc0c0);
+	//}
+	//printf("%d", b);
 
 
 	//printf("Begin\n");
