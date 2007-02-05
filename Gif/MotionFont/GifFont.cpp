@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 #include "GifFont.h"
 #include "drawing.h"
 #include <math.h>
@@ -121,11 +123,6 @@ void CGifFont::AddFrames(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT h
 		break;
 	}
 }
-void RectNoTransform(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
-{}
-
-const RectTransformMethod rectTransformMethods[5] = {RectNoTransform, RectToEllipse, RectToTriangle, RectToDiamond, RectToSShape};
-
 void CGifFont::DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height)
 {
 	RECT rc;
@@ -135,6 +132,22 @@ void CGifFont::DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x
 		x = rc.right;
 	}
 }
+void RectNoTransform(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
+{}
+void PieSliceMap(double& x, double& y)
+{
+	double alpha = (1+x)*M_PI/6;
+	x = y * cos(alpha);
+	y = y * sin(alpha);
+	//PieToXY(x,y,(1+x)* M_PI /6,y);
+	x = 1-x;
+}
+void RectToPieSlice(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
+{
+	RectConvert(lpData,cx,cy, PieSliceMap, trans);
+}
+
+const RectTransformMethod rectTransformMethods[6] = {RectNoTransform, RectToEllipse, RectToTriangle, RectToDiamond, RectToSShape, RectToPieSlice};
 RECT CGifFont::DrawOneChar(CDC& dc, LPBYTE lpData, string& text, int x, int y, int width, int height)
 {
 	CSize size;
@@ -167,6 +180,8 @@ RECT CGifFont::DrawOneChar(CDC& dc, LPBYTE lpData, string& text, int x, int y, i
 	rc.bottom = y+size.cy+esize;
 	return rc;
 }
+
+
 
 void CGifFont::DoNomotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
