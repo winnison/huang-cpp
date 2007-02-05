@@ -1,7 +1,6 @@
 #include <string>
 #include <vector>
 using namespace std;
-
 #include "AnimatedGifEncoder.h"
 
 #include "bean.h"
@@ -27,7 +26,7 @@ class CGifFont
 
 //Shape
 public:
-enum ShapeType{NormalShape = 0, EllipseShape = 1, TriangleShape = 2, DiamondShape = 3, S_Shape = 4};
+enum ShapeType{NormalShape = 0, EllipseShape = 1, TriangleShape = 2, DiamondShape = 3, S_Shape = 4, PieSliceShape = 5};
 #define SHAPECOUNT 5
 	BEAN(ShapeType, Shape);
 

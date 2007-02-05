@@ -1,6 +1,6 @@
 #include "define.h"
 #include "common.h"
-#include <math.h>
+#include "xy.h"
 
 #define DIB32COLOR unsigned int
 #define GetPos(x, y, width, height)  4*(((height)-(y)-1)*(width)+(x))
@@ -27,3 +27,5 @@ void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);
 void RectToTriangle(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);
 void RectToDiamond(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);
 void RectToSShape(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);
+
+void RectConvert(LPBYTE lpData, int cx, int cy, MapXY mapping, DIB32COLOR trans);
