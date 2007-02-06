@@ -110,6 +110,9 @@
 			<File
 				RelativePath=".\defines.cpp">
 			</File>
+			<File
+				RelativePath=".\GifDecoder.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
@@ -120,6 +123,9 @@
 			</File>
 			<File
 				RelativePath=".\defines.h">
+			</File>
+			<File
+				RelativePath=".\GifDecoder.h">
 			</File>
 			<File
 				RelativePath=".\LZWEncoder.h">
