@@ -36,7 +36,8 @@ bool CGifFont::Generate(string& giffile, string& text, HFONT hFont)
 	age.SetDelay(m_Interval);
 	vector<string> chars;
 	GetChars(chars, text);
-
+	//迫使两次随机得到相同.
+	srand(RANDSEED);
 	AddFrames(age, chars, hFont);
 
 	age.Finish();
@@ -46,7 +47,7 @@ bool CGifFont::Generate(string& giffile, string& text, HFONT hFont)
 }
 bool CGifFont::IsValid()
 {
-	return m_Shape>=0 && m_Shape<SHAPECOUNT && m_Motion>=0 && m_Motion<MOTIONCOUNT;
+	return m_Sizing>=0 && m_Sizing<SIZINGCOUNT && m_Shape>=0 && m_Shape<SHAPECOUNT && m_Motion>=0 && m_Motion<MOTIONCOUNT;
 }
 
 void CGifFont::GetOrignalSize(CDC& dc, vector<string>& chars, int& w, int& h)
@@ -128,7 +129,7 @@ void CGifFont::DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x
 	RECT rc;
 	for (int i=0; i<chars.size(); i++)
 	{
-		rc = DrawOneChar(dc, lpData, chars[i], x, y, width, height);
+		rc = DrawOneChar(dc, lpData, chars, i, x, y, width, height);
 		x = rc.right;
 	}
 }
@@ -136,20 +137,127 @@ void RectNoTransform(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 {}
 void PieSliceMap(double& x, double& y)
 {
-	double alpha = (1+x)*M_PI/6;
-	x = y * cos(alpha);
+	y = 1-y;
+	double alpha = (1+x)*M_PI/3;
+	x = y * cos(alpha)+0.5;
 	y = y * sin(alpha);
-	//PieToXY(x,y,(1+x)* M_PI /6,y);
 	x = 1-x;
+	y = 1-y;
 }
 void RectToPieSlice(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 {
-	RectConvert(lpData,cx,cy, PieSliceMap, trans);
+	RectConvert(lpData,cx,cy, rc, PieSliceMap, trans);
+}
+void AnnulusMap(double& x, double& y)
+{
+	y*=0.8;
+	y = 1-y;
+	double alpha = (1+x)*M_PI/3;
+	x = y * cos(alpha)+0.5;
+	y = y * sin(alpha);
+	x = 1-x;
+	y = 1.1-y;
+}
+void RectToAnnulus(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
+{
+	RectConvert(lpData,cx,cy, rc, AnnulusMap, trans);
 }
 
-const RectTransformMethod rectTransformMethods[6] = {RectNoTransform, RectToEllipse, RectToTriangle, RectToDiamond, RectToSShape, RectToPieSlice};
-RECT CGifFont::DrawOneChar(CDC& dc, LPBYTE lpData, string& text, int x, int y, int width, int height)
+const RectTransformMethod rectTransformMethods[7] = {RectNoTransform, RectToEllipse, RectToTriangle, RectToDiamond, RectToSShape, RectToPieSlice, RectToAnnulus};
+
+
+void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double proportion, DIB32COLOR trans)
 {
+	AlignType at = m_SizingAlign;
+	VAlignType vt = m_SizingVAlign;
+	int dx = rc.right-rc.left, dy = rc.bottom-rc.top;
+	int* buffer = new int[dx*dy*4], *p;
+	memset(buffer, 0, dx*dy*16);
+	double w = (double)(dx-1), h = (double)(dy-1), pt2 = (1-proportion)/2;
+	for (int i=dx-1; i>=0; i--)
+	{
+		for(int j=dy-1; j>=0; j--)
+		{
+			DIB32COLOR clr = DIBPixel(lpData, rc.left+i,rc.top+j,cx,cy);
+			double x = (double)i/w, y = (double)j/h;
+
+			//mapping
+			x*=proportion;
+			y*=proportion;
+			if (at<0)
+			{
+				x+=(rand()%3)*pt2;
+			}
+			else
+			{
+				x+=(int)at*pt2;
+			}
+			if (vt<0)
+			{
+				y+=(rand()%3)*pt2;
+			}
+			else
+			{
+				y+=(int)vt*pt2;
+			}
+
+			if (x>=0&&x<=1&&y>=0&&y<=1)
+			{
+				int ix = (int)(x*w), iy = (int)(y*h);
+				p = buffer+(ix+iy*dx)*4;
+				p[0]++;
+				p[1]+=GetR(clr);
+				p[2]+=GetG(clr);
+				p[3]+=GetB(clr);
+			}
+		}
+	}
+	for (int i=dx-1; i>=0; i--)
+	{
+		for(int j=dy-1; j>=0; j--)
+		{
+			p = buffer+(i+j*dx)*4;
+			if (*p==0)
+			{
+				DIBPixel(lpData,rc.left+i,rc.top+j,cx,cy) = trans;
+			}
+			else
+			{
+				DIBPixel(lpData,rc.left+i,rc.top+j,cx,cy) = GetAvg(p[1],p[2],p[3],p[0]);
+			}
+		}
+	}
+}
+void CGifFont::Sizing(LPBYTE lpData, vector<string>& chars, int charIndex, int cx, int cy, RECT& rc, DIB32COLOR trans)
+{
+	if (m_SizingProportion < 1.0 && m_SizingProportion > 0.0)
+	{
+		switch(m_Sizing)
+		{
+		case NormalSizing:
+			SizingConvert(lpData, cx, cy, rc, m_SizingProportion, trans);
+			break;
+		case RandomSizing:
+			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*(double)rand()/(double)RAND_MAX, trans);
+			break;
+		case IncSizing:
+			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*(1-(double)(charIndex)/(double)(chars.size()-1)), trans);
+			break;
+		case DecSizing:
+			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*((double)(charIndex)/(double)(chars.size()-1)), trans);
+			break;
+		case AlternateSizing:
+			if (charIndex&1)
+			{
+				SizingConvert(lpData, cx, cy, rc, m_SizingProportion, trans);
+			}
+		    break;
+		}
+	}
+}
+RECT CGifFont::DrawOneChar(CDC& dc, LPBYTE lpData, vector<string>& chars, int charIndex, int x, int y, int width, int height)
+{
+	string text = chars[charIndex];
 	CSize size;
 	dc.GetTextExtent(text.c_str(), text.length(), &size);
 	int exsize = 0, esize = 0;
@@ -178,6 +286,7 @@ RECT CGifFont::DrawOneChar(CDC& dc, LPBYTE lpData, string& text, int x, int y, i
 	rectTransformMethods[m_Shape](lpData, width, height, rc, m_Transparent);
 	rc.right = x+size.cx+esize;
 	rc.bottom = y+size.cy+esize;
+	Sizing(lpData, chars, charIndex, width, height, rc, m_Transparent);
 	return rc;
 }
 
@@ -282,7 +391,7 @@ void CGifFont::DoShakeMotion( CAnimatedGifEncoder& ge, vector<string>& chars, HF
 		int x=0,y=0;
 		for (int i=0; i<chars.size(); i++)
 		{
-			rc = DrawOneChar(dc, lpData, chars[i], x+(rand()%d), y+(rand()%d), w, h);
+			rc = DrawOneChar(dc, lpData, chars, i, x+(rand()%d), y+(rand()%d), w, h);
 			x+=rc.right-rc.left;
 		}
 

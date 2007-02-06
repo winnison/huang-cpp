@@ -698,22 +698,23 @@ void RectToSShape(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 
 
 
-void RectConvert(LPBYTE lpData, int cx, int cy, MapXY mapping, DIB32COLOR trans)
+void RectConvert(LPBYTE lpData, int cx, int cy, RECT& rc, MapXY mapping, DIB32COLOR trans)
 {
-	int* buffer = new int[cx*cy*4], *p;
-	memset(buffer, 0, cx*cy*16);
-	double w = (double)(cx-1), h = (double)(cy-1);
-	for (int i=cx-1; i>=0; i--)
+	int dx = rc.right-rc.left, dy = rc.bottom-rc.top;
+	int* buffer = new int[dx*dy*4], *p;
+	memset(buffer, 0, dx*dy*16);
+	double w = (double)(dx-1), h = (double)(dy-1);
+	for (int i=dx-1; i>=0; i--)
 	{
-		for(int j=cy-1; j>=0; j--)
+		for(int j=dy-1; j>=0; j--)
 		{
-			DIB32COLOR clr = DIBPixel(lpData, i,j,cx,cy);
+			DIB32COLOR clr = DIBPixel(lpData, rc.left+i,rc.top+j,cx,cy);
 			double x = (double)i/w, y = (double)j/h;
 			mapping(x, y);
 			if (x>=0&&x<=1&&y>=0&&y<=1)
 			{
 				int ix = (int)(x*w), iy = (int)(y*h);
-				p = buffer+(ix+iy*cx)*4;
+				p = buffer+(ix+iy*dx)*4;
 				p[0]++;
 				p[1]+=GetR(clr);
 				p[2]+=GetG(clr);
@@ -721,18 +722,18 @@ void RectConvert(LPBYTE lpData, int cx, int cy, MapXY mapping, DIB32COLOR trans)
 			}
 		}
 	}
-	for (int i=cx-1; i>=0; i--)
+	for (int i=dx-1; i>=0; i--)
 	{
-		for(int j=cy-1; j>=0; j--)
+		for(int j=dy-1; j>=0; j--)
 		{
-			p = buffer+(i+j*cx)*4;
+			p = buffer+(i+j*dx)*4;
 			if (*p==0)
 			{
-				DIBPixel(lpData,i,j,cx,cy) = trans;
+				DIBPixel(lpData,rc.left+i,rc.top+j,cx,cy) = trans;
 			}
 			else
 			{
-				DIBPixel(lpData,i,j,cx,cy) = GetAvg(p[1],p[2],p[3],p[0]);
+				DIBPixel(lpData,rc.left+i,rc.top+j,cx,cy) = GetAvg(p[1],p[2],p[3],p[0]);
 			}
 		}
 	}
