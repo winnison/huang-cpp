@@ -227,6 +227,7 @@ void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double pro
 			}
 		}
 	}
+	delete buffer;
 }
 void CGifFont::Sizing(LPBYTE lpData, vector<string>& chars, int charIndex, int cx, int cy, RECT& rc, DIB32COLOR trans)
 {
