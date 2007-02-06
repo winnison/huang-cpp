@@ -28,4 +28,4 @@ void RectToTriangle(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);
 void RectToDiamond(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);
 void RectToSShape(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans);
 
-void RectConvert(LPBYTE lpData, int cx, int cy, MapXY mapping, DIB32COLOR trans);
+void RectConvert(LPBYTE lpData, int cx, int cy, RECT& rc, MapXY mapping, DIB32COLOR trans);

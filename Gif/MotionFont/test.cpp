@@ -283,13 +283,16 @@ int main(int argc ,char * argv[])
 	g.SetHasEdge(TRUE);
 	g.SetHasShadow(TRUE);
 	g.SetShadowDis(4);
-	g.SetShape((CGifFont::ShapeType)atoi(argv[2]));
-	g.SetMotion((CGifFont::MotionType)atoi(argv[3]));
+	g.SetSizingProportion(.6);
+	g.SetSizing((CGifFont::SizingType)atoi(argv[2]));
+	g.SetShape((CGifFont::ShapeType)atoi(argv[3]));
+	g.SetMotion((CGifFont::MotionType)atoi(argv[4]));
 	g.SetFontColor(0xff0000);
 	g.SetEdgeColor(0xf0f0f0);
 	g.SetTransparent(0xffffff);
 	string file = argv[3], text = argv[1];
-	g.Generate(argv[2]+file+".gif", text, font);
+	file = "_"+file+"_";
+	g.Generate(argv[2]+file+argv[4]+".gif", text, font);
 	//if (b)
 	//{
 	//	b = EllipseMFont(argv[1], argv[2], font.m_hFont, 0xf0f0f0, 0xff0000, 0xffc0c0);

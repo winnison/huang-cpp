@@ -6,6 +6,7 @@ using namespace std;
 #include "bean.h"
 #include "dib.h"
 
+#define RANDSEED 123456789
 
 
 class CGifFont
@@ -24,15 +25,26 @@ class CGifFont
 	BEAN(COLORREF, ShadowColor);
 	BEAN(UINT, ShadowDis);
 
+//Sizing
+public:
+	enum SizingType{NormalSizing = 0, RandomSizing = 1, IncSizing = 2, DecSizing = 3, AlternateSizing = 4};
+#define SIZINGCOUNT 5
+	enum AlignType{RandomAlign = -1, LeftAlign = 0, CenterAlign = 1, RightAlign = 2};
+	enum VAlignType{RandomVAlign = -1, TopVAlign = 0, CenterVAlign = 1, BottomVAlign = 2};
+	BEAN(SizingType, Sizing);
+    BEAN(double, SizingProportion);
+	BEAN(AlignType, SizingAlign);
+	BEAN(VAlignType, SizingVAlign);
+
 //Shape
 public:
-enum ShapeType{NormalShape = 0, EllipseShape = 1, TriangleShape = 2, DiamondShape = 3, S_Shape = 4, PieSliceShape = 5};
-#define SHAPECOUNT 5
+	enum ShapeType{NormalShape = 0, EllipseShape = 1, TriangleShape = 2, DiamondShape = 3, S_Shape = 4, PieSliceShape = 5, AnnulusShape = 6};
+#define SHAPECOUNT 7
 	BEAN(ShapeType, Shape);
 
 //Motion
 public:
-enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2, SnowMotion = 3};
+	enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2, SnowMotion = 3};
 #define MOTIONCOUNT 4
 	BEAN(MotionType, Motion);
 
@@ -45,13 +57,23 @@ public:
 	: 
 	m_FontColor(0),
 	m_Transparent(0xffffff), 
+
 	m_HasEdge(FALSE), 
 	m_EdgeColor(0xffffff), 
+
 	m_HasShadow(FALSE), 
 	m_ShadowColor(0xb0b0b0),
 	m_ShadowDis(4),
+
+	m_Sizing(NormalSizing),
+	m_SizingProportion(1.0),
+	m_SizingAlign(CenterAlign),
+	m_SizingVAlign(CenterVAlign),
+
 	m_Shape(NormalShape),
+
 	m_Motion(Nomotion),
+
 	m_FramesCount(8),
 	m_Interval(200),
 	m_Quality(1)
@@ -65,7 +87,9 @@ protected:
 	virtual bool IsValid();
 	virtual void AddFrames(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height);
-	RECT DrawOneChar(CDC& dc, LPBYTE lpData, string& text, int x, int y, int width, int height);
+	virtual void SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double proportion, DIB32COLOR trans);
+	virtual void Sizing(LPBYTE lpData, vector<string>& chars, int charIndex, int cx, int cy, RECT& rc, DIB32COLOR trans);
+	RECT DrawOneChar(CDC& dc, LPBYTE lpData, vector<string>& chars, int charIndex, int x, int y, int width, int height);
 	void DoNomotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DoDisappearingMotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DoShakeMotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
