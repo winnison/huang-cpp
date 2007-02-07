@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 using namespace std;
-#include "AnimatedGifEncoder.h"
+#include "GifEncoder.h"
 
 #include "bean.h"
 #include "dib.h"
@@ -85,14 +85,14 @@ protected:
 	HBITMAP GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& rc);
 	//版本升高了以后需要判断shape和motion
 	virtual bool IsValid();
-	virtual void AddFrames(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	virtual void AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height);
 	virtual void SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double proportion, DIB32COLOR trans);
 	virtual void Sizing(LPBYTE lpData, vector<string>& chars, int charIndex, int cx, int cy, RECT& rc, DIB32COLOR trans);
 	RECT DrawOneChar(CDC& dc, LPBYTE lpData, vector<string>& chars, int charIndex, int x, int y, int width, int height);
-	void DoNomotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
-	void DoDisappearingMotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
-	void DoShakeMotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
-	void DoSnowMotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoNomotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoDisappearingMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoShakeMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoSnowMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 };
 

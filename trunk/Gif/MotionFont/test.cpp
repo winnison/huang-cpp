@@ -299,7 +299,7 @@ int main(int argc ,char * argv[])
 	//g.Generate(argv[2]+file+argv[4]+".gif", text, font);
 
 
-CAnimatedGifEncoder age;
+CGifEncoder age;
 	CGifDecoder gd;
 	age.SetQuality(0);
 	gd.Load("1.gif");
@@ -323,7 +323,7 @@ CAnimatedGifEncoder age;
 
 
 	//printf("Begin\n");
-	//CAnimatedGifEncoder ge;
+	//CGifEncoder ge;
 	//if(argc>2)
 	//{
 	//	ge.Start(argv[1]);

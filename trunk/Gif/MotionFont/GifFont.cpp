@@ -28,7 +28,7 @@ bool CGifFont::Generate(string& giffile, string& text, HFONT hFont)
 	{
 		return false;
 	}
-	CAnimatedGifEncoder age;
+	CGifEncoder age;
 	age.Start(giffile);
 	age.SetQuality(m_Quality);
 	age.SetTransparent(m_Transparent);
@@ -106,7 +106,7 @@ HBITMAP CGifFont::GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& l
 	return hBm;
 }
 
-void CGifFont::AddFrames(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont)
+void CGifFont::AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
 	switch(m_Motion)
 	{
@@ -293,7 +293,7 @@ RECT CGifFont::DrawOneChar(CDC& dc, LPBYTE lpData, vector<string>& chars, int ch
 
 
 
-void CGifFont::DoNomotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont)
+void CGifFont::DoNomotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
 	LPBYTE lpData;
 	RECT rc;
@@ -301,7 +301,7 @@ void CGifFont::DoNomotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT 
 	ge.AddFrame(hBm);
 	DeleteObject(hBm);
 }
-void CGifFont::DoDisappearingMotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont)
+void CGifFont::DoDisappearingMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
 	LPBYTE lpData = NULL, lpData0;
 	RECT rc;
@@ -359,7 +359,7 @@ void CGifFont::DoDisappearingMotion(CAnimatedGifEncoder& ge, vector<string>& cha
 
 	::ReleaseDC(NULL,dcScreen.m_hDC);
 }
-void CGifFont::DoShakeMotion( CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont)
+void CGifFont::DoShakeMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
 	CBrush brush;
 	brush.CreateSolidBrush(m_Transparent);
@@ -404,7 +404,7 @@ void CGifFont::DoShakeMotion( CAnimatedGifEncoder& ge, vector<string>& chars, HF
 }
 
 
-void CGifFont::DoSnowMotion(CAnimatedGifEncoder& ge, vector<string>& chars, HFONT hFont)
+void CGifFont::DoSnowMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
 	DIB32COLOR clr, trans = DIB32RGB(GetRValue(m_Transparent), GetGValue(m_Transparent), GetBValue(m_Transparent));
 	LPBYTE lpData = NULL;

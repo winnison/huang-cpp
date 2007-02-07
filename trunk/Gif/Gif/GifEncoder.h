@@ -8,7 +8,7 @@
 using namespace std;
 
 
-class CAnimatedGifEncoder
+class CGifEncoder
 {
 	int width; // image size
 	int height;
@@ -95,8 +95,8 @@ class CAnimatedGifEncoder
 	*/
 	void WriteString(string s);
 public:
-	CAnimatedGifEncoder(void);
-	~CAnimatedGifEncoder();
+	CGifEncoder(void);
+	~CGifEncoder();
 	/**
 	* Sets the delay time between each frame, or changes it
 	* for subsequent frames (applies to last frame added).
