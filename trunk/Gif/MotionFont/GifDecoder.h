@@ -45,8 +45,8 @@ class CGifDecoder
 	COLORREF* act; // active color table
 
 	int bgIndex; // background color index
-	int bgColor; // background color
-	int lastBgColor; // previous bg color
+	COLORREF bgColor; // background color
+	COLORREF lastBgColor; // previous bg color
 	int pixelAspect; // pixel aspect ratio
 
 	bool lctFlag; // local color table flag

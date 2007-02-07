@@ -11,9 +11,13 @@ class CGifFrame
 	int delay;
 	COLORREF transparent;
 	CDC dc;
+	int w, h;
 	void ReleaseDC();
 public:
 	HBITMAP GetBitmap();
+	CSize GetSize();
 	int GetDelay();
 	COLORREF GetTransparent();
+	LPBYTE GetData();
+	int ReplaceTransparent(COLORREF clr);
 };
