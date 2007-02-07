@@ -19,15 +19,11 @@ CGifFrame::CGifFrame(int width, int height, CDCHandle& dcScreen)
 :delay(-1),transparent(EMPTYCOLOR),w(width),h(height)
 {
 	hBmp = _CreateDIB(dcScreen, width, height, lpData);
-	dc.CreateCompatibleDC(dcScreen);
-	hBmp0 = dc.SelectBitmap(hBmp);
 }
 
-
-void CGifFrame::ReleaseDC()
+CGifFrame::~CGifFrame()
 {
-	dc.SelectBitmap(hBmp0);
-	hBmp0 = NULL;
+	DeleteObject(hBmp);
 }
 
 HBITMAP CGifFrame::GetBitmap()

@@ -390,6 +390,7 @@ bool CGifEncoder::Finish()
 		if (closeStream) 
 		{
 			fs->close();
+			SAVEDEL(fs)
 		}
 	} 
 	catch (...) 
@@ -397,7 +398,6 @@ bool CGifEncoder::Finish()
 		ok = false;
 	}
 
-	SAVEDEL(fs)
 	SAVEDEL(pixels)
 	SAVEDEL(indexedPixels)
 	// reset for subsequent use
@@ -409,7 +409,7 @@ bool CGifEncoder::Finish()
 	//colorTab = NULL;
 	closeStream = false;
 	firstFrame = true;
-
+	
 	return ok;
 }
 

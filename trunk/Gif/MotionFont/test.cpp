@@ -302,12 +302,24 @@ int main(int argc ,char * argv[])
 CGifEncoder age;
 	CGifDecoder gd;
 	age.SetQuality(0);
-	gd.Load("1.gif");
-	age.Start("1e.gif");
+	CGif* gif = gd.Load("1.gif");
+	age.Start("1f.gif");
 	age.SetRepeat(0);
-	for (int c= gd.GetFrameCount(),i=0; i<c; i++)
+	for (int c= gif->GetFrameCount(),i=0; i<c; i++)
 	{
-		CGifFrame *gf = gd.GetFrame(i);
+		CGifFrame *gf = gif->GetFrame(i);
+		age.SetTransparent(gf->GetTransparent());
+		age.SetDelay(gf->GetDelay());
+		age.AddFrame(gf->GetBitmap());
+	}
+	age.Finish();
+
+	delete gif;
+	gif = gd.Load("2.gif");
+	age.Start("2f.gif");
+	for (int c= gif->GetFrameCount(),i=0; i<c; i++)
+	{
+		CGifFrame *gf = gif->GetFrame(i);
 		age.SetTransparent(gf->GetTransparent());
 		age.SetDelay(gf->GetDelay());
 		age.AddFrame(gf->GetBitmap());

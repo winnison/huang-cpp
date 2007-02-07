@@ -4,15 +4,15 @@
 
 class CGifFrame 
 {
+	friend class CGif;
 	friend class CGifDecoder;
 	CGifFrame(int width, int height, CDCHandle& dcScreen);
-	HBITMAP hBmp, hBmp0;
+	~CGifFrame();
+	HBITMAP hBmp;
 	LPBYTE lpData;
 	int delay;
 	COLORREF transparent;
-	CDC dc;
 	int w, h;
-	void ReleaseDC();
 public:
 	HBITMAP GetBitmap();
 	CSize GetSize();
