@@ -113,6 +113,9 @@
 			<File
 				RelativePath=".\GifDecoder.cpp">
 			</File>
+			<File
+				RelativePath=".\GifFrame.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
@@ -126,6 +129,9 @@
 			</File>
 			<File
 				RelativePath=".\GifDecoder.h">
+			</File>
+			<File
+				RelativePath=".\GifFrame.h">
 			</File>
 			<File
 				RelativePath=".\LZWEncoder.h">

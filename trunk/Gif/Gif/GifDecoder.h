@@ -1,50 +1,34 @@
 #include <fstream>
 #include <string>
 #include "defines.h"
+#include "GifFrame.h"
+#include <vector>
 
+using namespace std;
 
-struct CGifFrame 
-{
-	CGifFrame(int width, int height, CDCHandle& dcScreen)
-		:delay(-1),transparent(EMPTYCOLOR)
-	{
-		hBmp = CreateDIB(dcScreen, width, height, lpData);
-		dc.CreateCompatibleDC(dcScreen);
-		hBmp0 = dc.SelectBitmap(hBmp);
-	}
-	HBITMAP hBmp, hBmp0;
-	LPBYTE lpData;
-	int delay;
-	COLORREF transparent;
-	CDC dc;
-	void ReleaseDC()
-	{
-		dc.SelectBitmap(hBmp0);
-	}
-};
-
-class GifDecoder 
-{
-
-	/**
-	* File read status: No errors.
-	*/
+/**
+* File read status: No errors.
+*/
 #define STATUS_OK -1
 
-	/**
-	* File read status: open source Done.
-	*/
+/**
+* File read status: open source Done.
+*/
 #define STATUS_DONE 0
 
-	/**
-	* File read status: Error decoding file (may be partially decoded)
-	*/
+/**
+* File read status: Error decoding file (may be partially decoded)
+*/
 #define STATUS_FORMAT_ERROR 1
 
-	/**
-	* File read status: Unable to open source.
-	*/
+/**
+* File read status: Unable to open source.
+*/
 #define STATUS_OPEN_ERROR 2
+
+class CGifDecoder 
+{
+
 
 
 	fstream* inStream;
@@ -54,10 +38,10 @@ class GifDecoder
 	int height; // full image height
 	bool gctFlag; // global color table used
 	int gctSize; // size of global color table
-	int loopCount = 1; // iterations; 0 = repeat forever
+	int loopCount; // iterations; 0 = repeat forever
 
-	COLORREF* gct; // global color table
-	COLORREF* lct; // local color table
+	COLORREF gct[256]; // global color table
+	COLORREF lct[256]; // local color table
 	COLORREF* act; // active color table
 
 	int bgIndex; // background color index
@@ -78,14 +62,14 @@ class GifDecoder
 	//HBITMAP lastImage; // previous frame
 
 	byte block[256]; // current data block
-	int blockSize = 0; // block size
+	int blockSize; // block size
 
 	// last graphic control extension info
-	int dispose = 0;
+	int dispose;
 	// 0=no action; 1=leave in place; 2=restore to bg; 3=restore to prev
-	int lastDispose = 0;
-	bool transparency = false; // use transparent color
-	int delay = 0; // delay in milliseconds
+	int lastDispose;
+	bool transparency; // use transparent color
+	int delay; // delay in milliseconds
 	int transIndex; // transparent color index
 
 	static const int MaxStackSize = 4096;
@@ -97,26 +81,26 @@ class GifDecoder
 	byte pixelStack[MaxStackSize+1];
 	LPBYTE pixels;
 
-	vector<CGifFrame*> frames; // frames read from current file
+	vector <CGifFrame* > frames; // frames read from current file
 	int frameCount;
 
 
-	/**
-	* Gets display duration for specified frame.
-	*
-	* @param n int index of frame
-	* @return delay in milliseconds
-	*/
-	int GetDelay(int n) ;
+	///**
+	//* Gets display duration for specified frame.
+	//*
+	//* @param n int index of frame
+	//* @return delay in milliseconds
+	//*/
+	//int GetDelay(int n) ;
 
 
-	/**
-	* Creates new frame image from current data (and previous
-	* frames as specified by their disposition codes).
-	*/
-	int [] GetPixels( Bitmap bitmap );
+	///**
+	//* Creates new frame image from current data (and previous
+	//* frames as specified by their disposition codes).
+	//*/
+	//int [] GetPixels( Bitmap bitmap );
 
-	void SetPixels( int [] pixels );
+	//void SetPixels( int [] pixels );
 
 	void SetPixels();
 	/**
@@ -148,7 +132,7 @@ class GifDecoder
 	* @param ncolors int number of colors to read
 	* @return int array containing 256 colors (packed ARGB with full alpha)
 	*/
-	int[] ReadColorTable(int ncolors);
+	void ReadColorTable(int ncolors, COLORREF* tab);
 	/**
 	* Main file parser.  Reads GIF content blocks.
 	*/
@@ -164,7 +148,7 @@ class GifDecoder
 	/**
 	* Reads next frame image
 	*/
-	void ReadImage();
+	void ReadImage(CDCHandle& dcScreen);
 	/**
 	* Reads Logical Screen Descriptor
 	*/
@@ -187,7 +171,7 @@ class GifDecoder
 	*/
 	void Skip();
 public:
-	GifDecoder();
+	CGifDecoder();
 	/**
 	* Gets the number of frames read from file.
 	* @return frame count
@@ -199,7 +183,7 @@ public:
 	*
 	* @return BufferedImage containing first frame, or null if none.
 	*/
-	HBITMAP GetImage() ;
+	CGifFrame* GetImage() ;
 
 	/**
 	* Gets the "Netscape" iteration count, if any.
@@ -213,7 +197,7 @@ public:
 	*
 	* @return BufferedImage representation of frame, or null if n is invalid.
 	*/
-	HBITMAP GetFrame(int n);
+	CGifFrame* GetFrame(int n);
 
 	/**
 	* Gets image size.
@@ -227,7 +211,7 @@ public:
 	* @param BufferedInputStream containing GIF file.
 	* @return read status code (0 = no errors)
 	*/
-	int Load( Stream inStream );
+	int Load( fstream* inStream );
 	/**
 	* Reads GIF file from specified file/URL source  
 	* (URL assumed if name contains ":/" or "file:")
@@ -236,4 +220,4 @@ public:
 	* @return read status code (0 = no errors)
 	*/
 	int Load(string name);
-}
+};

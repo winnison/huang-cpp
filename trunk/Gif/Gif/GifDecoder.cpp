@@ -1,7 +1,7 @@
 #include "GifDecoder.h"
 
 
-GifDecoder::GifDecoder()
+CGifDecoder::CGifDecoder()
 :
 inStream(NULL),
 status(0),
@@ -10,13 +10,13 @@ height(0),
 gctFlag(false),
 gctSize(0),
 loopCount(1),
-gct(NULL),
-lct(NULL),
-atc(NULL),
+//gct(NULL),
+//lct(NULL),
+act(NULL),
 bgIndex(0),
 bgColor(0),
 lastBgColor(0),
-pixelAspect(0)
+pixelAspect(0),
 lctFlag(false),
 interlace(false),
 lctSize(0),
@@ -24,7 +24,6 @@ ix(0),
 iy(0),
 iw(0),
 ih(0),
-lastRect(0,0,0,0),
 image(NULL),
 lastImage(NULL),
 blockSize(0),
@@ -38,26 +37,26 @@ pixels(NULL)
 
 }
 
-/**
-* Gets display duration for specified frame.
-*
-* @param n int index of frame
-* @return delay in milliseconds
-*/
-int GifDecoder::GetDelay(int n) 
-{
-	if ((n >= 0) && (n < frames.size())) 
-	{
-		return frames[n].delayMs;
-	}
-	return -1;
-}
+///**
+//* Gets display duration for specified frame.
+//*
+//* @param n int index of frame
+//* @return delay in milliseconds
+//*/
+//int CGifDecoder::GetDelay(int n) 
+//{
+//	if ((n >= 0) && (n < frames.size())) 
+//	{
+//		return frames[n].delayMs;
+//	}
+//	return -1;
+//}
 
 /**
 * Gets the number of frames read from file.
 * @return frame count
 */
-int GifDecoder::GetFrameCount() 
+int CGifDecoder::GetFrameCount() 
 {
 	return frames.size();
 }
@@ -67,7 +66,7 @@ int GifDecoder::GetFrameCount()
 *
 * @return BufferedImage containing first frame, or NULL if none.
 */
-HBITMAP GifDecoder::GetImage() 
+CGifFrame* CGifDecoder::GetImage() 
 {
 	return GetFrame(0);
 }
@@ -78,7 +77,7 @@ HBITMAP GifDecoder::GetImage()
 *
 * @return iteration count if one was specified, else 1.
 */
-int GifDecoder::GetLoopCount() 
+int CGifDecoder::GetLoopCount() 
 {
 	return loopCount;
 }
@@ -87,7 +86,7 @@ int GifDecoder::GetLoopCount()
 //* Creates new frame image from current data (and previous
 //* frames as specified by their disposition codes).
 //*/
-//int [] GifDecoder::GetPixels( Bitmap bitmap )
+//int [] CGifDecoder::GetPixels( Bitmap bitmap )
 //{
 //	int [] pixels = new int [ 3 * image.Width * image.Height ];
 //	int count = 0;
@@ -107,7 +106,7 @@ int GifDecoder::GetLoopCount()
 //	return pixels;
 //}
 //
-//void GifDecoder::SetPixels( int [] pixels )
+//void CGifDecoder::SetPixels( int [] pixels )
 //{
 //	int count = 0;
 //	for (int th = 0; th < image.Height; th++)
@@ -120,7 +119,7 @@ int GifDecoder::GetLoopCount()
 //	}
 //}
 
-void GifDecoder::SetPixels() 
+void CGifDecoder::SetPixels() 
 {
 	// expose destination image's pixels as int array
 	//		int[] dest =
@@ -218,10 +217,10 @@ void GifDecoder::SetPixels()
 			{
 				// map color and insert in destination
 				int index = ((int) pixels[sx++]) & 0xff;
-				int c = act[index];
+				COLORREF c = act[index];
 				if (c != 0) 
 				{
-					*((DIB32COLOR*)(image->lpData+(4*(width*height-dx))) = c;
+					*((COLORREF*)(image->lpData+(4*(width*height-dx)))) = c;
 					//dest[dx] = c;
 				}
 				dx++;
@@ -236,11 +235,11 @@ void GifDecoder::SetPixels()
 *
 * @return BufferedImage representation of frame, or NULL if n is invalid.
 */
-HBITMAP GifDecoder::GetFrame(int n) 
+CGifFrame* CGifDecoder::GetFrame(int n) 
 {
 	if ((n >= 0) && (n < frames.size())) 
 	{
-		return frames[n].image;
+		return frames[n];
 	}
 	return NULL;
 }
@@ -250,7 +249,7 @@ HBITMAP GifDecoder::GetFrame(int n)
 *
 * @return GIF image dimensions
 */
-CSize GifDecoder::GetFrameSize() 
+CSize CGifDecoder::GetFrameSize() 
 {
 	return CSize(width, height);
 }
@@ -261,12 +260,12 @@ CSize GifDecoder::GetFrameSize()
 * @param BufferedInputStream containing GIF file.
 * @return read status code (0 = no errors)
 */
-int GifDecoder::Load( fstream* inStream ) 
+int CGifDecoder::Load( fstream* inStream ) 
 {
-	Init();
+	//Init();
 	if ( inStream != NULL) 
 	{
-		this.inStream = inStream;
+		this->inStream = inStream;
 		ReadHeader();
 		if (!Error()) 
 		{
@@ -276,7 +275,7 @@ int GifDecoder::Load( fstream* inStream )
 				status = STATUS_FORMAT_ERROR;
 			}
 		}
-		inStream.close();
+		inStream->close();
 	} 
 	else 
 	{
@@ -300,7 +299,7 @@ int GifDecoder::Load( fstream* inStream )
 * @param name String containing source
 * @return read status code (0 = no errors)
 */
-int GifDecoder::Load(string file) 
+int CGifDecoder::Load(string file) 
 {
 	status = STATUS_OK;
 	try 
@@ -324,7 +323,7 @@ int GifDecoder::Load(string file)
 * Decodes LZW image data into pixel array.
 * Adapted from John Cristy's ImageMagick.
 */
-void GifDecoder::DecodeImageData() 
+void CGifDecoder::DecodeImageData() 
 {
 	int NullCode = -1;
 	int npix = iw * ih;
@@ -474,7 +473,7 @@ void GifDecoder::DecodeImageData()
 /**
 * Returns true if an error was encountered during reading/decoding
 */
-bool GifDecoder::Error() 
+bool CGifDecoder::Error() 
 {
 	return status >= 0;
 }
@@ -482,7 +481,7 @@ bool GifDecoder::Error()
 ///**
 //* Initializes or re-initializes reader
 //*/
-//void GifDecoder::Init() 
+//void CGifDecoder::Init() 
 //{
 //	status = STATUS_OK;
 //	frameCount = 0;
@@ -494,13 +493,13 @@ bool GifDecoder::Error()
 /**
 * Reads a single byte from the input stream.
 */
-int GifDecoder::Read() 
+int CGifDecoder::Read() 
 {
 	int curByte = 0;
 	try 
 	{
-		int count = inStream->read(&curByte, 1);
-		if (count!=1)
+		inStream->read((char*)(&curByte), 1);
+		if (inStream->fail())
 		{
 			status = STATUS_FORMAT_ERROR;
 		}
@@ -517,7 +516,7 @@ int GifDecoder::Read()
 *
 * @return number of bytes stored in "buffer"
 */
-int GifDecoder::ReadBlock() 
+int CGifDecoder::ReadBlock() 
 {
 	blockSize = Read();
 	int n = 0;
@@ -528,10 +527,15 @@ int GifDecoder::ReadBlock()
 			int count = 0;
 			while (n < blockSize) 
 			{
-				count = inStream->read(&block[n], blockSize - n);
-				//if (count <= -1) 
-				if (count <= 0) 
+				inStream->read((char*)(&block[n]), blockSize - n);
+				if(inStream->fail())
+				{
 					break;
+				}
+
+				//if (count <= -1) 
+				//if (count <= 0) 
+				//	break;
 				n += count;
 			}
 		} 
@@ -553,15 +557,19 @@ int GifDecoder::ReadBlock()
 * @param ncolors int number of colors to read
 * @return int array containing 256 colors (packed ARGB with full alpha)
 */
-int[] GifDecoder::ReadColorTable(int ncolors) 
+void CGifDecoder::ReadColorTable(int ncolors, COLORREF* tab) 
 {
 	int nbytes = 3 * ncolors;
-	int[] tab = NULL;
-	byte[] c = new byte[nbytes];
+	//COLORREF* tab = NULL;
+	byte* c = new byte[nbytes];
 	int n = 0;
 	try 
 	{
-		n = inStream->read(c, nbytes );
+		inStream->read((char*)c, nbytes );
+		if (!inStream->fail())
+		{
+			n = nbytes;
+		}
 	} 
 	catch (...) 
 	{
@@ -572,7 +580,7 @@ int[] GifDecoder::ReadColorTable(int ncolors)
 	} 
 	else 
 	{
-		tab = new int[256]; // max size to avoid bounds checks
+		//tab = new COLORREF[256]; // max size to avoid bounds checks
 		int i = 0;
 		int j = 0;
 		while (i < ncolors) 
@@ -580,19 +588,22 @@ int[] GifDecoder::ReadColorTable(int ncolors)
 			int r = ((int) c[j++]) & 0xff;
 			int g = ((int) c[j++]) & 0xff;
 			int b = ((int) c[j++]) & 0xff;
-			tab[i++] = ( int ) ( 0xff000000 | (r << 16) | (g << 8) | b );
+			tab[i++] = ( COLORREF ) ( 0xff000000 | (r << 16) | (g << 8) | b );
 		}
 	}
-	return tab;
+	delete c;
+	//return tab;
 }
 
 /**
 * Main file parser.  Reads GIF content blocks.
 */
-void GifDecoder::ReadContents() 
+void CGifDecoder::ReadContents() 
 {
 	// read GIF file content blocks
+	CDCHandle dcScreen = GetDC(NULL);
 	bool done = false;
+	string app = "NETSCAPE2.0";
 	while (!(done || Error())) 
 	{
 		int code = Read();
@@ -600,7 +611,7 @@ void GifDecoder::ReadContents()
 		{
 
 		case 0x2C : // image separator
-			ReadImage();
+			ReadImage(dcScreen);
 			break;
 
 		case 0x21 : // extension
@@ -613,17 +624,18 @@ void GifDecoder::ReadContents()
 
 			case 0xff : // application extension
 				ReadBlock();
-				String app = "";
-				for (int i = 0; i < 11; i++) 
-				{
-					app += (char) block[i];
-				}
-				if (app.Equals("NETSCAPE2.0")) 
+				//for (int i = 0; i < 11; i++) 
+				//{
+				//	app += (char) block[i];
+				//}
+				if (app.compare(0,11,(char*)block,11)==0) 
 				{
 					ReadNetscapeExt();
 				}
 				else
+				{
 					Skip(); // don't care
+				}
 				break;
 
 			default : // uninteresting extension
@@ -644,12 +656,13 @@ void GifDecoder::ReadContents()
 			break;
 		}
 	}
+	::ReleaseDC(NULL,dcScreen);
 }
 
 /**
 * Reads Graphics Control Extension values
 */
-void GifDecoder::ReadGraphicControlExt() 
+void CGifDecoder::ReadGraphicControlExt() 
 {
 	Read(); // block size
 	int packed = Read(); // packed fields
@@ -667,14 +680,14 @@ void GifDecoder::ReadGraphicControlExt()
 /**
 * Reads GIF file header information.
 */
-void GifDecoder::ReadHeader() 
+void CGifDecoder::ReadHeader() 
 {
-	String id = "";
+	string id = "";
 	for (int i = 0; i < 6; i++) 
 	{
 		id += (char) Read();
 	}
-	if (!id.StartsWith("GIF")) 
+	if (!id.compare(0,3,"GIF",3)!=0) 
 	{
 		status = STATUS_FORMAT_ERROR;
 		return;
@@ -683,7 +696,7 @@ void GifDecoder::ReadHeader()
 	ReadLSD();
 	if (gctFlag && !Error()) 
 	{
-		gct = ReadColorTable(gctSize);
+		ReadColorTable(gctSize, gct);
 		bgColor = gct[bgIndex];
 	}
 }
@@ -691,7 +704,7 @@ void GifDecoder::ReadHeader()
 /**
 * Reads next frame image
 */
-void GifDecoder::ReadImage() 
+void CGifDecoder::ReadImage(CDCHandle& dcScreen) 
 {
 	ix = ReadShort(); // (sub)image position & size
 	iy = ReadShort();
@@ -707,7 +720,7 @@ void GifDecoder::ReadImage()
 
 	if (lctFlag) 
 	{
-		lct = ReadColorTable(lctSize); // read table
+		ReadColorTable(lctSize, lct); // read table
 		act = lct; // make local table active
 	} 
 	else 
@@ -741,14 +754,10 @@ void GifDecoder::ReadImage()
 	//		image =
 	//			new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
 
-	CDCHandle dcScreen = GetDC(NULL);
-	CDC dc;
-	dc.CreateCompatibleDC(dcScreen);
-	bitmap = new Bitmap( width, height );
-	image = bitmap;
+	image = new CGifFrame(width, height, dcScreen);
 	SetPixels(); // transfer pixel data to image
 
-	frames.Add(new GifFrame(bitmap, delay)); // add image to frame list
+	frames.push_back(image);
 
 	if (transparency) 
 	{
@@ -761,7 +770,7 @@ void GifDecoder::ReadImage()
 /**
 * Reads Logical Screen Descriptor
 */
-void GifDecoder::ReadLSD() 
+void CGifDecoder::ReadLSD() 
 {
 
 	// logical screen size
@@ -783,7 +792,7 @@ void GifDecoder::ReadLSD()
 /**
 * Reads Netscape extenstion to obtain iteration count
 */
-void GifDecoder::ReadNetscapeExt() 
+void CGifDecoder::ReadNetscapeExt() 
 {
 	do 
 	{
@@ -801,7 +810,7 @@ void GifDecoder::ReadNetscapeExt()
 /**
 * Reads next 16-bit value, LSB first
 */
-int GifDecoder::ReadShort() 
+int CGifDecoder::ReadShort() 
 {
 	// read 16-bit value, LSB first
 	return Read() | (Read() << 8);
@@ -810,23 +819,27 @@ int GifDecoder::ReadShort()
 /**
 * Resets frame state for reading next image.
 */
-void GifDecoder::ResetFrame() 
+void CGifDecoder::ResetFrame() 
 {
 	lastDispose = dispose;
-	lastRect = new Rectangle(ix, iy, iw, ih);
+	lastRect.left = ix;
+	lastRect.top = iy;
+	lastRect.right = ix+iw;
+	lastRect.bottom = iy+ih;
+	//lastRect = new Rectangle(ix, iy, iw, ih);
 	lastImage = image;
 	lastBgColor = bgColor;
 	//		int dispose = 0;
 	bool transparency = false;
 	int delay = 0;
-	lct = NULL;
+	//lct = NULL;
 }
 
 /**
 * Skips variable length blocks up to and including
 * next zero length block.
 */
-void GifDecoder::Skip() 
+void CGifDecoder::Skip() 
 {
 	do 
 	{
