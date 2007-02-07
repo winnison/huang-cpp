@@ -10,12 +10,13 @@
 #define CHECKRANGE(a, left, right) \
 	if ((a)<(left))\
 	{\
-		(a) = (left);\
+	(a) = (left);\
 	}\
 	else if((a)>(right))\
 	{\
-		(a) = (right);\
+	(a) = (right);\
 	}
+
 
 
 

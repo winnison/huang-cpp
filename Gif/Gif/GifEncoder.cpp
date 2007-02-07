@@ -1,9 +1,9 @@
-#include "AnimatedGifEncoder.h"
+#include "GifEncoder.h"
 #include "NeuQuant.h"
 #include "LZWEncoder.h"
 
 
-CAnimatedGifEncoder::CAnimatedGifEncoder()
+CGifEncoder::CGifEncoder()
 :
 width(0),
 height(0),
@@ -27,7 +27,7 @@ sample(10)
 {
 }
 
-CAnimatedGifEncoder::~CAnimatedGifEncoder()
+CGifEncoder::~CGifEncoder()
 {
 	SAVEDEL(pixels)
 	SAVEDEL(indexedPixels)
@@ -37,7 +37,7 @@ CAnimatedGifEncoder::~CAnimatedGifEncoder()
 /**
 * Analyzes image colors and creates color map.
 */
-void CAnimatedGifEncoder::AnalyzePixels() 
+void CGifEncoder::AnalyzePixels() 
 {
 	int nPix = width*height;
 	int len = 3*nPix;
@@ -87,7 +87,7 @@ void CAnimatedGifEncoder::AnalyzePixels()
 * Returns index of palette color closest to c
 *
 */
-int CAnimatedGifEncoder::FindClosest(COLORREF c) 
+int CGifEncoder::FindClosest(COLORREF c) 
 {
 	if (colorTab == NULL) return -1;
 	int r = GetRValue(c);
@@ -117,7 +117,7 @@ int CAnimatedGifEncoder::FindClosest(COLORREF c)
 /**
 * Extracts image pixels into byte array "pixels"
 */
-void CAnimatedGifEncoder::GetImagePixels() 
+void CGifEncoder::GetImagePixels() 
 {
 	HBITMAP hBm = NULL;
 	BITMAP bmpInfo;
@@ -170,7 +170,7 @@ void CAnimatedGifEncoder::GetImagePixels()
 /**
 * Writes Graphic Control Extension
 */
-void CAnimatedGifEncoder::WriteGraphicCtrlExt() 
+void CGifEncoder::WriteGraphicCtrlExt() 
 {
 	fs->put(0x21); // extension introducer
 	fs->put(0xf9); // GCE label
@@ -206,7 +206,7 @@ void CAnimatedGifEncoder::WriteGraphicCtrlExt()
 /**
 * Writes Image Descriptor
 */
-void CAnimatedGifEncoder::WriteImageDesc()
+void CGifEncoder::WriteImageDesc()
 {
 	fs->put(0x2c);// image separator
 	WriteShort(0); // image position x,y = 0,0
@@ -233,7 +233,7 @@ void CAnimatedGifEncoder::WriteImageDesc()
 /**
 * Writes Logical Screen Descriptor
 */
-void CAnimatedGifEncoder::WriteLSD()  
+void CGifEncoder::WriteLSD()  
 {
 	// logical screen size
 	WriteShort(width);
@@ -253,7 +253,7 @@ void CAnimatedGifEncoder::WriteLSD()
 * Writes Netscape application extension to define
 * repeat count.
 */
-void CAnimatedGifEncoder::WriteNetscapeExt()
+void CGifEncoder::WriteNetscapeExt()
 {
 	int a = 0x000b;
 	WriteShort(0xff21);
@@ -273,7 +273,7 @@ void CAnimatedGifEncoder::WriteNetscapeExt()
 /**
 * Writes color table
 */
-void CAnimatedGifEncoder::WritePalette()
+void CGifEncoder::WritePalette()
 {
 	fs->write((char*)colorTab, (3 * NETSIZE));
 	/*int n = (3 * 256) - (3 * NETSIZE);
@@ -286,13 +286,13 @@ void CAnimatedGifEncoder::WritePalette()
 /**
 * Encodes and writes pixel data
 */
-void CAnimatedGifEncoder::WritePixels()
+void CGifEncoder::WritePixels()
 {
 	CLZWEncoder encoder(width, height, indexedPixels, colorDepth);
 	encoder.Encode( fs );
 }
 
-void CAnimatedGifEncoder::WriteInt(int value)
+void CGifEncoder::WriteInt(int value)
 {
 	fs->write((char*)&value, 4);
 }
@@ -300,7 +300,7 @@ void CAnimatedGifEncoder::WriteInt(int value)
 /**
 *    Write 16-bit value to output stream, LSB first
 */
-void CAnimatedGifEncoder::WriteShort(int value)
+void CGifEncoder::WriteShort(int value)
 {
 	fs->write((char*)&value, 2);
 }
@@ -308,7 +308,7 @@ void CAnimatedGifEncoder::WriteShort(int value)
 /**
 * Writes string to output stream
 */
-void CAnimatedGifEncoder::WriteString(string s)
+void CGifEncoder::WriteString(string s)
 {
 	fs->write(s.c_str(), s.length());
 }
@@ -326,7 +326,7 @@ void CAnimatedGifEncoder::WriteString(string s)
 * @param im BufferedImage containing frame to write.
 * @return true if successful.
 */
-bool CAnimatedGifEncoder::AddFrame(HBITMAP hBm) 
+bool CGifEncoder::AddFrame(HBITMAP hBm) 
 {
 	if ((hBm == 0) || !started) 
 	{
@@ -378,7 +378,7 @@ bool CAnimatedGifEncoder::AddFrame(HBITMAP hBm)
 * If writing to an OutputStream, the stream is not
 * closed.
 */
-bool CAnimatedGifEncoder::Finish() 
+bool CGifEncoder::Finish() 
 {
 	if (!started) return false;
 	bool ok = true;
@@ -420,7 +420,7 @@ bool CAnimatedGifEncoder::Finish()
 * @param os OutputStream on which GIF images are written.
 * @return false if initial write failed.
 */
-bool CAnimatedGifEncoder::Start( fstream* os) 
+bool CGifEncoder::Start( fstream* os) 
 {
 	if (os == NULL || started) return false;
 	bool ok = true;
@@ -444,7 +444,7 @@ bool CAnimatedGifEncoder::Start( fstream* os)
 * @param file string containing output file name.
 * @return false if open or initial write failed.
 */
-bool CAnimatedGifEncoder::Start(string file) 
+bool CGifEncoder::Start(string file) 
 {
 	if (started) return false;
 	bool ok = true;
@@ -467,7 +467,7 @@ bool CAnimatedGifEncoder::Start(string file)
 *
 * @param ms int delay time in milliseconds
 */
-void CAnimatedGifEncoder::SetDelay(int ms) 
+void CGifEncoder::SetDelay(int ms) 
 {
 	delay = ( int ) ((ms+5) / 10.0f);
 }
@@ -478,7 +478,7 @@ void CAnimatedGifEncoder::SetDelay(int ms)
 * color has been set, otherwise 2.
 * @param code int disposal code.
 */
-void CAnimatedGifEncoder::SetDispose(int code) 
+void CGifEncoder::SetDispose(int code) 
 {
 	if (code >= 0) 
 	{
@@ -495,7 +495,7 @@ void CAnimatedGifEncoder::SetDispose(int code)
 * @param iter int number of iterations.
 * @return
 */
-void CAnimatedGifEncoder::SetRepeat(int iter) 
+void CGifEncoder::SetRepeat(int iter) 
 {
 	if (iter >= 0) 
 	{
@@ -514,7 +514,7 @@ void CAnimatedGifEncoder::SetRepeat(int iter)
 *
 * @param c COLOR to be treated as transparent on display.
 */
-void CAnimatedGifEncoder::SetTransparent(COLORREF c) 
+void CGifEncoder::SetTransparent(COLORREF c) 
 {
 	transparent = c & 0x00ffffff;
 }
@@ -525,7 +525,7 @@ void CAnimatedGifEncoder::SetTransparent(COLORREF c)
 *
 * @param fps float frame rate (frames per second)
 */
-void CAnimatedGifEncoder::SetFrameRate(float fps) 
+void CGifEncoder::SetFrameRate(float fps) 
 {
 	if (fps != 0) 
 	{
@@ -544,7 +544,7 @@ void CAnimatedGifEncoder::SetFrameRate(float fps)
 * @param quality int greater than 0.
 * @return
 */
-void CAnimatedGifEncoder::SetQuality(int quality) 
+void CGifEncoder::SetQuality(int quality) 
 {
 	if (quality < 1) quality = 1;
 	sample = quality;
@@ -558,7 +558,7 @@ void CAnimatedGifEncoder::SetQuality(int quality)
 * @param w int frame width.
 * @param h int frame width.
 */
-void CAnimatedGifEncoder::SetSize(int w, int h) 
+void CGifEncoder::SetSize(int w, int h) 
 {
 	if (started && !firstFrame) return;
 	width = w;

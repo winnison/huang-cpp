@@ -114,6 +114,9 @@
 				RelativePath=".\GifDecoder.cpp">
 			</File>
 			<File
+				RelativePath=".\GifEncoder.cpp">
+			</File>
+			<File
 				RelativePath=".\GifFrame.cpp">
 			</File>
 		</Filter>
@@ -122,13 +125,13 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\AnimatedGifEncoder.h">
-			</File>
-			<File
 				RelativePath=".\defines.h">
 			</File>
 			<File
 				RelativePath=".\GifDecoder.h">
+			</File>
+			<File
+				RelativePath=".\GifEncoder.h">
 			</File>
 			<File
 				RelativePath=".\GifFrame.h">

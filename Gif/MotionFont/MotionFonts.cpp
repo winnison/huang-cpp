@@ -1,5 +1,5 @@
 #include "MotionFonts.h"
-#include "AnimatedGifEncoder.h"
+#include "GifEncoder.h"
 #include <math.h>
 #include "drawing.h"
 
@@ -9,7 +9,7 @@
 bool HueFloatMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
 {
 	const int shadowD = 4;
-	CAnimatedGifEncoder age;
+	CGifEncoder age;
 	age.Start(filename);
 	age.SetQuality(1);
 	age.SetTransparent(transparent);
@@ -166,7 +166,7 @@ bool HueFloatMFont(string filename, string text, HFONT hFont, COLORREF transpare
 bool ShapeShadowedMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
 {
 	const int shadowD = 4;
-	CAnimatedGifEncoder age;
+	CGifEncoder age;
 	age.Start(filename);
 	age.SetQuality(1);
 	age.SetTransparent(transparent);
@@ -216,7 +216,7 @@ bool ShapeShadowedMFont(string filename, string text, HFONT hFont, COLORREF tran
 
 bool EdgedMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
 {
-	CAnimatedGifEncoder age;
+	CGifEncoder age;
 	age.Start(filename);
 	age.SetQuality(1);
 	age.SetTransparent(transparent);
@@ -262,7 +262,7 @@ bool EdgedMFont(string filename, string text, HFONT hFont, COLORREF transparent,
 
 bool DisappearingMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
 {
-	CAnimatedGifEncoder age;
+	CGifEncoder age;
 	age.Start(filename);
 	age.SetQuality(1);
 	age.SetTransparent(transparent);
@@ -353,7 +353,7 @@ bool DisappearingMFont(string filename, string text, HFONT hFont, COLORREF trans
 bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
 {
 	const int shadowD = 4;
-	CAnimatedGifEncoder age;
+	CGifEncoder age;
 	age.Start(filename);
 	age.SetQuality(1);
 	age.SetTransparent(transparent);
@@ -418,7 +418,7 @@ bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparen
 bool TriangleMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
 {
 	const int shadowD = 4;
-	CAnimatedGifEncoder age;
+	CGifEncoder age;
 	age.Start(filename);
 	age.SetQuality(1);
 	age.SetTransparent(transparent);
@@ -487,7 +487,7 @@ bool TriangleMFont(string filename, string text, HFONT hFont, COLORREF transpare
 
 //bool ScrollMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
 //{
-//	CAnimatedGifEncoder age;
+//	CGifEncoder age;
 //	age.Start(filename);
 //	age.SetQuality(1);
 //	age.SetTransparent(transparent);
@@ -597,7 +597,7 @@ bool TriangleMFont(string filename, string text, HFONT hFont, COLORREF transpare
 //
 bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF transparent, COLORREF primaryClr, COLORREF secondaryClr)
 {
-	CAnimatedGifEncoder age;
+	CGifEncoder age;
 	age.Start(filename);
 	age.SetQuality(1);
 	age.SetTransparent(transparent);
