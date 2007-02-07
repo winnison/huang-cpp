@@ -6,30 +6,30 @@
 
 using namespace std;
 
-/**
-* File read status: No errors.
-*/
-#define STATUS_OK -1
-
-/**
-* File read status: open source Done.
-*/
-#define STATUS_DONE 0
-
-/**
-* File read status: Error decoding file (may be partially decoded)
-*/
-#define STATUS_FORMAT_ERROR 1
-
-/**
-* File read status: Unable to open source.
-*/
-#define STATUS_OPEN_ERROR 2
 
 class CGifDecoder 
 {
 
 
+/**
+* File read status: No errors.
+*/
+static const int STATUS_OK = -1;
+
+/**
+* File read status: open source Done.
+*/
+static const int STATUS_DONE = 0;
+
+/**
+* File read status: Error decoding file (may be partially decoded)
+*/
+static const int STATUS_FORMAT_ERROR = 1;
+
+/**
+* File read status: Unable to open source.
+*/
+static const int STATUS_OPEN_ERROR = 2;
 
 	fstream* inStream;
 	int status;
