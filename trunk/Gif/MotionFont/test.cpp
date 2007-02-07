@@ -1,5 +1,7 @@
 #include "MotionFonts.h"
 #include "GifFont.h"
+#include "GifDecoder.h"
+
 HBITMAP LoadPictureFile(LPCTSTR pszFile)
 {
 	ATLASSERT(pszFile != NULL);
@@ -277,22 +279,42 @@ int main(int argc ,char * argv[])
 	//		SaveBmp(Transform(bm3, matrix5),sz);
 	//}
 
-	CFont font;
-	font.CreatePointFont(300, _T("свт╡"));
-	CGifFont g;
-	g.SetHasEdge(TRUE);
-	g.SetHasShadow(TRUE);
-	g.SetShadowDis(4);
-	g.SetSizingProportion(.6);
-	g.SetSizing((CGifFont::SizingType)atoi(argv[2]));
-	g.SetShape((CGifFont::ShapeType)atoi(argv[3]));
-	g.SetMotion((CGifFont::MotionType)atoi(argv[4]));
-	g.SetFontColor(0xff0000);
-	g.SetEdgeColor(0xf0f0f0);
-	g.SetTransparent(0xffffff);
-	string file = argv[3], text = argv[1];
-	file = "_"+file+"_";
-	g.Generate(argv[2]+file+argv[4]+".gif", text, font);
+
+
+	//CFont font;
+	//font.CreatePointFont(300, _T("свт╡"));
+	//CGifFont g;
+	//g.SetHasEdge(TRUE);
+	//g.SetHasShadow(TRUE);
+	//g.SetShadowDis(4);
+	//g.SetSizingProportion(.6);
+	//g.SetSizing((CGifFont::SizingType)atoi(argv[2]));
+	//g.SetShape((CGifFont::ShapeType)atoi(argv[3]));
+	//g.SetMotion((CGifFont::MotionType)atoi(argv[4]));
+	//g.SetFontColor(0xff0000);
+	//g.SetEdgeColor(0xf0f0f0);
+	//g.SetTransparent(0xffffff);
+	//string file = argv[3], text = argv[1];
+	//file = "_"+file+"_";
+	//g.Generate(argv[2]+file+argv[4]+".gif", text, font);
+
+
+CAnimatedGifEncoder age;
+	CGifDecoder gd;
+	age.SetQuality(0);
+	gd.Load("1.gif");
+	age.Start("1e.gif");
+	age.SetRepeat(0);
+	for (int c= gd.GetFrameCount(),i=0; i<c; i++)
+	{
+		CGifFrame *gf = gd.GetFrame(i);
+		age.SetTransparent(gf->GetTransparent());
+		age.SetDelay(gf->GetDelay());
+		age.AddFrame(gf->GetBitmap());
+	}
+	age.Finish();
+
+
 	//if (b)
 	//{
 	//	b = EllipseMFont(argv[1], argv[2], font.m_hFont, 0xf0f0f0, 0xff0000, 0xffc0c0);

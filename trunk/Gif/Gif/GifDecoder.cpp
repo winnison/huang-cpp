@@ -32,7 +32,8 @@ lastDispose(0),
 transparency(false),
 delay(0),
 transIndex(0),
-pixels(NULL)
+pixels(NULL),
+frameCount(0)
 {
 
 }
@@ -58,7 +59,7 @@ pixels(NULL)
 */
 int CGifDecoder::GetFrameCount() 
 {
-	return frames.size();
+	return frameCount;
 }
 
 /**
@@ -218,9 +219,9 @@ void CGifDecoder::SetPixels()
 				// map color and insert in destination
 				int index = ((int) pixels[sx++]) & 0xff;
 				COLORREF c = act[index];
-				if (c != 0) 
+				//if (c != 0) 
 				{
-					*((COLORREF*)(image->lpData+(4*(width*height-dx)))) = c;
+					*((COLORREF*)(image->lpData+(4*(width*height-(dx+width-2*(dx%width)))))) = c;
 					//dest[dx] = c;
 				}
 				dx++;
@@ -304,7 +305,7 @@ int CGifDecoder::Load(string file)
 	status = STATUS_OK;
 	try 
 	{
-		fstream* fs = new fstream( file.c_str(), ios_base::out | ios_base::binary ) ;
+		fstream* fs = new fstream( file.c_str(), ios_base::in | ios_base::binary ) ;
 		status = Load(fs);
 		fs->close();
 	} 
@@ -519,36 +520,37 @@ int CGifDecoder::Read()
 int CGifDecoder::ReadBlock() 
 {
 	blockSize = Read();
-	int n = 0;
+	//int n = 0;
 	if (blockSize > 0) 
 	{
 		try 
 		{
-			int count = 0;
-			while (n < blockSize) 
-			{
-				inStream->read((char*)(&block[n]), blockSize - n);
+			//int count = 0;
+			//if (n < blockSize) 
+			//{
+				inStream->read((char*)(&block), blockSize);
 				if(inStream->fail())
 				{
-					break;
+					status = STATUS_FORMAT_ERROR;
 				}
 
 				//if (count <= -1) 
 				//if (count <= 0) 
 				//	break;
-				n += count;
-			}
+				//n += count;
+			//}
 		} 
 		catch (...) 
 		{
-		}
-
-		if (n < blockSize) 
-		{
 			status = STATUS_FORMAT_ERROR;
 		}
+
+		//if (n < blockSize) 
+		//{
+		//	status = STATUS_FORMAT_ERROR;
+		//}
 	}
-	return n;
+	return blockSize;
 }
 
 /**
@@ -562,13 +564,13 @@ void CGifDecoder::ReadColorTable(int ncolors, COLORREF* tab)
 	int nbytes = 3 * ncolors;
 	//COLORREF* tab = NULL;
 	byte* c = new byte[nbytes];
-	int n = 0;
+	int n = nbytes;
 	try 
 	{
 		inStream->read((char*)c, nbytes );
-		if (!inStream->fail())
+		if (inStream->fail())
 		{
-			n = nbytes;
+			n = 0;
 		}
 	} 
 	catch (...) 
@@ -588,7 +590,7 @@ void CGifDecoder::ReadColorTable(int ncolors, COLORREF* tab)
 			int r = ((int) c[j++]) & 0xff;
 			int g = ((int) c[j++]) & 0xff;
 			int b = ((int) c[j++]) & 0xff;
-			tab[i++] = ( COLORREF ) ( 0xff000000 | (r << 16) | (g << 8) | b );
+			tab[i++] = ( COLORREF ) ((r << 16) | (g << 8) | b );
 		}
 	}
 	delete c;
@@ -656,6 +658,10 @@ void CGifDecoder::ReadContents()
 			break;
 		}
 	}
+	for (int i=frames.size()-1; i>=0; i--)
+	{
+		frames[i]->ReleaseDC();
+	}
 	::ReleaseDC(NULL,dcScreen);
 }
 
@@ -687,7 +693,7 @@ void CGifDecoder::ReadHeader()
 	{
 		id += (char) Read();
 	}
-	if (!id.compare(0,3,"GIF",3)!=0) 
+	if (id.compare(0,3,"GIF",3)!=0) 
 	{
 		status = STATUS_FORMAT_ERROR;
 		return;
@@ -729,12 +735,12 @@ void CGifDecoder::ReadImage(CDCHandle& dcScreen)
 		if (bgIndex == transIndex)
 			bgColor = 0;
 	}
-	int save = 0;
-	if (transparency) 
-	{
-		save = act[transIndex];
-		act[transIndex] = 0; // set transparent color if specified
-	}
+	//int save = 0;
+	//if (transparency) 
+	//{
+	//	save = act[transIndex];
+	//	act[transIndex] = 0; // set transparent color if specified
+	//}
 
 	if (act == NULL) 
 	{
@@ -758,11 +764,15 @@ void CGifDecoder::ReadImage(CDCHandle& dcScreen)
 	SetPixels(); // transfer pixel data to image
 
 	frames.push_back(image);
-
-	if (transparency) 
+	if (transparency)
 	{
-		act[transIndex] = save;
+		image->transparent = act[transIndex];
 	}
+	image->delay = delay;
+	//if (transparency) 
+	//{
+	//	act[transIndex] = save;
+	//}
 	ResetFrame();
 
 }
