@@ -16,7 +16,7 @@ HBITMAP _CreateDIB(HDC hdc,int cx,int cy, LPBYTE &lpData)
 
 
 CGifFrame::CGifFrame(int width, int height, CDCHandle& dcScreen)
-:delay(-1),transparent(EMPTYCOLOR)
+:delay(-1),transparent(EMPTYCOLOR),w(width),h(height)
 {
 	hBmp = _CreateDIB(dcScreen, width, height, lpData);
 	dc.CreateCompatibleDC(dcScreen);
@@ -34,6 +34,11 @@ HBITMAP CGifFrame::GetBitmap()
 {
 	return hBmp;
 }
+CSize CGifFrame::GetSize()
+{
+	return CSize(w,h);
+}
+
 int CGifFrame::GetDelay()
 {
 	return delay;
@@ -43,11 +48,26 @@ COLORREF CGifFrame::GetTransparent()
 	return transparent;
 }
 
-bool CGifFrame::IsTransparency()
-{
-	return transparent != EMPTYCOLOR;
-}
 LPBYTE CGifFrame::GetData()
 {
 	return lpData;
 }
+
+int CGifFrame::ReplaceTransparent(COLORREF clr)
+{
+	byte* pb = (byte*)&clr;
+	byte b = pb[0];
+	pb[0] = pb[2];
+	pb[2] = b;
+	int count = 0;
+	for (int i=w*h-1; i>=0; i--)
+	{
+		if(((COLORREF*)lpData)[i] == transparent)
+		{
+			count++;
+			((COLORREF*)lpData)[i] = clr;
+		}
+	}
+	return count;
+}
+
