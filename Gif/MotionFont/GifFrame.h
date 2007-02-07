@@ -16,6 +16,4 @@ public:
 	HBITMAP GetBitmap();
 	int GetDelay();
 	COLORREF GetTransparent();
-	bool IsTransparency();
-	LPBYTE GetData();
 };
