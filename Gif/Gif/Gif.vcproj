@@ -108,6 +108,9 @@
 				RelativePath=".\defines.cpp">
 			</File>
 			<File
+				RelativePath=".\Gif.cpp">
+			</File>
+			<File
 				RelativePath=".\GifDecoder.cpp">
 			</File>
 			<File
@@ -123,6 +126,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath=".\defines.h">
+			</File>
+			<File
+				RelativePath=".\Gif.h">
 			</File>
 			<File
 				RelativePath=".\GifDecoder.h">

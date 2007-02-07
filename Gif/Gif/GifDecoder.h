@@ -1,7 +1,7 @@
 #include <fstream>
 #include <string>
 #include "defines.h"
-#include "GifFrame.h"
+#include "Gif.h"
 #include <vector>
 
 using namespace std;
@@ -14,22 +14,17 @@ class CGifDecoder
 /**
 * File read status: No errors.
 */
-static const int STATUS_OK = -1;
-
-/**
-* File read status: open source Done.
-*/
-static const int STATUS_DONE = 0;
+	static const int STATUS_OK = 0;
 
 /**
 * File read status: Error decoding file (may be partially decoded)
 */
-static const int STATUS_FORMAT_ERROR = 1;
+	static const int STATUS_FORMAT_ERROR = 1;
 
 /**
 * File read status: Unable to open source.
 */
-static const int STATUS_OPEN_ERROR = 2;
+	static const int STATUS_OPEN_ERROR = 2;
 
 	fstream* inStream;
 	int status;
@@ -81,7 +76,8 @@ static const int STATUS_OPEN_ERROR = 2;
 	byte pixelStack[MaxStackSize+1];
 	LPBYTE pixels;
 
-	vector <CGifFrame* > frames; // frames read from current file
+	CGif* gif;
+	//vector <CGifFrame* > frames; // frames read from current file
 	int frameCount;
 
 
@@ -102,7 +98,7 @@ static const int STATUS_OPEN_ERROR = 2;
 
 	//void SetPixels( int [] pixels );
 
-	void SetPixels();
+	void SetPixels(CDCHandle& dcScreen);
 	/**
 	* Decodes LZW image data into pixel array.
 	* Adapted from John Cristy's ImageMagick.
@@ -112,10 +108,10 @@ static const int STATUS_OPEN_ERROR = 2;
 	* Returns true if an error was encountered during reading/decoding
 	*/
 	bool Error();
-	///**
-	//* Initializes or re-initializes reader
-	//*/
-	//void Init();
+	/**
+	* Initializes or re-initializes reader
+	*/
+	void Init();
 	/**
 	* Reads a single byte from the input stream.
 	*/
@@ -172,46 +168,47 @@ static const int STATUS_OPEN_ERROR = 2;
 	void Skip();
 public:
 	CGifDecoder();
-	/**
-	* Gets the number of frames read from file.
-	* @return frame count
-	*/
-	int GetFrameCount() ;
+	~CGifDecoder();
+	///**
+	//* Gets the number of frames read from file.
+	//* @return frame count
+	//*/
+	//int GetFrameCount() ;
 
-	/**
-	* Gets the first (or only) image read.
-	*
-	* @return BufferedImage containing first frame, or null if none.
-	*/
-	CGifFrame* GetImage() ;
+	///**
+	//* Gets the first (or only) image read.
+	//*
+	//* @return BufferedImage containing first frame, or null if none.
+	//*/
+	//CGifFrame* GetImage() ;
 
-	/**
-	* Gets the "Netscape" iteration count, if any.
-	* A count of 0 means repeat indefinitiely.
-	*
-	* @return iteration count if one was specified, else 1.
-	*/
-	int GetLoopCount() ;
-	/**
-	* Gets the image contents of frame n.
-	*
-	* @return BufferedImage representation of frame, or null if n is invalid.
-	*/
-	CGifFrame* GetFrame(int n);
+	///**
+	//* Gets the "Netscape" iteration count, if any.
+	//* A count of 0 means repeat indefinitiely.
+	//*
+	//* @return iteration count if one was specified, else 1.
+	//*/
+	//int GetLoopCount() ;
+	///**
+	//* Gets the image contents of frame n.
+	//*
+	//* @return BufferedImage representation of frame, or null if n is invalid.
+	//*/
+	//CGifFrame* GetFrame(int n);
 
-	/**
-	* Gets image size.
-	*
-	* @return GIF image dimensions
-	*/
-	CSize GetFrameSize();
+	///**
+	//* Gets image size.
+	//*
+	//* @return GIF image dimensions
+	//*/
+	//CSize GetFrameSize();
 	/**
 	* Reads GIF image from stream
 	*
 	* @param BufferedInputStream containing GIF file.
 	* @return read status code (0 = no errors)
 	*/
-	int Load( fstream* inStream );
+	CGif* Load( fstream* inStream );
 	/**
 	* Reads GIF file from specified file/URL source  
 	* (URL assumed if name contains ":/" or "file:")
@@ -219,5 +216,5 @@ public:
 	* @param name String containing source
 	* @return read status code (0 = no errors)
 	*/
-	int Load(string name);
+	CGif* Load(string name);
 };

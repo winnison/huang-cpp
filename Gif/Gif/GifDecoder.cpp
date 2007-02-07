@@ -38,6 +38,10 @@ frameCount(0)
 
 }
 
+CGifDecoder::~CGifDecoder()
+{
+	SAVEDEL(pixels);
+}
 ///**
 //* Gets display duration for specified frame.
 //*
@@ -53,35 +57,35 @@ frameCount(0)
 //	return -1;
 //}
 
-/**
-* Gets the number of frames read from file.
-* @return frame count
-*/
-int CGifDecoder::GetFrameCount() 
-{
-	return frameCount;
-}
-
-/**
-* Gets the first (or only) image read.
-*
-* @return BufferedImage containing first frame, or NULL if none.
-*/
-CGifFrame* CGifDecoder::GetImage() 
-{
-	return GetFrame(0);
-}
-
-/**
-* Gets the "Netscape" iteration count, if any.
-* A count of 0 means repeat indefinitiely.
-*
-* @return iteration count if one was specified, else 1.
-*/
-int CGifDecoder::GetLoopCount() 
-{
-	return loopCount;
-}
+///**
+//* Gets the number of frames read from file.
+//* @return frame count
+//*/
+//int CGifDecoder::GetFrameCount() 
+//{
+//	return frameCount;
+//}
+//
+///**
+//* Gets the first (or only) image read.
+//*
+//* @return BufferedImage containing first frame, or NULL if none.
+//*/
+//CGifFrame* CGifDecoder::GetImage() 
+//{
+//	return GetFrame(0);
+//}
+//
+///**
+//* Gets the "Netscape" iteration count, if any.
+//* A count of 0 means repeat indefinitiely.
+//*
+//* @return iteration count if one was specified, else 1.
+//*/
+//int CGifDecoder::GetLoopCount() 
+//{
+//	return loopCount;
+//}
 
 ///**
 //* Creates new frame image from current data (and previous
@@ -120,8 +124,9 @@ int CGifDecoder::GetLoopCount()
 //	}
 //}
 
-void CGifDecoder::SetPixels() 
+void CGifDecoder::SetPixels(CDCHandle& dcScreen) 
 {
+	COLORREF trans = image->transparent;
 	// expose destination image's pixels as int array
 	//		int[] dest =
 	//			(( int ) image.getRaster().getDataBuffer()).getData();
@@ -133,10 +138,10 @@ void CGifDecoder::SetPixels()
 		if (lastDispose == 3) 
 		{
 			// use image before last
-			int n = frames.size() - 2;
+			int n = gif->frames.size() - 2;
 			if (n > 0) 
 			{
-				lastImage = frames.at(n - 1);
+				lastImage = gif->frames.at(n - 1);
 			} 
 			else 
 			{
@@ -156,10 +161,10 @@ void CGifDecoder::SetPixels()
 			if (lastDispose == 2) 
 			{
 				// fill last image rect area with background color
-				COLORREF c = EMPTYCOLOR;
+				COLORREF c;
 				if (transparency) 
 				{
-					c = 0; 	// assume background is transparent
+					c = image->transparent; 	// assume background is transparent
 				} 
 				else 
 				{
@@ -168,7 +173,10 @@ void CGifDecoder::SetPixels()
 				}
 				CBrush brush;
 				brush.CreateSolidBrush(c);
-				image->dc.FillRect(&lastRect, brush);
+				CDC dc;dc.CreateCompatibleDC(dcScreen);
+				HBITMAP hBmp = dc.SelectBitmap(image->hBmp);
+				dc.FillRect(&lastRect, brush);
+				dc.SelectBitmap(hBmp);
 			}
 		}
 	}
@@ -219,7 +227,7 @@ void CGifDecoder::SetPixels()
 				// map color and insert in destination
 				int index = ((int) pixels[sx++]) & 0xff;
 				COLORREF c = act[index];
-				//if (c != 0) 
+				//if (c != trans) 
 				{
 					*((COLORREF*)(image->lpData+(4*(width*height-(dx+width-2*(dx%width)))))) = c;
 					//dest[dx] = c;
@@ -231,29 +239,29 @@ void CGifDecoder::SetPixels()
 	//SetPixels( dest );
 }
 
-/**
-* Gets the image contents of frame n.
-*
-* @return BufferedImage representation of frame, or NULL if n is invalid.
-*/
-CGifFrame* CGifDecoder::GetFrame(int n) 
-{
-	if ((n >= 0) && (n < frames.size())) 
-	{
-		return frames[n];
-	}
-	return NULL;
-}
-
-/**
-* Gets image size.
-*
-* @return GIF image dimensions
-*/
-CSize CGifDecoder::GetFrameSize() 
-{
-	return CSize(width, height);
-}
+///**
+//* Gets the image contents of frame n.
+//*
+//* @return BufferedImage representation of frame, or NULL if n is invalid.
+//*/
+//CGifFrame* CGifDecoder::GetFrame(int n) 
+//{
+//	if ((n >= 0) && (n < frames.size())) 
+//	{
+//		return frames[n];
+//	}
+//	return NULL;
+//}
+//
+///**
+//* Gets image size.
+//*
+//* @return GIF image dimensions
+//*/
+//CSize CGifDecoder::GetFrameSize() 
+//{
+//	return CSize(width, height);
+//}
 
 /**
 * Reads GIF image from stream
@@ -261,36 +269,42 @@ CSize CGifDecoder::GetFrameSize()
 * @param BufferedInputStream containing GIF file.
 * @return read status code (0 = no errors)
 */
-int CGifDecoder::Load( fstream* inStream ) 
+CGif* CGifDecoder::Load( fstream* inStream ) 
 {
-	//Init();
-	if ( inStream != NULL) 
+	Init();
+	try
 	{
-		this->inStream = inStream;
-		ReadHeader();
-		if (!Error()) 
+		if ( inStream != NULL) 
 		{
-			ReadContents();
-			if (frameCount < 0) 
+			this->inStream = inStream;
+			ReadHeader();
+			if (!Error()) 
 			{
-				status = STATUS_FORMAT_ERROR;
+				ReadContents();
+				if (frameCount < 0) 
+				{
+					status = STATUS_FORMAT_ERROR;
+				}
 			}
+			inStream->close();
+		} 
+		else 
+		{
+			status = STATUS_OPEN_ERROR;
 		}
-		inStream->close();
-	} 
-	else 
-	{
-		status = STATUS_OPEN_ERROR;
 	}
-	for (int i=0; i<frames.size(); i++)
+	catch (...)
 	{
-		frames[i]->ReleaseDC();
+		return NULL;
 	}
 	if (status == STATUS_OK)
 	{
-		status = STATUS_DONE;
+		gif->repeate = loopCount;
+		gif->size = CSize(width, height);
+		return gif;
 	}
-	return status;
+	delete gif;
+	return NULL;
 }
 
 /**
@@ -300,24 +314,20 @@ int CGifDecoder::Load( fstream* inStream )
 * @param name String containing source
 * @return read status code (0 = no errors)
 */
-int CGifDecoder::Load(string file) 
+CGif* CGifDecoder::Load(string file) 
 {
-	status = STATUS_OK;
+	CGif* ret = NULL;
 	try 
 	{
 		fstream* fs = new fstream( file.c_str(), ios_base::in | ios_base::binary ) ;
-		status = Load(fs);
+		ret = Load(fs);
 		fs->close();
 	} 
 	catch (...) 
 	{
-		status = STATUS_OPEN_ERROR;
+		return NULL;
 	}
-	if (status == STATUS_OK)
-	{
-		status = STATUS_DONE;
-	}
-	return status;
+	return ret;
 }
 
 /**
@@ -476,20 +486,45 @@ void CGifDecoder::DecodeImageData()
 */
 bool CGifDecoder::Error() 
 {
-	return status >= 0;
+	return status > 0;
 }
 
-///**
-//* Initializes or re-initializes reader
-//*/
-//void CGifDecoder::Init() 
-//{
-//	status = STATUS_OK;
-//	frameCount = 0;
-//	frames.clear();
-//	SAVEDEL(gct);
-//	SAVEDEL(lct);
-//}
+/**
+* Initializes or re-initializes reader
+*/
+void CGifDecoder::Init() 
+{
+	inStream = NULL;
+	status = STATUS_OK;
+	width = 0;
+	height = 0;
+	gctFlag = false;
+	gctSize = 0;
+	loopCount = 1;
+	act = NULL;
+	bgIndex = 0;
+	bgColor = 0;
+	lastBgColor = 0;
+	pixelAspect = 0;
+	lctFlag = false;
+	interlace = false;
+	lctSize = 0;
+	ix = 0;
+	iy = 0;
+	iw = 0;
+	ih = 0;
+	image = NULL;
+	lastImage = NULL;
+	blockSize = 0;
+	dispose = 0;
+	lastDispose = 0;
+	transparency = false;
+	delay = 0;
+	transIndex = 0;
+	pixels = NULL;
+	frameCount = 0;
+	gif = new CGif();
+}
 
 /**
 * Reads a single byte from the input stream.
@@ -658,10 +693,6 @@ void CGifDecoder::ReadContents()
 			break;
 		}
 	}
-	for (int i=frames.size()-1; i>=0; i--)
-	{
-		frames[i]->ReleaseDC();
-	}
 	::ReleaseDC(NULL,dcScreen);
 }
 
@@ -761,13 +792,13 @@ void CGifDecoder::ReadImage(CDCHandle& dcScreen)
 	//			new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
 
 	image = new CGifFrame(width, height, dcScreen);
-	SetPixels(); // transfer pixel data to image
-
-	frames.push_back(image);
 	if (transparency)
 	{
 		image->transparent = act[transIndex];
 	}
+	SetPixels(dcScreen); // transfer pixel data to image
+
+	gif->frames.push_back(image);
 	image->delay = delay;
 	//if (transparency) 
 	//{
