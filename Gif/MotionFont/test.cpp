@@ -279,52 +279,82 @@ int main(int argc ,char * argv[])
 	//		SaveBmp(Transform(bm3, matrix5),sz);
 	//}
 
+	//1 file
+	//2 text
+	//3 fontcolor
+	//4 transparent
+	//5 quality
+	//6 framescount
+	//7 interval
 
+	//8 hasEdge
+	//9 edgeColor
 
-	//CFont font;
-	//font.CreatePointFont(300, _T("свт╡"));
-	//CGifFont g;
-	//g.SetHasEdge(TRUE);
-	//g.SetHasShadow(TRUE);
-	//g.SetShadowDis(4);
-	//g.SetSizingProportion(.6);
-	//g.SetSizing((CGifFont::SizingType)atoi(argv[2]));
-	//g.SetShape((CGifFont::ShapeType)atoi(argv[3]));
-	//g.SetMotion((CGifFont::MotionType)atoi(argv[4]));
-	//g.SetFontColor(0xff0000);
-	//g.SetEdgeColor(0xf0f0f0);
-	//g.SetTransparent(0xffffff);
-	//string file = argv[3], text = argv[1];
-	//file = "_"+file+"_";
-	//g.Generate(argv[2]+file+argv[4]+".gif", text, font);
+	//10 hasShadow
+	//11 shadowColor
+	//12 shadowdis
 
+	//13 sizing type
+	//14 align
+	//15 valign
+	//16 SizingProportion
 
-CGifEncoder age;
-	CGifDecoder gd;
-	age.SetQuality(0);
-	CGif* gif = gd.Load("1.gif");
-	age.Start("1f.gif");
-	age.SetRepeat(0);
-	for (int c= gif->GetFrameCount(),i=0; i<c; i++)
-	{
-		CGifFrame *gf = gif->GetFrame(i);
-		age.SetTransparent(gf->GetTransparent());
-		age.SetDelay(gf->GetDelay());
-		age.AddFrame(gf->GetBitmap());
-	}
-	age.Finish();
+	//17 Shape type
+	//18 motion type
 
-	delete gif;
-	gif = gd.Load("2.gif");
-	age.Start("2f.gif");
-	for (int c= gif->GetFrameCount(),i=0; i<c; i++)
-	{
-		CGifFrame *gf = gif->GetFrame(i);
-		age.SetTransparent(gf->GetTransparent());
-		age.SetDelay(gf->GetDelay());
-		age.AddFrame(gf->GetBitmap());
-	}
-	age.Finish();
+//19 font size
+//20 font family
+	string file = argv[1], text = argv[2];
+
+	CGifFont g;
+	g.SetFontColor(atoi(argv[3]));
+	g.SetTransparent(atoi(argv[4]));
+	g.SetQuality(atoi(argv[5]));
+	g.SetFramesCount(atoi(argv[6]));
+	g.SetInterval(atoi(argv[7]));
+	g.SetHasEdge(atoi(argv[8]));
+	g.SetEdgeColor(atoi(argv[9]));
+	g.SetHasShadow(atoi(argv[10]));
+	g.SetShadowColor(atoi(argv[11]));
+	g.SetShadowDis(atoi(argv[12]));
+	g.SetSizing((CGifFont::SizingType)atoi(argv[13]));
+	g.SetSizingAlign((CGifFont::AlignType)atoi(argv[14]));
+	g.SetSizingVAlign((CGifFont::VAlignType)atoi(argv[15]));
+	g.SetSizingProportion(atof(argv[16]));
+	g.SetShape((CGifFont::ShapeType)atoi(argv[17]));
+	g.SetMotion((CGifFont::MotionType)atoi(argv[18]));
+	CFont font;
+	font.CreatePointFont(atoi(argv[19])*10, _T(argv[20]));
+	g.Generate(file, text, font);
+
+	
+
+//CGifEncoder age;
+//	CGifDecoder gd;
+//	age.SetQuality(0);
+//	CGif* gif = gd.Load("1.gif");
+//	age.Start("1f.gif");
+//	age.SetRepeat(0);
+//	for (int c= gif->GetFrameCount(),i=0; i<c; i++)
+//	{
+//		CGifFrame *gf = gif->GetFrame(i);
+//		age.SetTransparent(gf->GetTransparent());
+//		age.SetDelay(gf->GetDelay());
+//		age.AddFrame(gf->GetBitmap());
+//	}
+//	age.Finish();
+//
+//	delete gif;
+//	gif = gd.Load("2.gif");
+//	age.Start("2f.gif");
+//	for (int c= gif->GetFrameCount(),i=0; i<c; i++)
+//	{
+//		CGifFrame *gf = gif->GetFrame(i);
+//		age.SetTransparent(gf->GetTransparent());
+//		age.SetDelay(gf->GetDelay());
+//		age.AddFrame(gf->GetBitmap());
+//	}
+//	age.Finish();
 
 
 	//if (b)
