@@ -47,6 +47,7 @@ bool CGifFont::Generate(string& giffile, string& text, HFONT hFont)
 }
 bool CGifFont::IsValid()
 {
+	m_Transparent &= 0xffffff;
 	return m_Sizing>=0 && m_Sizing<SIZINGCOUNT && m_Shape>=0 && m_Shape<SHAPECOUNT && m_Motion>=0 && m_Motion<MOTIONCOUNT;
 }
 
@@ -170,6 +171,10 @@ void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double pro
 {
 	AlignType at = m_SizingAlign;
 	VAlignType vt = m_SizingVAlign;
+	if (at<0)
+		at = (AlignType)(rand()%3);
+	if (vt<0)
+		vt = (VAlignType)(rand()%3);
 	int dx = rc.right-rc.left, dy = rc.bottom-rc.top;
 	int* buffer = new int[dx*dy*4], *p;
 	memset(buffer, 0, dx*dy*16);
@@ -184,19 +189,19 @@ void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double pro
 			//mapping
 			x*=proportion;
 			y*=proportion;
-			if (at<0)
-			{
-				x+=(rand()%3)*pt2;
-			}
-			else
+			//if (at<0)
+			//{
+			//	x+=(rand()%3)*pt2;
+			//}
+			//else
 			{
 				x+=(int)at*pt2;
 			}
-			if (vt<0)
-			{
-				y+=(rand()%3)*pt2;
-			}
-			else
+			//if (vt<0)
+			//{
+			//	y+=(rand()%3)*pt2;
+			//}
+			//else
 			{
 				y+=(int)vt*pt2;
 			}
@@ -261,7 +266,8 @@ RECT CGifFont::DrawOneChar(CDC& dc, LPBYTE lpData, vector<string>& chars, int ch
 	string text = chars[charIndex];
 	CSize size;
 	dc.GetTextExtent(text.c_str(), text.length(), &size);
-	int exsize = 0, esize = 0;
+	RECT rc;
+int exsize = 0, esize = 0;
 	if (m_HasShadow)
 	{
 		float h,s,v,h1,s1,v1;
@@ -279,15 +285,25 @@ RECT CGifFont::DrawOneChar(CDC& dc, LPBYTE lpData, vector<string>& chars, int ch
 		esize = 2;
 		DrawTextWithOuter(dc, text, size, x, y, m_FontColor, m_EdgeColor);
 	}
-	RECT rc;
+	else
+	{
+		dc.SetTextColor(m_FontColor);
+		rc.left = x;
+		rc.top = y;
+		rc.right = x+size.cx;
+		rc.bottom = y+size.cy;
+		dc.DrawText(text.c_str(), text.length(), &rc, DT_SINGLELINE | DT_LEFT | DT_VCENTER);
+	}
 	rc.left = x;
 	rc.top = y;
 	rc.right = x + size.cx + exsize;
 	rc.bottom = y + size.cy + exsize;
 	rectTransformMethods[m_Shape](lpData, width, height, rc, m_Transparent);
-	rc.right = x+size.cx+esize;
-	rc.bottom = y+size.cy+esize;
 	Sizing(lpData, chars, charIndex, width, height, rc, m_Transparent);
+	rc.left = x;
+	rc.top = y;
+	rc.right = x + size.cx + esize;
+	rc.bottom = y + size.cy + esize;
 	return rc;
 }
 
