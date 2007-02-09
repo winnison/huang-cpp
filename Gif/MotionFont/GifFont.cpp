@@ -169,6 +169,14 @@ const RectTransformMethod rectTransformMethods[7] = {RectNoTransform, RectToElli
 
 void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double proportion, DIB32COLOR trans)
 {
+	if (proportion>1)
+	{
+		return;
+	}
+	if (proportion<MINSIZINGPROPORTION)
+	{
+		proportion = MINSIZINGPROPORTION;
+	}
 	AlignType at = m_SizingAlign;
 	VAlignType vt = m_SizingVAlign;
 	if (at<0)
