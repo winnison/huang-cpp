@@ -32,6 +32,7 @@ public:
 	enum AlignType{RandomAlign = -1, LeftAlign = 0, CenterAlign = 1, RightAlign = 2};
 	enum VAlignType{RandomVAlign = -1, TopVAlign = 0, CenterVAlign = 1, BottomVAlign = 2};
 	BEAN(SizingType, Sizing);
+#define MINSIZINGPROPORTION 0.1
     BEAN(double, SizingProportion);
 	BEAN(AlignType, SizingAlign);
 	BEAN(VAlignType, SizingVAlign);
