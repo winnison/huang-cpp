@@ -138,19 +138,6 @@ void RectNoTransform(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 {}
 void PieSliceMap(double& x, double& y)
 {
-	y = 1-y;
-	double alpha = (1+x)*M_PI/3;
-	x = y * cos(alpha)+0.5;
-	y = y * sin(alpha);
-	x = 1-x;
-	y = 1-y;
-}
-void RectToPieSlice(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
-{
-	RectConvert(lpData,cx,cy, rc, PieSliceMap, trans);
-}
-void AnnulusMap(double& x, double& y)
-{
 	y*=0.8;
 	y = 1-y;
 	double alpha = (1+x)*M_PI/3;
@@ -159,17 +146,33 @@ void AnnulusMap(double& x, double& y)
 	x = 1-x;
 	y = 1.1-y;
 }
-void RectToAnnulus(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
+void RectToPieSlice(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 {
-	RectConvert(lpData,cx,cy, rc, AnnulusMap, trans);
+	RectConvert(lpData,cx,cy, rc, PieSliceMap, trans);
+}
+void MirrorMap(double& x, double& y)
+{
+	x = 1-x;
+}
+void RectToMirror(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
+{
+	RectConvert(lpData,cx,cy, rc, MirrorMap, trans);
+}
+void ReflectionMap(double& x, double& y)
+{
+	y = 1-y;
+}
+void RectToReflection(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
+{
+	RectConvert(lpData,cx,cy, rc, ReflectionMap, trans);
 }
 
-const RectTransformMethod rectTransformMethods[7] = {RectNoTransform, RectToEllipse, RectToTriangle, RectToDiamond, RectToSShape, RectToPieSlice, RectToAnnulus};
+const RectTransformMethod rectTransformMethods[SHAPECOUNT] = {RectNoTransform, RectToEllipse, RectToTriangle, RectToDiamond, RectToSShape, RectToPieSlice, RectToMirror, RectToReflection};
 
 
 void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double proportion, DIB32COLOR trans)
 {
-	if (proportion>1)
+	if (proportion>=1)
 	{
 		return;
 	}

@@ -106,14 +106,14 @@ void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 	for (int y=0; y<dy2; y++)
 	{
 		d = (double)(y)/(double)(dy2_1);
-		da = (int)(sqrt(1-d*d)*dx);
+		da = (int)(0.5+sqrt(1-d*d)*dx);
 		da1 = da/2;
 		da2 = da - da1;
 		for (int x=0; x<da2; x++)
 		{
 			int r=0,g=0,b=0,n=0;
 			dd = (double)(x)/(double)(dx2_1);
-			db2 = (int)(sqrt(1-dd*dd)*(dy2_1));
+			db2 = (int)(0.5+sqrt(1-dd*dd)*(dy2_1));
 			xstart = (x)*dx2/da2;
 			xend = (x+1)*dx2/da2;
 			if (xend>dx2)
@@ -166,7 +166,7 @@ void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 		{
 			int r=0,g=0,b=0,n=0;
 			dd = (double)(x)/(double)(dx1_1);
-			db2 = (int)(sqrt(1-dd*dd)*(dy2_1));
+			db2 = (int)(0.5+sqrt(1-dd*dd)*(dy2_1));
 			xstart = (x)*dx1/da1;
 			xend = (x+1)*dx1/da1;
 			if (xend>dx1)
@@ -219,14 +219,14 @@ void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 	for (int y=0; y<dy1; y++)
 	{
 		d = (double)(y)/(double)(dy1_1);
-		da = (int)(sqrt(1-d*d)*dx);
+		da = (int)(0.5+sqrt(1-d*d)*dx);
 		da1 = da/2;
 		da2 = da - da1;
 		for (int x=0; x<da2; x++)
 		{
 			int r=0,g=0,b=0,n=0;
 			dd = (double)(x)/(double)(dx2_1);
-			db1 = (int)(sqrt(1-dd*dd)*(dy1_1));
+			db1 = (int)(0.5+sqrt(1-dd*dd)*(dy1_1));
 			xstart = (x)*dx2/da2;
 			xend = (x+1)*dx2/da2;
 			if (xend>dx2)
@@ -279,7 +279,7 @@ void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 		{
 			int r=0,g=0,b=0,n=0;
 			dd = (double)(x)/(double)(dx1_1);
-			db1 = (int)(sqrt(1-dd*dd)*(dy1_1));
+			db1 = (int)(0.5+sqrt(1-dd*dd)*(dy1_1));
 			xstart = (x)*dx1/da1;
 			xend = (x+1)*dx1/da1;
 			if (xend>dx1)
@@ -408,14 +408,14 @@ void RectToDiamond(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 	for (int y=0; y<dy2; y++)
 	{
 		d = (double)(y)/(double)(dy2_1);
-		da = (int)((1-d)*dx);
+		da = (int)(0.5+(1-d)*dx);
 		da1 = da/2;
 		da2 = da - da1;
 		for (int x=0; x<da2; x++)
 		{
 			int r=0,g=0,b=0,n=0;
 			dd = (double)(x)/(double)(dx2_1);
-			db2 = (int)((1-dd)*(dy2_1));
+			db2 = (int)(0.5+(1-dd)*(dy2_1));
 			xstart = (x)*dx2/da2;
 			xend = (x+1)*dx2/da2;
 			if (xend>dx2)
@@ -468,7 +468,7 @@ void RectToDiamond(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 		{
 			int r=0,g=0,b=0,n=0;
 			dd = (double)(x)/(double)(dx1_1);
-			db2 = (int)((1-dd)*(dy2_1));
+			db2 = (int)(0.5+(1-dd)*(dy2_1));
 			xstart = (x)*dx1/da1;
 			xend = (x+1)*dx1/da1;
 			if (xend>dx1)
@@ -521,14 +521,14 @@ void RectToDiamond(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 	for (int y=0; y<dy1; y++)
 	{
 		d = (double)(y)/(double)(dy1_1);
-		da = (int)((1-d)*dx);
+		da = (int)(0.5+(1-d)*dx);
 		da1 = da/2;
 		da2 = da - da1;
 		for (int x=0; x<da2; x++)
 		{
 			int r=0,g=0,b=0,n=0;
 			dd = (double)(x)/(double)(dx2_1);
-			db1 = (int)((1-dd)*(dy1_1));
+			db1 = (int)(0.5+(1-dd)*(dy1_1));
 			xstart = (x)*dx2/da2;
 			xend = (x+1)*dx2/da2;
 			if (xend>dx2)
@@ -581,7 +581,7 @@ void RectToDiamond(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 		{
 			int r=0,g=0,b=0,n=0;
 			dd = (double)(x)/(double)(dx1_1);
-			db1 = (int)((1-dd)*(dy1_1));
+			db1 = (int)(0.5+(1-dd)*(dy1_1));
 			xstart = (x)*dx1/da1;
 			xend = (x+1)*dx1/da1;
 			if (xend>dx1)
@@ -648,20 +648,20 @@ void RectToSShape(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 		case 0:
 		case 1:
 			d = (2-d)/2;
-			start = (int)(dx1 * d * d);
+			start = (int)(0.5+dx1 * d * d);
 			break;
 		case 2:
 			d = d-2;
-			start = (int)(dx2 * d * d);
+			start = (int)(0.5+dx2 * d * d);
 			break;
 		case 3:
 			d = 4-d;
-			start = dx2 + (int)((dx1-dx2) * (1-d*d));
+			start = dx2 + (int)(0.5+(dx1-dx2) * (1-d*d));
 			break;
 		case 4:
 		case 5:
 			d = (d-4)/2;
-			start = (int)(dx1 * (1-d*d));
+			start = (int)(0.5+dx1 * (1-d*d));
 			break;
 		default:
 			break;
@@ -713,7 +713,7 @@ void RectConvert(LPBYTE lpData, int cx, int cy, RECT& rc, MapXY mapping, DIB32CO
 			mapping(x, y);
 			if (x>=0&&x<=1&&y>=0&&y<=1)
 			{
-				int ix = (int)(x*w), iy = (int)(y*h);
+				int ix = (int)(0.5+x*w), iy = (int)(0.5+y*h);
 				p = buffer+(ix+iy*dx)*4;
 				p[0]++;
 				p[1]+=GetR(clr);
