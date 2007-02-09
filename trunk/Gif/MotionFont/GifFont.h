@@ -39,8 +39,8 @@ public:
 
 //Shape
 public:
-	enum ShapeType{NormalShape = 0, EllipseShape = 1, TriangleShape = 2, DiamondShape = 3, S_Shape = 4, PieSliceShape = 5, AnnulusShape = 6};
-#define SHAPECOUNT 7
+	enum ShapeType{NormalShape = 0, EllipseShape = 1, TriangleShape = 2, DiamondShape = 3, S_Shape = 4, PieSliceShape = 5, MirrorShape = 6, ReflectionShape = 7};
+#define SHAPECOUNT 8
 	BEAN(ShapeType, Shape);
 
 //Motion
