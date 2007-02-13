@@ -38,20 +38,21 @@ void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, RECT& rc, con
 	{
 		return;
 	}
-	base2 = (base+1)/2;
 	int right1 =rc.right-1, bottom1 = rc.bottom-1;
 	for (int x=rc.left; x<=right1; x++)
 	{
 		for (int y=rc.top; y<=bottom1; y++)
 		{
-			int r = 0, g = 0, b = 0;
+			int r = 0, g = 0, b = 0, base = 0;
 			DIB32COLOR rgb;
 			BOOL istop = y == 0, isbottom = y == bottom1;
-#define ADDRGB(x, y, f)\
+#define ADDRGB(x, y, f) \
 	rgb = DIBPixel(lpDataSrc, x, y, cx, cy);\
 	r += f*GetR(rgb);\
 	g += f*GetG(rgb);\
-	b += f*GetB(rgb);
+	b += f*GetB(rgb);\
+	base += f;
+
 			if (x != 0)
 			{
 				if (!istop)
@@ -86,6 +87,7 @@ void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, RECT& rc, con
 				}
 			}
 #undef ADDRGB
+			base2 = (base+1)/2;
 			r = (r+base2)/base;
 			g = (g+base2)/base;
 			b = (b+base2)/base;

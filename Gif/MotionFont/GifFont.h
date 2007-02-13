@@ -45,8 +45,8 @@ public:
 
 //Motion
 public:
-	enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2, SnowMotion = 3};
-#define MOTIONCOUNT 4
+	enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2, SnowMotion = 3, BluringMotion = 4, SharpenMotion = 5};
+#define MOTIONCOUNT 6
 	BEAN(MotionType, Motion);
 
 	BEAN(int, FramesCount);
@@ -84,7 +84,7 @@ public:
 protected:
 	void GetOrignalSize(CDC& dc, vector<string>& chars, int& w, int& h);
 	HBITMAP GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& rc);
-	//版本升高了以后需要判断shape和motion
+	//版本升高了以后需要判断size,shape和motion
 	virtual bool IsValid();
 	virtual void AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height);
@@ -95,5 +95,7 @@ protected:
 	void DoDisappearingMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DoShakeMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DoSnowMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoBluringMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoSharpenMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 };
 
