@@ -36,7 +36,7 @@ bool CGifFont::Generate(string& giffile, string& text, HFONT hFont)
 	age.SetDelay(m_Interval);
 	vector<string> chars;
 	GetChars(chars, text);
-	//迫使两次随机得到相同.
+	//迫使每次随机得到相同.
 	srand(RANDSEED);
 	AddFrames(age, chars, hFont);
 
@@ -122,6 +122,12 @@ void CGifFont::AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 		break;
 	case SnowMotion:
 		DoSnowMotion(ge, chars, hFont);
+		break;
+	case BluringMotion:
+		DoBluringMotion(ge, chars, hFont);
+		break;
+	case SharpenMotion:
+		DoSharpenMotion(ge, chars, hFont);
 		break;
 	}
 }
@@ -481,6 +487,82 @@ void CGifFont::DoSnowMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 		DeleteObject(hBm1);
 	}
 	DeleteObject(hBm);
+
+	::ReleaseDC(NULL,dcScreen.m_hDC);
+}
+
+void CGifFont::DoBluringMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
+{
+	const int m[3][3] = {{1,1,1}, {1,1,1}, {1,1,1}};
+	LPBYTE lpData = NULL, lpData0;
+	RECT rc;
+	HBITMAP hBm = GetOrignalBitmap(chars, hFont, lpData0, rc);
+	int w = rc.right-rc.left, h = rc.bottom-rc.top;
+	int fc = GetFramesCount(), fc2 = fc/2;
+	if (fc2<2)
+	{
+		fc2 = 2;
+	}
+	HBITMAP* bms = new HBITMAP[fc2];
+	CDCHandle dcScreen = GetDC(NULL);
+	for (int i=0; i<fc2; i++)
+	{
+		bms[i] = CreateDIB(dcScreen, w, h, lpData);
+		Transform(lpData0, lpData, w,h, rc, m);
+		lpData0 = lpData;
+	}
+	ge.AddFrame(hBm);
+	fc2--;
+	for (int i=0; i<fc2; i++)
+	{
+		ge.AddFrame(bms[i]);
+	}
+	for (int i=fc2; i>=0; i--)
+	{
+		ge.AddFrame(bms[i]);
+		DeleteObject(bms[i]);
+	}
+	ge.AddFrame(hBm);
+	DeleteObject(hBm);
+	delete bms;
+
+	::ReleaseDC(NULL,dcScreen.m_hDC);
+}
+
+void CGifFont::DoSharpenMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
+{
+	const int m[3][3] = {{1,2,1}, {2,-24,2}, {1,2,1}};
+	LPBYTE lpData = NULL, lpData0;
+	RECT rc;
+	HBITMAP hBm = GetOrignalBitmap(chars, hFont, lpData0, rc);
+	int w = rc.right-rc.left, h = rc.bottom-rc.top;
+	int fc = GetFramesCount(), fc2 = fc/2;
+	if (fc2<2)
+	{
+		fc2 = 2;
+	}
+	HBITMAP* bms = new HBITMAP[fc2];
+	CDCHandle dcScreen = GetDC(NULL);
+	for (int i=0; i<fc2; i++)
+	{
+		bms[i] = CreateDIB(dcScreen, w, h, lpData);
+		Transform(lpData0, lpData, w,h, rc, m);
+		lpData0 = lpData;
+	}
+	ge.AddFrame(hBm);
+	fc2--;
+	for (int i=0; i<fc2; i++)
+	{
+		ge.AddFrame(bms[i]);
+	}
+	for (int i=fc2; i>=0; i--)
+	{
+		ge.AddFrame(bms[i]);
+		DeleteObject(bms[i]);
+	}
+	ge.AddFrame(hBm);
+	DeleteObject(hBm);
+	delete bms;
 
 	::ReleaseDC(NULL,dcScreen.m_hDC);
 }
