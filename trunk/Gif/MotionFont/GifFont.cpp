@@ -79,7 +79,7 @@ void CGifFont::GetOrignalSize(CDC& dc, vector<string>& chars, int& w, int& h)
 		h += 2;
 	}
 }
-HBITMAP CGifFont::GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& r)
+HBITMAP CGifFont::GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& r, RECT* rs)
 {
 	CDCHandle dcScreen = GetDC(NULL);
 	CDC dc;
@@ -101,7 +101,14 @@ HBITMAP CGifFont::GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& l
 	dc.FillRect(&r, brush);
 
 
-	DrawAllChars(dc,lpData,chars,0,0,w,h);
+	if (rs == NULL)
+	{
+		DrawAllChars(dc,lpData,chars,0,0,w,h);
+	}
+	else
+	{
+		DrawAllChars(dc,lpData,chars,0,0,w,h,rs);
+	}
 	dc.SelectBitmap(hBmp);
 	::ReleaseDC(NULL,dcScreen.m_hDC);
 	return hBm;
@@ -129,15 +136,23 @@ void CGifFont::AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 	case SharpenMotion:
 		DoSharpenMotion(ge, chars, hFont);
 		break;
+	case SizingMotion:
+		DoSizingMotion(ge, chars, hFont);
+		break;
 	}
 }
 void CGifFont::DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height)
 {
-	RECT rc;
+	RECT* rs = new RECT[chars.size()];
+	DrawAllChars(dc, lpData, chars, x, y, width, height, rs);
+	delete rs;
+}
+void CGifFont::DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height, RECT* rs)
+{
 	for (int i=0; i<chars.size(); i++)
 	{
-		rc = DrawOneChar(dc, lpData, chars, i, x, y, width, height);
-		x = rc.right;
+		rs[i] = DrawOneChar(dc, lpData, chars, i, x, y, width, height);
+		x = rs[i].right;
 	}
 }
 void RectNoTransform(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
@@ -176,7 +191,7 @@ void RectToReflection(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)
 const RectTransformMethod rectTransformMethods[SHAPECOUNT] = {RectNoTransform, RectToEllipse, RectToTriangle, RectToDiamond, RectToSShape, RectToPieSlice, RectToMirror, RectToReflection};
 
 
-void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double proportion, DIB32COLOR trans)
+void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double proportion, AlignType at, VAlignType vt, DIB32COLOR trans)
 {
 	if (proportion>=1)
 	{
@@ -186,12 +201,6 @@ void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double pro
 	{
 		proportion = MINSIZINGPROPORTION;
 	}
-	AlignType at = m_SizingAlign;
-	VAlignType vt = m_SizingVAlign;
-	if (at<0)
-		at = (AlignType)(rand()%3);
-	if (vt<0)
-		vt = (VAlignType)(rand()%3);
 	int dx = rc.right-rc.left, dy = rc.bottom-rc.top;
 	int* buffer = new int[dx*dy*4], *p;
 	memset(buffer, 0, dx*dy*16);
@@ -255,24 +264,30 @@ void CGifFont::Sizing(LPBYTE lpData, vector<string>& chars, int charIndex, int c
 {
 	if (m_SizingProportion < 1.0 && m_SizingProportion > 0.0)
 	{
+		AlignType at = m_SizingAlign;
+		VAlignType vt = m_SizingVAlign;
+		if (at<0)
+			at = (AlignType)(rand()%3);
+		if (vt<0)
+			vt = (VAlignType)(rand()%3);
 		switch(m_Sizing)
 		{
 		case NormalSizing:
-			SizingConvert(lpData, cx, cy, rc, m_SizingProportion, trans);
+			SizingConvert(lpData, cx, cy, rc, m_SizingProportion, at, vt, trans);
 			break;
 		case RandomSizing:
-			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*(double)rand()/(double)RAND_MAX, trans);
+			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*(double)rand()/(double)RAND_MAX, at, vt, trans);
 			break;
 		case IncSizing:
-			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*(1-(double)(charIndex)/(double)(chars.size()-1)), trans);
+			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*(1-(double)(charIndex)/(double)(chars.size()-1)), at, vt, trans);
 			break;
 		case DecSizing:
-			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*((double)(charIndex)/(double)(chars.size()-1)), trans);
+			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*((double)(charIndex)/(double)(chars.size()-1)), at, vt, trans);
 			break;
 		case AlternateSizing:
 			if (charIndex&1)
 			{
-				SizingConvert(lpData, cx, cy, rc, m_SizingProportion, trans);
+				SizingConvert(lpData, cx, cy, rc, m_SizingProportion, at, vt, trans);
 			}
 		    break;
 		}
@@ -491,9 +506,9 @@ void CGifFont::DoSnowMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 	::ReleaseDC(NULL,dcScreen.m_hDC);
 }
 
+const int BluringMatrix[3][3] = {{1,1,1}, {1,1,1}, {1,1,1}};
 void CGifFont::DoBluringMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
-	const int m[3][3] = {{1,1,1}, {1,1,1}, {1,1,1}};
 	LPBYTE lpData = NULL, lpData0;
 	RECT rc;
 	HBITMAP hBm = GetOrignalBitmap(chars, hFont, lpData0, rc);
@@ -508,7 +523,7 @@ void CGifFont::DoBluringMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFo
 	for (int i=0; i<fc2; i++)
 	{
 		bms[i] = CreateDIB(dcScreen, w, h, lpData);
-		Transform(lpData0, lpData, w,h, rc, m);
+		Transform(lpData0, lpData, w,h, rc, BluringMatrix);
 		lpData0 = lpData;
 	}
 	ge.AddFrame(hBm);
@@ -531,7 +546,7 @@ void CGifFont::DoBluringMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFo
 
 void CGifFont::DoSharpenMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
-	const int m[3][3] = {{1,2,1}, {2,-24,2}, {1,2,1}};
+	const int m[3][3] = {{1,2,1}, {2,-36,2}, {1,2,1}};
 	LPBYTE lpData = NULL, lpData0;
 	RECT rc;
 	HBITMAP hBm = GetOrignalBitmap(chars, hFont, lpData0, rc);
@@ -566,3 +581,67 @@ void CGifFont::DoSharpenMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFo
 
 	::ReleaseDC(NULL,dcScreen.m_hDC);
 }
+
+void CGifFont::DoSizingMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFont)
+{
+	LPBYTE lpData = NULL;
+	RECT rc, *rs = new RECT[chars.size()];
+	HBITMAP hBm = GetOrignalBitmap(chars, hFont, lpData, rc, rs);
+	int w = rc.right-rc.left, h = rc.bottom-rc.top;
+	int fc = GetFramesCount(), fc2 = fc/2;
+	if (fc2<2)
+	{
+		fc2 = 2;
+	}
+	fc = fc2*2;
+	HBITMAP* bms = new HBITMAP[fc];
+	LPBYTE * lpDatas = new LPBYTE[fc];
+
+	CDCHandle dcScreen = GetDC(NULL);
+	for (int i=0; i<fc; i++)
+	{
+		bms[i] = CreateDIB(dcScreen, w, h, lpDatas[i]);
+		memcpy(lpDatas[i], lpData, 4*w*h);
+	}
+	DeleteObject(hBm);
+	for (int index=chars.size()-1; index>=0; index--)
+	{
+		
+		if (m_HasShadow)
+		{
+			rs[index].right += m_ShadowDis;
+			rs[index].bottom += m_ShadowDis;
+			if (!m_HasEdge)
+			{
+				rs[index].right += 2;
+				rs[index].bottom += 2;
+			}
+		}
+		AlignType at = m_SizingAlign;
+		VAlignType vt = m_SizingVAlign;
+		if (at<0)
+			at = (AlignType)(rand()%3);
+		if (vt<0)
+			vt = (VAlignType)(rand()%3);
+		for (int i=0; i<fc2; i++)
+		{
+			SizingConvert(lpDatas[i], w, h, rs[index], 1 - (double)((i)%fc2)/(double)fc2, at, vt, m_Transparent);
+		}
+		for (int i=fc2; i<fc; i++)
+		{
+			SizingConvert(lpDatas[i], w, h, rs[index], (double)((i)%fc2)/(double)fc2, at, vt, m_Transparent);
+		}
+	}
+
+	for (int i=0; i<fc; i++)
+	{
+		ge.AddFrame(bms[i]);
+		DeleteObject(bms[i]);
+	}
+	delete bms;
+	delete rs;
+	delete lpDatas;
+	::ReleaseDC(NULL,dcScreen.m_hDC);
+}
+
+

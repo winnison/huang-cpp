@@ -45,8 +45,8 @@ public:
 
 //Motion
 public:
-	enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2, SnowMotion = 3, BluringMotion = 4, SharpenMotion = 5};
-#define MOTIONCOUNT 6
+	enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2, SnowMotion = 3, BluringMotion = 4, SharpenMotion = 5, SizingMotion = 6};
+#define MOTIONCOUNT 7
 	BEAN(MotionType, Motion);
 
 	BEAN(int, FramesCount);
@@ -83,12 +83,13 @@ public:
 	
 protected:
 	void GetOrignalSize(CDC& dc, vector<string>& chars, int& w, int& h);
-	HBITMAP GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& rc);
+	HBITMAP GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& rc, RECT* rs = NULL);
 	//版本升高了以后需要判断size,shape和motion
 	virtual bool IsValid();
 	virtual void AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height);
-	virtual void SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double proportion, DIB32COLOR trans);
+	void DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height, RECT* rs);
+	virtual void SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double proportion, AlignType at, VAlignType vt, DIB32COLOR trans);
 	virtual void Sizing(LPBYTE lpData, vector<string>& chars, int charIndex, int cx, int cy, RECT& rc, DIB32COLOR trans);
 	RECT DrawOneChar(CDC& dc, LPBYTE lpData, vector<string>& chars, int charIndex, int x, int y, int width, int height);
 	void DoNomotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
@@ -97,5 +98,6 @@ protected:
 	void DoSnowMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DoBluringMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DoSharpenMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoSizingMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 };
 
