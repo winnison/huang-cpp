@@ -645,3 +645,4 @@ void CGifFont::DoSizingMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFo
 }
 
 
+

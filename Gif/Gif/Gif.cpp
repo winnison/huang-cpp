@@ -2,7 +2,7 @@
 
 CGif::CGif()
 :
-repeate(0),
+repeat(0),
 size(0,0),
 frames()
 {
@@ -11,9 +11,30 @@ CGif::~CGif()
 {
 	for (int i=frames.size()-1; i>=0; i--)
 	{
-		delete frames[i];
+		try
+		{
+			delete frames[i];
+		}
+		catch (...)
+		{
+		}
 	}
 }
+bool CGif::AddFrame(CGifFrame* frame)
+{
+	if (size.cy==0 || size.cx == 0)
+	{
+		size.cx = frame->w;
+		size.cy = frame->h;
+	}
+	else if (size.cx != frame->w || size.cy != frame->h)
+	{
+		return false;
+	}
+	frames.push_back(frame);
+	return true;
+}
+
 int CGif::GetFrameCount()
 {
 	return frames.size();
@@ -26,9 +47,13 @@ CGifFrame* CGif::GetFrame(int index)
 	}
 	return frames[index];
 }
-int CGif::GetRepeate()
+void CGif::SetRepeat(int repeat)
 {
-	return repeate;
+	this->repeat = repeat;
+}
+int CGif::GetRepeat()
+{
+	return repeat;
 }
 CSize CGif::GetSize()
 {

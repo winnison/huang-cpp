@@ -138,10 +138,10 @@ void CGifDecoder::SetPixels(CDCHandle& dcScreen)
 		if (lastDispose == 3) 
 		{
 			// use image before last
-			int n = gif->frames.size() - 2;
+			int n = gif->GetFrameCount() - 2;
 			if (n > 0) 
 			{
-				lastImage = gif->frames.at(n - 1);
+				lastImage = gif->GetFrame(n - 1);
 			} 
 			else 
 			{
@@ -299,8 +299,8 @@ CGif* CGifDecoder::Load( fstream* inStream )
 	}
 	if (status == STATUS_OK)
 	{
-		gif->repeate = loopCount;
-		gif->size = CSize(width, height);
+		gif->SetRepeat(loopCount);
+		//gif->size = CSize(width, height);
 		return gif;
 	}
 	delete gif;
@@ -798,7 +798,7 @@ void CGifDecoder::ReadImage(CDCHandle& dcScreen)
 	}
 	SetPixels(dcScreen); // transfer pixel data to image
 
-	gif->frames.push_back(image);
+	gif->AddFrame(image);
 	image->delay = delay;
 	//if (transparency) 
 	//{

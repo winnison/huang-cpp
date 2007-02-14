@@ -4,15 +4,17 @@
 
 class CGif
 {
-	friend class CGifDecoder;
-	CGif();
-	int repeate;
+	int repeat;
 	CSize size;
 	std::vector<CGifFrame*> frames;
 public:
+	CGif();
 	~CGif();
+
+	bool AddFrame(CGifFrame* frame);
 	int GetFrameCount();
 	CGifFrame* GetFrame(int index = 0);
-	int GetRepeate();
+	void SetRepeat(int repeat);
+	int GetRepeat();
 	CSize GetSize();
 };
