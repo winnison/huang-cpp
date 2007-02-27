@@ -23,21 +23,19 @@ inline void GetChars(vector<string>& chars, string& text)
 }
 	/*
 	0	个性化字体版本号			％d		
-	1	字体颜色					％d		
 	-	透明色					无					客户端背景不同有	
-	2	画质						％d		
-	3	帧数						％d		
-	4	帧间隔时间				％d					单位：ms	
-	5	边缘颜色					％d										负值表示没有边缘
-	6	阴影颜色					％d										负值表示没有阴影
-	7	阴影距离					％d		
-	8	变换大小规则				％d		
-	9	变换大小比例				％d					单位：1％	
-	10	变换大小单字对齐			％d %d									负值表示随机
-	11	字体形状					％d		
-	12	字体动画					％d		
+	1	画质						％d		
+	2	帧数						％d		
+	3	帧间隔时间				％d					单位：ms	
+	4	边缘颜色					％d										负值表示没有边缘
+	5	阴影颜色					％d										负值表示没有阴影
+	6	阴影距离					％d		
+	7	变换大小规则				％d		
+	8	变换大小比例				％d					单位：1％	
+	9	变换大小单字对齐			％d %d									负值表示随机
+	10	字体形状					％d		
+	11	字体动画					％d		
 	*/
-#define PARAMSCOUNT 13
 
 string CGifFont::GetParamsString()
 {
@@ -49,7 +47,6 @@ string CGifFont::GetParamsString()
 	formatString.push_back(' ');
 
 	ADD(m_Version);
-	ADD(m_FontColor);
 	ADD(m_Quality);
 	ADD(m_FramesCount);
 	ADD(m_Interval);
@@ -78,7 +75,6 @@ bool CGifFont::SetParamsString(string& formatString)
 #define GET(i) GETT(i, int)
 
 	GET(m_Version);
-	GET(m_FontColor);
 	GET(m_Quality);
 	GET(m_FramesCount);
 	GET(m_Interval);
@@ -123,11 +119,22 @@ bool CGifFont::Generate(string& giffile, string& text, HFONT hFont)
 
 	return true;
 }
-bool CGifFont::IsValid()
+void CGifFont::Check()
 {
 	m_Transparent &= 0xffffff;
 	CHECKRANGE(m_SizingProportion, 0.01, 1);
-	return m_Sizing>=0 && m_Sizing<SIZINGCOUNT && m_Shape>=0 && m_Shape<SHAPECOUNT && m_Motion>=0 && m_Motion<MOTIONCOUNT;
+	CHECKRANGE(m_Quality, 1, 20);
+	CHECKRANGE(m_Interval, 10, 10000);
+}
+bool CGifFont::IsValid()
+{
+	Check();
+	return 
+		m_Sizing>=0 && m_Sizing<SIZINGCOUNT && 
+		m_SizingAlign>=-1 && m_SizingAlign<3 &&
+		m_SizingVAlign>=-1 && m_SizingVAlign<3 &&
+		m_Shape>=0 && m_Shape<SHAPECOUNT && 
+		m_Motion>=0 && m_Motion<MOTIONCOUNT;
 }
 
 void CGifFont::GetOrignalSize(CDC& dc, vector<string>& chars, int& w, int& h)
@@ -272,14 +279,7 @@ const RectTransformMethod rectTransformMethods[SHAPECOUNT] = {RectNoTransform, R
 
 void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double proportion, AlignType at, VAlignType vt, DIB32COLOR trans)
 {
-	if (proportion>=1)
-	{
-		return;
-	}
-	if (proportion<MINSIZINGPROPORTION)
-	{
-		proportion = MINSIZINGPROPORTION;
-	}
+	CHECKRANGE(proportion, MINSIZINGPROPORTION, 1);
 	int dx = rc.right-rc.left, dy = rc.bottom-rc.top;
 	int* buffer = new int[dx*dy*4], *p;
 	memset(buffer, 0, dx*dy*16);
@@ -310,16 +310,14 @@ void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double pro
 			{
 				y+=(int)vt*pt2;
 			}
-
-			if (x>=0&&x<=1&&y>=0&&y<=1)
-			{
-				int ix = (int)(x*w), iy = (int)(y*h);
-				p = buffer+(ix+iy*dx)*4;
-				p[0]++;
-				p[1]+=GetR(clr);
-				p[2]+=GetG(clr);
-				p[3]+=GetB(clr);
-			}
+			CHECKRANGE(x, 0, 1);
+			CHECKRANGE(y, 0, 1);
+			int ix = ROUND(x*w), iy = ROUND(y*h);
+			p = buffer+(ix+iy*dx)*4;
+			p[0]++;
+			p[1]+=GetR(clr);
+			p[2]+=GetG(clr);
+			p[3]+=GetB(clr);
 		}
 	}
 	for (int i=dx-1; i>=0; i--)
@@ -341,7 +339,8 @@ void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double pro
 }
 void CGifFont::Sizing(LPBYTE lpData, vector<string>& chars, int charIndex, int cx, int cy, RECT& rc, DIB32COLOR trans)
 {
-	if (m_SizingProportion < 1.0 && m_SizingProportion > 0.0)
+
+	if (m_Sizing != NoSizing && m_SizingProportion < 1.0 && m_SizingProportion > 0.0)
 	{
 		AlignType at = m_SizingAlign;
 		VAlignType vt = m_SizingVAlign;
@@ -349,28 +348,49 @@ void CGifFont::Sizing(LPBYTE lpData, vector<string>& chars, int charIndex, int c
 			at = (AlignType)(rand()%3);
 		if (vt<0)
 			vt = (VAlignType)(rand()%3);
+		double p = (double)(charIndex)/(double)(chars.size()-1);
+#define P(p) (1-(1-m_SizingProportion)*(p))
 		switch(m_Sizing)
 		{
 		case NormalSizing:
 			SizingConvert(lpData, cx, cy, rc, m_SizingProportion, at, vt, trans);
 			break;
 		case RandomSizing:
-			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*(double)rand()/(double)RAND_MAX, at, vt, trans);
+			SizingConvert(lpData, cx, cy, rc, P((double)rand()/(double)RAND_MAX), at, vt, trans);
 			break;
 		case IncSizing:
-			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*(1-(double)(charIndex)/(double)(chars.size()-1)), at, vt, trans);
+			SizingConvert(lpData, cx, cy, rc, P(1-p), at, vt, trans);
 			break;
 		case DecSizing:
-			SizingConvert(lpData, cx, cy, rc, 1-(1-m_SizingProportion)*((double)(charIndex)/(double)(chars.size()-1)), at, vt, trans);
+			SizingConvert(lpData, cx, cy, rc, P(p), at, vt, trans);
+			break;
+		case MiddleUpSizing:
+			if (p<0.5)
+			{
+				p = 1-p;
+			}
+			SizingConvert(lpData, cx, cy, rc, P(p*2-1), at, vt, trans);
+			break;
+		case MiddleDownSizing:
+			if (p<0.5)
+			{
+				p = 1-p;
+			}
+			SizingConvert(lpData, cx, cy, rc, P(2-p*2), at, vt, trans);
 			break;
 		case AlternateSizing:
 			if (charIndex&1)
 			{
 				SizingConvert(lpData, cx, cy, rc, m_SizingProportion, at, vt, trans);
 			}
+			else
+			{
+				SizingConvert(lpData, cx, cy, rc, 1, at, vt, trans);
+			}
 		    break;
 		}
 	}
+#undef P
 }
 RECT CGifFont::DrawOneChar(CDC& dc, LPBYTE lpData, vector<string>& chars, int charIndex, int x, int y, int width, int height)
 {

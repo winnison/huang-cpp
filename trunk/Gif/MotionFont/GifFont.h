@@ -28,12 +28,12 @@ class CGifFont
 
 //Sizing
 public:
-	enum SizingType{NormalSizing = 0, RandomSizing = 1, IncSizing = 2, DecSizing = 3, AlternateSizing = 4};
-#define SIZINGCOUNT 5
+	enum SizingType{NoSizing = 0, NormalSizing = 1, RandomSizing = 2, IncSizing = 3, DecSizing = 4, MiddleUpSizing = 5, MiddleDownSizing = 6, AlternateSizing = 7};
+#define SIZINGCOUNT 8
 	enum AlignType{RandomAlign = -1, LeftAlign = 0, CenterAlign = 1, RightAlign = 2};
 	enum VAlignType{RandomVAlign = -1, TopVAlign = 0, CenterVAlign = 1, BottomVAlign = 2};
 	BEAN(SizingType, Sizing);
-#define MINSIZINGPROPORTION 0.1
+#define MINSIZINGPROPORTION 0.01
     BEAN(double, SizingProportion);
 	BEAN(AlignType, SizingAlign);
 	BEAN(VAlignType, SizingVAlign);
@@ -87,6 +87,7 @@ public:
 	//版本升高了以后需要判断size,shape和motion
 	virtual bool IsValid();
 protected:
+	void Check();
 	void GetOrignalSize(CDC& dc, vector<string>& chars, int& w, int& h);
 	HBITMAP GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& rc, RECT* rs = NULL);
 	virtual void AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
