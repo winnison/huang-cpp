@@ -21,6 +21,19 @@ inline void GetChars(vector<string>& chars, string& text)
 		}
 	}
 }
+bool SetParamsString(string& formatString)
+{
+	int ps[9];
+	for (int i=0, index = 0; i<9; i++)
+	{
+		int index1 = formatString.find_first_of(' ', index);
+	}
+	return true;
+}
+bool GetParamsString(string& formatString)
+{
+	return true;
+}
 
 bool CGifFont::Generate(string& giffile, string& text, HFONT hFont)
 {
