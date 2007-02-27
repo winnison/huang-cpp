@@ -1,4 +1,4 @@
-#include "GifFontThread.h"
+#include "GifFontTask.h"
 #include "GifFont.h"
 
 CGifFontTask::CGifFontTask(GifFontCallBack* callBack, string file, string text, string formatParams, HFONT font)
