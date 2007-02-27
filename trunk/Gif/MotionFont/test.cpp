@@ -323,6 +323,10 @@ int main(int argc ,char * argv[])
 	g.SetSizingProportion(atof(argv[16]));
 	g.SetShape((CGifFont::ShapeType)atoi(argv[17]));
 	g.SetMotion((CGifFont::MotionType)atoi(argv[18]));
+
+	string s = g.GetParamsString();
+	g.SetParamsString(s);
+
 	CFont font;
 	font.CreatePointFont(atoi(argv[19])*10, _T(argv[20]));
 	g.Generate(file, text, font);
