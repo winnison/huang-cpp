@@ -388,7 +388,7 @@ HBITMAP Transform( HBITMAP hBitmap , float matrix[3][3])
 						b += w*GetBValue(clr);
 					}
 				}
-				int R = (int)(r/f+.5), G = (int)(g/f+.5), B = (int)(b/f+.5);
+				int R = INTROUND(r/f), G = INTROUND(g/f), B = INTROUND(b/f);
 				CHECKRANGE(R, 0, 255);
 				CHECKRANGE(G, 0, 255);
 				CHECKRANGE(B, 0, 255);

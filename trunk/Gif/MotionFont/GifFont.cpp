@@ -312,7 +312,7 @@ void CGifFont::SizingConvert(LPBYTE lpData, int cx, int cy, RECT& rc, double pro
 			}
 			CHECKRANGE(x, 0, 1);
 			CHECKRANGE(y, 0, 1);
-			int ix = ROUND(x*w), iy = ROUND(y*h);
+			int ix = INTROUND(x*w), iy = INTROUND(y*h);
 			p = buffer+(ix+iy*dx)*4;
 			p[0]++;
 			p[1]+=GetR(clr);
