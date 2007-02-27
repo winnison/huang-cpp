@@ -14,7 +14,7 @@ CGifFontTask::~CGifFontTask()
 	DeleteObject(m_hFont);
 }
 
-void CGifFontTask::Proc()
+void CGifFontTask::Process()
 {
 	CGifFont gf;
 	gf.SetParamsString(m_sFormatParams);

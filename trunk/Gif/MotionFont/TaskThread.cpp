@@ -9,7 +9,7 @@ CTaskThread::~CTaskThread()
 {
 	Stop();
 }
-bool CTaskThread::Create(int priorty)
+bool CTaskThread::Create(int priority)
 {
 	if (!_fStop)
 		return false;
@@ -61,7 +61,7 @@ void CTaskThread::PushTaskFront(const CTask* task)
 	try
 	{
 		if( task )
-			_tasks.push_front(task);
+			_tasks.push_front(*task);
 	}
 	catch(...)
 	{
@@ -132,7 +132,7 @@ void CTaskThread::Work()
 	}
 
 }
-static DWORD WINAPI CTaskThread::_ThreadProc(LPVOID lp)
+DWORD WINAPI CTaskThread::_ThreadProc(LPVOID lp)
 {
 	CTaskThread *pt = (CTaskThread *)lp;
 	if( pt )

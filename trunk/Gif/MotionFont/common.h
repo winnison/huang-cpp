@@ -13,10 +13,3 @@
 #define ROUNDDIV(a,n) (((a)+(n)/2)/(n))
 
 
-#define TryCatch(process) try\
-{\
-	process;
-}\
-catch (...)\
-{\
-}\
