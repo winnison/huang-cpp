@@ -1,3 +1,4 @@
+#include "define.h"
 #include <list>
 using namespace std;
 
@@ -12,7 +13,7 @@ class CTaskThread
 public:
 	CTaskThread();
 	~CTaskThread();
-	bool Create(int	priorty = THREAD_PRIORITY_NORMAL);
+	bool Create(int	priority = THREAD_PRIORITY_NORMAL);
 	void Stop();
 	bool Clear();
 	virtual void PushTask(const CTask*);
