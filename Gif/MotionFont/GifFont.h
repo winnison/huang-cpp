@@ -6,12 +6,13 @@ using namespace std;
 #include "bean.h"
 #include "dib.h"
 
-#define RANDSEED 123456789
-
+#define RANDSEED			123456789
+#define GIF_FONT_VERSION	0
 
 class CGifFont
 {
 //Main
+	BEAN(int, Version);
 	BEAN(COLORREF, FontColor);
 	BEAN(COLORREF, Transparent);
 	BEAN(int, Quality);
@@ -56,6 +57,7 @@ public:
 public:
 	CGifFont()
 	: 
+	m_Version(GIF_FONT_VERSION),
 	m_FontColor(0),
 	m_Transparent(0xffffff), 
 
@@ -80,13 +82,13 @@ public:
 	m_Quality(1)
 	{}
 	bool Generate(string& giffile, string& text, HFONT hFont);
+	string GetParamsString();
 	bool SetParamsString(string& formatString);
-	bool GetParamsString(string& formatString);
+	//版本升高了以后需要判断size,shape和motion
+	virtual bool IsValid();
 protected:
 	void GetOrignalSize(CDC& dc, vector<string>& chars, int& w, int& h);
 	HBITMAP GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& rc, RECT* rs = NULL);
-	//版本升高了以后需要判断size,shape和motion
-	virtual bool IsValid();
 	virtual void AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height);
 	void DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height, RECT* rs);

@@ -21,17 +21,82 @@ inline void GetChars(vector<string>& chars, string& text)
 		}
 	}
 }
-bool SetParamsString(string& formatString)
+	/*
+	0	个性化字体版本号			％d		
+	1	字体颜色					％d		
+	-	透明色					无					客户端背景不同有	
+	2	画质						％d		
+	3	帧数						％d		
+	4	帧间隔时间				％d					单位：ms	
+	5	边缘颜色					％d										负值表示没有边缘
+	6	阴影颜色					％d										负值表示没有阴影
+	7	阴影距离					％d		
+	8	变换大小规则				％d		
+	9	变换大小比例				％d					单位：1％	
+	10	变换大小单字对齐			％d %d									负值表示随机
+	11	字体形状					％d		
+	12	字体动画					％d		
+	*/
+#define PARAMSCOUNT 13
+
+string CGifFont::GetParamsString()
 {
-	int ps[9];
-	for (int i=0, index = 0; i<9; i++)
-	{
-		int index1 = formatString.find_first_of(' ', index);
-	}
-	return true;
+	char chs[0x100];
+	string formatString = _T("");
+
+#define ADD(i)\
+	formatString += itoa((int)(i), chs, 10);\
+	formatString.push_back(' ');
+
+	ADD(m_Version);
+	ADD(m_FontColor);
+	ADD(m_Quality);
+	ADD(m_FramesCount);
+	ADD(m_Interval);
+	ADD(m_HasEdge?m_EdgeColor:-1);
+	ADD(m_HasShadow?m_ShadowColor:-1);
+	ADD(m_ShadowDis);
+	ADD(m_Sizing);
+	ADD(0.5+m_SizingProportion*100);
+	ADD(m_SizingAlign);
+	ADD(m_SizingVAlign);
+	ADD(m_Shape);
+	ADD(m_Motion);
+
+#undef ADD
+	return formatString;
 }
-bool GetParamsString(string& formatString)
+bool CGifFont::SetParamsString(string& formatString)
 {
+	int index = 0, index1, t;
+#define GETT(i, type)\
+	index1 = formatString.find_first_of(' ', index);\
+	if (index1<0)\
+		return false;\
+	(i) = (type)atoi(formatString.substr(index, index1-index).c_str());\
+	index = index1+1;
+#define GET(i) GETT(i, int)
+
+	GET(m_Version);
+	GET(m_FontColor);
+	GET(m_Quality);
+	GET(m_FramesCount);
+	GET(m_Interval);
+	GET(m_EdgeColor);
+	m_HasEdge = m_EdgeColor<0;
+	GET(m_ShadowColor);
+	m_HasShadow = m_ShadowColor<0;
+	GET(m_ShadowDis);
+	GETT(m_Sizing, SizingType);
+	GET(t);
+	m_SizingProportion = (double)t / 100;
+	GETT(m_SizingAlign, AlignType);
+	GETT(m_SizingVAlign, VAlignType);
+	GETT(m_Shape, ShapeType);
+	GETT(m_Motion, MotionType);
+
+#undef GET
+#undef GETT
 	return true;
 }
 
@@ -61,6 +126,7 @@ bool CGifFont::Generate(string& giffile, string& text, HFONT hFont)
 bool CGifFont::IsValid()
 {
 	m_Transparent &= 0xffffff;
+	CHECKRANGE(m_SizingProportion, 0.01, 1);
 	return m_Sizing>=0 && m_Sizing<SIZINGCOUNT && m_Shape>=0 && m_Shape<SHAPECOUNT && m_Motion>=0 && m_Motion<MOTIONCOUNT;
 }
 

@@ -5,7 +5,7 @@ using namespace std;
 class CTask
 {
 public:
-	virtual void Process();
+	virtual void Process(){};
 };
 
 class CTaskThread
@@ -15,11 +15,11 @@ public:
 	~CTaskThread();
 	bool Create(int	priority = THREAD_PRIORITY_NORMAL);
 	void Stop();
-	bool Clear();
-	virtual void PushTask(const CTask*);
+	void Clear();
+	virtual void PushTask( CTask*);
 protected:
-	void PushTaskFront(const CTask*);
-	void PushTaskBack(const CTask*);
+	void PushTaskFront( CTask*);
+	void PushTaskBack( CTask*);
 private:
 	void Work();
 	static DWORD WINAPI _ThreadProc(LPVOID lp);
@@ -34,7 +34,7 @@ private:
 class CQueueTaskThread :
 	public CTaskThread
 {
-	virtual void PushTask(const CTask* task)
+	virtual void PushTask( CTask* task)
 	{
 		PushTaskBack(task);
 	}
@@ -44,7 +44,7 @@ class CStackTaskThread :
 	public CTaskThread
 {
 public:
-	virtual void PushTask(const CTask* task)
+	virtual void PushTask( CTask* task)
 	{
 		PushTaskFront(task);
 	}

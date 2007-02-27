@@ -41,7 +41,7 @@ void CTaskThread::Stop()
 		_hThread = NULL;
 	}
 }
-bool CTaskThread::Clear()
+void CTaskThread::Clear()
 {
 	m_csListLock.Lock();
 	for (int i=_tasks.size(); i>0; i--)
@@ -52,7 +52,11 @@ bool CTaskThread::Clear()
 	}
 	m_csListLock.Unlock();
 }
-void CTaskThread::PushTaskFront(const CTask* task)
+void CTaskThread::PushTask(CTask* task)
+{
+	PushTaskBack(task);
+}
+void CTaskThread::PushTaskFront(CTask* task)
 {
 	if( _fStop )
 		return;
@@ -61,7 +65,7 @@ void CTaskThread::PushTaskFront(const CTask* task)
 	try
 	{
 		if( task )
-			_tasks.push_front(*task);
+			_tasks.push_front(task);
 	}
 	catch(...)
 	{
@@ -72,7 +76,7 @@ void CTaskThread::PushTaskFront(const CTask* task)
 	if(bOK)
 		SetEvent( _hEvent );
 }
-void CTaskThread::PushTaskBack(const CTask* task)
+void CTaskThread::PushTaskBack(CTask* task)
 {
 	if( _fStop )
 		return;
