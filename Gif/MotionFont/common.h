@@ -12,4 +12,5 @@
 
 #define ROUNDDIV(a,n) (((a)+(n)/2)/(n))
 
+#define ROUND(d) (int)((d)+0.5)
 
