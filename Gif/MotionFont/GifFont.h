@@ -80,7 +80,8 @@ public:
 	m_Quality(1)
 	{}
 	bool Generate(string& giffile, string& text, HFONT hFont);
-	
+	bool SetParamsString(string& formatString);
+	bool GetParamsString(string& formatString);
 protected:
 	void GetOrignalSize(CDC& dc, vector<string>& chars, int& w, int& h);
 	HBITMAP GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& lpData, RECT& rc, RECT* rs = NULL);
