@@ -5,7 +5,7 @@ using namespace std;
 
 #include "bean.h"
 #include "dib.h"
-
+#include "RectMappingConverter.h"
 #define RANDSEED			123456789
 #define GIF_FONT_VERSION	0
 
@@ -46,8 +46,8 @@ public:
 
 //Motion
 public:
-	enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2, SnowMotion = 3, BluringMotion = 4, SharpenMotion = 5, SizingMotion = 6};
-#define MOTIONCOUNT 7
+	enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2, SnowMotion = 3, BluringMotion = 4, SharpenMotion = 5, SizingMotion = 6, HTurnOverMotion = 7, VTurnOverMotion = 8, RollingMotion = 9, WobblyMotion = 10};
+#define MOTIONCOUNT 11
 	BEAN(MotionType, Motion);
 
 	BEAN(int, FramesCount);
@@ -102,6 +102,7 @@ protected:
 	void DoSnowMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DoBluringMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DoSharpenMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
-	void DoSizingMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoSizingMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoRectMappingConvertMotion(CRectMappingConverter* prmc, CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 };
 

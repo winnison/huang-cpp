@@ -79,9 +79,9 @@ bool CGifFont::SetParamsString(string& formatString)
 	GET(m_FramesCount);
 	GET(m_Interval);
 	GET(m_EdgeColor);
-	m_HasEdge = m_EdgeColor<0;
+	m_HasEdge = m_EdgeColor>=0;
 	GET(m_ShadowColor);
-	m_HasShadow = m_ShadowColor<0;
+	m_HasShadow = m_ShadowColor>=0;
 	GET(m_ShadowDis);
 	GETT(m_Sizing, SizingType);
 	GET(t);
@@ -202,6 +202,7 @@ HBITMAP CGifFont::GetOrignalBitmap(vector<string>& chars, HFONT hFont, LPBYTE& l
 
 void CGifFont::AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
+	CRectMappingConverter *prmc;
 	switch(m_Motion)
 	{
 	case Nomotion:
@@ -224,6 +225,26 @@ void CGifFont::AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 		break;
 	case SizingMotion:
 		DoSizingMotion(ge, chars, hFont);
+		break;
+	case HTurnOverMotion:
+		prmc = new CHTurnOverRectMappingConverter();
+		DoRectMappingConvertMotion(prmc, ge, chars, hFont);
+		delete prmc;
+		break;
+	case VTurnOverMotion:
+		prmc = new CVTurnOverRectMappingConverter();
+		DoRectMappingConvertMotion(prmc, ge, chars, hFont);
+		delete prmc;
+		break;
+	case RollingMotion:
+		prmc = new CRollingRectMappingConverter();
+		DoRectMappingConvertMotion(prmc, ge, chars, hFont);
+		delete prmc;
+		break;
+	case WobblyMotion:
+		prmc = new CWobblyRectMappingConverter();
+		DoRectMappingConvertMotion(prmc, ge, chars, hFont);
+		delete prmc;
 		break;
 	}
 }
@@ -429,8 +450,13 @@ int exsize = 0, esize = 0;
 	rc.top = y;
 	rc.right = x + size.cx + exsize;
 	rc.bottom = y + size.cy + exsize;
-	rectTransformMethods[m_Shape](lpData, width, height, rc, m_Transparent);
-	Sizing(lpData, chars, charIndex, width, height, rc, m_Transparent);
+	DIB32COLOR trans = RGB2DIB(m_Transparent);
+	rectTransformMethods[m_Shape](lpData, width, height, rc, trans);
+	Sizing(lpData, chars, charIndex, width, height, rc, trans);
+	if (m_Shape || m_Sizing)
+	{
+		AntiAliasing(lpData, width, height, rc, trans);
+	}
 	rc.left = x;
 	rc.top = y;
 	rc.right = x + size.cx + esize;
@@ -463,7 +489,7 @@ void CGifFont::DoDisappearingMotion(CGifEncoder& ge, vector<string>& chars, HFON
 	CBrush brush;
 	brush.CreateSolidBrush(GetTransparent());
 	lpData0 = lpData;
-	DIB32COLOR clr, trans = DIB32RGB(GetRValue(m_Transparent), GetGValue(m_Transparent), GetBValue(m_Transparent));
+	DIB32COLOR clr, trans = RGB2DIB(m_Transparent);
 	CDCHandle dcScreen = GetDC(NULL);
 	for (int i=0; i<fc2; i++)
 	{
@@ -553,7 +579,7 @@ void CGifFont::DoShakeMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFon
 
 void CGifFont::DoSnowMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
-	DIB32COLOR clr, trans = DIB32RGB(GetRValue(m_Transparent), GetGValue(m_Transparent), GetBValue(m_Transparent));
+	DIB32COLOR clr, trans = RGB2DIB(m_Transparent);
 	LPBYTE lpData = NULL;
 	RECT rc;
 	HBITMAP hBm = GetOrignalBitmap(chars, hFont, lpData, rc);
@@ -683,6 +709,7 @@ void CGifFont::DoSharpenMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFo
 
 void CGifFont::DoSizingMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 {
+	DIB32COLOR trans = RGB2DIB(m_Transparent);
 	LPBYTE lpData = NULL;
 	RECT rc, *rs = new RECT[chars.size()];
 	HBITMAP hBm = GetOrignalBitmap(chars, hFont, lpData, rc, rs);
@@ -724,11 +751,11 @@ void CGifFont::DoSizingMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFo
 			vt = (VAlignType)(rand()%3);
 		for (int i=0; i<fc2; i++)
 		{
-			SizingConvert(lpDatas[i], w, h, rs[index], 1 - (double)((i)%fc2)/(double)fc2, at, vt, m_Transparent);
+			SizingConvert(lpDatas[i], w, h, rs[index], 1 - (double)((i)%fc2)/(double)fc2, at, vt, trans);
 		}
 		for (int i=fc2; i<fc; i++)
 		{
-			SizingConvert(lpDatas[i], w, h, rs[index], (double)((i)%fc2)/(double)fc2, at, vt, m_Transparent);
+			SizingConvert(lpDatas[i], w, h, rs[index], (double)((i)%fc2)/(double)fc2, at, vt, trans);
 		}
 	}
 
@@ -745,3 +772,37 @@ void CGifFont::DoSizingMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFo
 
 
 
+void CGifFont::DoRectMappingConvertMotion(CRectMappingConverter* prmc, CGifEncoder& ge, vector<string>& chars, HFONT hFont)
+{
+	DIB32COLOR clr, trans = RGB2DIB(m_Transparent);
+	LPBYTE lpData = NULL;
+	RECT rc, *rs = new RECT[chars.size()];
+	HBITMAP hBm = GetOrignalBitmap(chars, hFont, lpData, rc, rs);
+	int w = rc.right-rc.left, h = rc.bottom-rc.top;
+	int buffersize = w*h;
+	int fc = GetFramesCount();
+	if (fc<4)
+	{
+		fc = 4;
+	}
+	double fc1 = (double)(fc-1);
+
+	CDCHandle dcScreen = GetDC(NULL);
+	CDC dc;dc.CreateCompatibleDC(dcScreen);
+	LPBYTE lpData1 = NULL;
+	HBITMAP hBm1 = CreateDIB(dc, w, h, lpData1);
+	for (int i=0; i<fc; i++)
+	{
+		prmc->m_Pos = (double)i/fc1;
+		FillDib32Color(lpData1, w, h, trans);
+		for (int index=chars.size()-1; index>=0; index--)
+		{
+			prmc->RectConvert(lpData, lpData1, w, h, rs[index], trans);
+		}
+		ge.AddFrame(hBm1);
+	}
+	DeleteObject(hBm1);
+	DeleteObject(hBm);
+
+	::ReleaseDC(NULL,dcScreen.m_hDC);
+}
