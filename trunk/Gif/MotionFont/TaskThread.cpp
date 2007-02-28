@@ -130,7 +130,7 @@ void CTaskThread::Work()
 				catch (...)
 				{
 				}
-				delete pt;
+				SetEvent(_hEvent);
 			}
 		}
 	}
