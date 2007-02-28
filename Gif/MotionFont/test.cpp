@@ -2,6 +2,7 @@
 #include "GifFont.h"
 #include "GifDecoder.h"
 #include "TaskThread.h"
+#include <MMSystem.h>
 
 HBITMAP LoadPictureFile(LPCTSTR pszFile)
 {
@@ -196,7 +197,12 @@ class CTestTask : public CTask
 	int id;
 public:
 	CTestTask(int id){this->id = id;};
-	virtual void Process(){printf("task[%d] try\n", id);Sleep(1000); printf("task[%d] done\n", id);};
+	virtual void Process(){
+		printf("task[%d] try\n", id);
+		DWORD dw = 800000000;
+		while (--dw);
+		//Sleep(1000); 
+		printf("task[%d] done\n", id);};
 };
 int main(int argc ,char * argv[])
 {
@@ -339,28 +345,28 @@ int main(int argc ,char * argv[])
 	//g.Generate(file, text, font);
 
 	CStackTaskThread qtt;
-	qtt.Create();
-	//for (int i=0; i<10; i++)
-	//{
-	//	qtt.PushTask(new CTestTask(i));
-	//}
-	//printf("Task arranged\n");
-	//Sleep(5500);
-	//printf("clear try\n");
-	//qtt.Clear();
-	//printf("clear done\n");
-	//Sleep(6000);
-	//printf("Exit\n");
-
-	for (int i=0; i<30; i++)
+	for (int i=0; i<10; i++)
 	{
 		qtt.PushTask(new CTestTask(i));
-		printf("task[%d] pushed\n", i);
-		Sleep(((rand()%20)+1)*100);
 	}
 	printf("Task arranged\n");
-	Sleep(30000);
+	qtt.Create();
+	Sleep(5500);
+	printf("clear try\n");
+	qtt.Clear();
+	printf("clear done\n");
+	Sleep(6000);
 	printf("Exit\n");
+
+	//for (int i=0; i<30; i++)
+	//{
+	//	qtt.PushTask(new CTestTask(i));
+	//	printf("task[%d] pushed\n", i);
+	//	Sleep(((rand()%20)+1)*100);
+	//}
+	//printf("Task arranged\n");
+	//Sleep(30000);
+	//printf("Exit\n");
 
 
 //CGifEncoder age;

@@ -23,6 +23,7 @@ bool CTaskThread::Create(int priority)
 	if( _hThread && _hEvent )
 	{
 		_fStop = false;
+		SetEvent(_hEvent);
 	}
 	return !_fStop;
 }
@@ -44,7 +45,7 @@ void CTaskThread::Stop()
 void CTaskThread::Clear()
 {
 	m_csListLock.Lock();
-	for (int i=_tasks.size(); i>0; i--)
+	while(_tasks.size())
 	{
 		CTask* pt = _tasks.front();
 		_tasks.pop_front();
@@ -58,8 +59,8 @@ void CTaskThread::PushTask(CTask* task)
 }
 void CTaskThread::PushTaskFront(CTask* task)
 {
-	if( _fStop )
-		return;
+	//if( _fStop )
+	//	return;
 	BOOL bOK = TRUE;
 	m_csListLock.Lock();
 	try
@@ -78,8 +79,8 @@ void CTaskThread::PushTaskFront(CTask* task)
 }
 void CTaskThread::PushTaskBack(CTask* task)
 {
-	if( _fStop )
-		return;
+	//if( _fStop )
+	//	return;
 	BOOL bOK = TRUE;
 	m_csListLock.Lock();
 	try
@@ -98,7 +99,7 @@ void CTaskThread::PushTaskBack(CTask* task)
 }
 void CTaskThread::Work()
 {
-	while( true )
+	while( true ) 
 	{
 		DWORD dwret = WaitForSingleObject( _hEvent, INFINITE );
 		if( dwret == WAIT_OBJECT_0)
