@@ -298,7 +298,7 @@ bool DisappearingMFont(string filename, string text, HFONT hFont, COLORREF trans
 
 	DrawTextWithOuter(dc, text, size, 0, 0, primaryClr, secondaryClr);
 
-	DIB32COLOR clr, trans = DIB32RGB(GetRValue(transparent), GetGValue(transparent), GetBValue(transparent));
+	DIB32COLOR clr, trans = RGB2DIB(transparent);
 
 
 	for (int i=0,d=1; i<4; i++, d<<=1)
@@ -385,7 +385,7 @@ bool EllipseMFont(string filename, string text, HFONT hFont, COLORREF transparen
 	brush.CreateSolidBrush(transparent);
 	dc.FillRect(&r, brush);
 
-	DIB32COLOR trans = DIB32RGB(GetRValue(transparent), GetGValue(transparent), GetBValue(transparent));
+	DIB32COLOR trans = RGB2DIB(transparent);
 	int x = 0;
 	for (int j=0; j<len; )
 	{
@@ -453,7 +453,7 @@ bool TriangleMFont(string filename, string text, HFONT hFont, COLORREF transpare
 	brush.CreateSolidBrush(transparent);
 	dc.FillRect(&r, brush);
 
-	DIB32COLOR trans = DIB32RGB(GetRValue(transparent), GetGValue(transparent), GetBValue(transparent));
+	DIB32COLOR trans = RGB2DIB(transparent);
 	int x = 0;
 	for (int j=0; j<len; )
 	{
@@ -648,7 +648,7 @@ bool QuadrelScrollMFont(string filename, string text, HFONT hFont, COLORREF tran
 	size.cx+=2;
 	size.cy+=2;
 
-	DIB32COLOR clr, trans = DIB32RGB(GetRValue(transparent), GetGValue(transparent), GetBValue(transparent));
+	DIB32COLOR clr, trans = RGB2DIB(transparent);
 
 	for (double pos = 0; pos<=1; pos+=.1)
 	{

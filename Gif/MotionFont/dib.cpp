@@ -6,6 +6,14 @@ inline DIB32COLOR GetAvg(int r, int g, int b, int n)
 	int n2 = n/2;
 	return DIB32RGB((r+n2)/n, (g+n2)/n, (b+n2)/n);
 }
+void FillDib32Color(LPBYTE lpData, int cx, int cy, DIB32COLOR clr)
+{
+	DIB32COLOR * pClr = (DIB32COLOR*)lpData;
+	for (int i=cx*cy-1; i>=0; i--)
+	{
+		pClr[i] = clr;
+	}
+}
 
 HBITMAP CreateDIB(HDC hdc,int cx,int cy, LPBYTE &lpData)
 {
@@ -32,7 +40,7 @@ void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, const int mat
 }
 void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, RECT& rc, const int m[3][3])
 {
-	int base = 0, base2;
+	int base, base2;
 	base = m[0][0]+m[0][1]+m[0][2]+m[1][0]+m[1][1]+m[1][2]+m[2][0]+m[2][1]+m[2][2];
 	if (base == 0)
 	{
@@ -96,6 +104,108 @@ void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, RECT& rc, con
 			CHECKRANGE(g, 0, 255);
 			CHECKRANGE(b, 0, 255);
 			DIBPixel(lpDataDst, x, y, cx, cy) = DIB32RGB(r,g,b);
+		}
+	}
+}
+void AntiAliasing(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR bgColor)
+{
+	const int m[3][3] = {{1,1,1}, {1,1,1}, {1,1,1}};
+	int base, base2, n4;
+	base = m[0][0]+m[0][1]+m[0][2]+m[1][0]+m[1][1]+m[1][2]+m[2][0]+m[2][1]+m[2][2];
+	if (base == 0)
+	{
+		return;
+	}
+	int right1 =rc.right-1, bottom1 = rc.bottom-1;
+	for (int x=rc.left; x<=right1; x++)
+	{
+		for (int y=rc.top; y<=bottom1; y++)
+		{
+#define  ISBG(x, y) (DIBPixel(lpData, x, y, cx, cy) == bgColor)
+			if (ISBG(x, y))
+			{
+				BOOL istop = y == 0, isbottom = y == bottom1;
+				n4 = -1;
+				if (x!=0 && !ISBG(x-1,y))
+				{
+					n4++;
+				}
+				if (x!=right1 &&!ISBG(x+1,y))
+				{
+					n4++;
+				}
+				if (!istop && !ISBG(x,y-1))
+				{
+					n4++;
+				}
+				if (!isbottom && !ISBG(x,y+1))
+				{
+					n4++;
+				}
+#undef ISBG
+				if (n4<=0)
+				{
+					continue;
+				}
+
+				int r = 0, g = 0, b = 0, base = 0;
+				DIB32COLOR rgb;
+#define ADD(x, y, f, rgb)\
+	r += f*GetR(rgb);\
+	g += f*GetG(rgb);\
+	b += f*GetB(rgb);\
+	base += f;
+
+#define ADDRGB(x, y, f) \
+	rgb = DIBPixel(lpData, x, y, cx, cy);\
+	ADD(x, y, f, rgb)
+
+				if (x != 0)
+				{
+					if (!istop)
+					{
+						ADDRGB(x-1, y-1,m[0][0]);
+					}
+					ADDRGB(x-1,y, m[0][1]);
+					if (!isbottom)
+					{
+						ADDRGB(x-1,y+1,m[0][2]);
+					}
+				}
+				if (!istop)
+				{
+					ADDRGB(x,y-1,m[1][0]);
+				}
+				//ADDRGB(x,y,m[1][1]);
+				ADD(x, y, m[1][1], bgColor);
+				if (!isbottom)
+				{
+					ADDRGB(x,y+1,m[1][2])
+				}
+				if (x != right1)
+				{
+					if (!istop)
+					{
+						ADDRGB(x+1, y-1,m[2][0]);
+					}
+					ADDRGB(x+1,y, m[2][1]);
+					if (!isbottom)
+					{
+						ADDRGB(x+1,y+1,m[2][2]);
+					}
+				}
+#undef ADDRGB
+#undef ADD
+				base2 = (base+1)/2;
+				r = (r+base2)/base;
+				g = (g+base2)/base;
+				b = (b+base2)/base;
+
+				CHECKRANGE(r, 0, 255);
+				CHECKRANGE(g, 0, 255);
+				CHECKRANGE(b, 0, 255);
+				DIBPixel(lpData, x, y, cx, cy) = DIB32RGB(r,g,b);
+			}
 		}
 	}
 }
