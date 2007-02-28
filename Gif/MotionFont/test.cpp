@@ -1,6 +1,7 @@
 #include "MotionFonts.h"
 #include "GifFont.h"
 #include "GifDecoder.h"
+#include "TaskThread.h"
 
 HBITMAP LoadPictureFile(LPCTSTR pszFile)
 {
@@ -190,7 +191,13 @@ BOOL SaveBmp(HBITMAP hBitmap , LPTSTR szFile)
 	CloseHandle(fh);
 	return TRUE;
 }
-
+class CTestTask : public CTask
+{
+	int id;
+public:
+	CTestTask(int id){this->id = id;};
+	virtual void Process(){printf("task[%d] try\n", id);Sleep(1000); printf("task[%d] done\n", id);};
+};
 int main(int argc ,char * argv[])
 {
 	//if(argc!=12)
@@ -304,34 +311,57 @@ int main(int argc ,char * argv[])
 
 //19 font size
 //20 font family
-	string file = argv[1], text = argv[2];
+	//string file = argv[1], text = argv[2];
 
-	CGifFont g;
-	g.SetFontColor(atoi(argv[3]));
-	g.SetTransparent(atoi(argv[4]));
-	g.SetQuality(atoi(argv[5]));
-	g.SetFramesCount(atoi(argv[6]));
-	g.SetInterval(atoi(argv[7]));
-	g.SetHasEdge(atoi(argv[8]));
-	g.SetEdgeColor(atoi(argv[9]));
-	g.SetHasShadow(atoi(argv[10]));
-	g.SetShadowColor(atoi(argv[11]));
-	g.SetShadowDis(atoi(argv[12]));
-	g.SetSizing((CGifFont::SizingType)atoi(argv[13]));
-	g.SetSizingAlign((CGifFont::AlignType)atoi(argv[14]));
-	g.SetSizingVAlign((CGifFont::VAlignType)atoi(argv[15]));
-	g.SetSizingProportion(atof(argv[16]));
-	g.SetShape((CGifFont::ShapeType)atoi(argv[17]));
-	g.SetMotion((CGifFont::MotionType)atoi(argv[18]));
+	//CGifFont g;
+	//g.SetFontColor(atoi(argv[3]));
+	//g.SetTransparent(atoi(argv[4]));
+	//g.SetQuality(atoi(argv[5]));
+	//g.SetFramesCount(atoi(argv[6]));
+	//g.SetInterval(atoi(argv[7]));
+	//g.SetHasEdge(atoi(argv[8]));
+	//g.SetEdgeColor(atoi(argv[9]));
+	//g.SetHasShadow(atoi(argv[10]));
+	//g.SetShadowColor(atoi(argv[11]));
+	//g.SetShadowDis(atoi(argv[12]));
+	//g.SetSizing((CGifFont::SizingType)atoi(argv[13]));
+	//g.SetSizingAlign((CGifFont::AlignType)atoi(argv[14]));
+	//g.SetSizingVAlign((CGifFont::VAlignType)atoi(argv[15]));
+	//g.SetSizingProportion(atof(argv[16]));
+	//g.SetShape((CGifFont::ShapeType)atoi(argv[17]));
+	//g.SetMotion((CGifFont::MotionType)atoi(argv[18]));
 
-	string s = g.GetParamsString();
-	g.SetParamsString(s);
+	//string s = g.GetParamsString();
+	//g.SetParamsString(s);
 
-	CFont font;
-	font.CreatePointFont(atoi(argv[19])*10, _T(argv[20]));
-	g.Generate(file, text, font);
+	//CFont font;
+	//font.CreatePointFont(atoi(argv[19])*10, _T(argv[20]));
+	//g.Generate(file, text, font);
 
-	
+	CStackTaskThread qtt;
+	qtt.Create();
+	//for (int i=0; i<10; i++)
+	//{
+	//	qtt.PushTask(new CTestTask(i));
+	//}
+	//printf("Task arranged\n");
+	//Sleep(5500);
+	//printf("clear try\n");
+	//qtt.Clear();
+	//printf("clear done\n");
+	//Sleep(6000);
+	//printf("Exit\n");
+
+	for (int i=0; i<30; i++)
+	{
+		qtt.PushTask(new CTestTask(i));
+		printf("task[%d] pushed\n", i);
+		Sleep(((rand()%20)+1)*100);
+	}
+	printf("Task arranged\n");
+	Sleep(30000);
+	printf("Exit\n");
+
 
 //CGifEncoder age;
 //	CGifDecoder gd;

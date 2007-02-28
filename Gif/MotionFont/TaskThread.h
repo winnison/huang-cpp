@@ -34,6 +34,7 @@ private:
 class CQueueTaskThread :
 	public CTaskThread
 {
+public:
 	virtual void PushTask( CTask* task)
 	{
 		PushTaskBack(task);
