@@ -1,5 +1,8 @@
 #include "dib.h"
+#include <vector>
+#include <utility>
 
+using namespace std;
 
 inline DIB32COLOR GetAvg(int r, int g, int b, int n)
 {
@@ -109,14 +112,9 @@ void Transform(LPBYTE lpDataSrc, LPBYTE lpDataDst, int cx, int cy, RECT& rc, con
 }
 void AntiAliasing(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR bgColor)
 {
-	const int m[3][3] = {{1,1,1}, {1,1,1}, {1,1,1}};
-	int base, base2, n4;
-	base = m[0][0]+m[0][1]+m[0][2]+m[1][0]+m[1][1]+m[1][2]+m[2][0]+m[2][1]+m[2][2];
-	if (base == 0)
-	{
-		return;
-	}
 	int right1 =rc.right-1, bottom1 = rc.bottom-1;
+	DIB32COLOR rgb;
+	vector<pair< pair<int, int>, DIB32COLOR> > vcList;
 	for (int x=rc.left; x<=right1; x++)
 	{
 		for (int y=rc.top; y<=bottom1; y++)
@@ -124,78 +122,59 @@ void AntiAliasing(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR bgColor)
 #define  ISBG(x, y) (DIBPixel(lpData, x, y, cx, cy) == bgColor)
 			if (ISBG(x, y))
 			{
-				BOOL istop = y == 0, isbottom = y == bottom1;
-				n4 = -1;
-				if (x!=0 && !ISBG(x-1,y))
+				int r = 0, g = 0, b = 0, base = 0, n4 = -1, base2;
+				if (x!=0 &&!ISBG(x-1,y))
 				{
 					n4++;
 				}
-				if (x!=right1 &&!ISBG(x+1,y))
+				if (x!=right1 && !ISBG(x+1,y))
 				{
 					n4++;
 				}
-				if (!istop && !ISBG(x,y-1))
+				if (y!=0 && !ISBG(x,y-1))
 				{
 					n4++;
 				}
-				if (!isbottom && !ISBG(x,y+1))
+				if (y!=bottom1 && !ISBG(x,y+1))
 				{
 					n4++;
 				}
-#undef ISBG
 				if (n4<=0)
 				{
 					continue;
 				}
+#undef ISBG
 
-				int r = 0, g = 0, b = 0, base = 0;
-				DIB32COLOR rgb;
-#define ADD(x, y, f, rgb)\
+#define ADD(x,y,rgb,f)\
 	r += f*GetR(rgb);\
 	g += f*GetG(rgb);\
 	b += f*GetB(rgb);\
-	base += f;
+	base ++;
 
-#define ADDRGB(x, y, f) \
+#define ADDRGB(x, y) \
 	rgb = DIBPixel(lpData, x, y, cx, cy);\
-	ADD(x, y, f, rgb)
+	ADD(x,y,rgb,1);
+				if (x!=0)
+				{
+					ADDRGB(x-1,y);
+				}
+				if (x!=right1)
+				{
+					ADDRGB(x+1,y);
+				}
+				if (y!=0)
+				{
+					ADDRGB(x,y-1);
+				}
+				if (y!=bottom1)
+				{
+					ADDRGB(x,y+1);
+				}
+				ADD(x,y,bgColor,2);
 
-				if (x != 0)
-				{
-					if (!istop)
-					{
-						ADDRGB(x-1, y-1,m[0][0]);
-					}
-					ADDRGB(x-1,y, m[0][1]);
-					if (!isbottom)
-					{
-						ADDRGB(x-1,y+1,m[0][2]);
-					}
-				}
-				if (!istop)
-				{
-					ADDRGB(x,y-1,m[1][0]);
-				}
-				//ADDRGB(x,y,m[1][1]);
-				ADD(x, y, m[1][1], bgColor);
-				if (!isbottom)
-				{
-					ADDRGB(x,y+1,m[1][2])
-				}
-				if (x != right1)
-				{
-					if (!istop)
-					{
-						ADDRGB(x+1, y-1,m[2][0]);
-					}
-					ADDRGB(x+1,y, m[2][1]);
-					if (!isbottom)
-					{
-						ADDRGB(x+1,y+1,m[2][2]);
-					}
-				}
 #undef ADDRGB
 #undef ADD
+
 				base2 = (base+1)/2;
 				r = (r+base2)/base;
 				g = (g+base2)/base;
@@ -204,9 +183,14 @@ void AntiAliasing(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR bgColor)
 				CHECKRANGE(r, 0, 255);
 				CHECKRANGE(g, 0, 255);
 				CHECKRANGE(b, 0, 255);
-				DIBPixel(lpData, x, y, cx, cy) = DIB32RGB(r,g,b);
+				vcList.push_back(make_pair(make_pair(x, y), DIB32RGB(r,g,b)));
 			}
 		}
+	}
+	for (int i=vcList.size()-1; i>=0; i--)
+	{
+		pair< pair<int, int>, DIB32COLOR>  *p = &vcList[i];
+		DIBPixel(lpData, p->first.first, p->first.second, cx, cy) = p->second;
 	}
 }
 void RectToEllipse(LPBYTE lpData, int cx, int cy, RECT& rc, DIB32COLOR trans)

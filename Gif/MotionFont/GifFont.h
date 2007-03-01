@@ -103,6 +103,6 @@ protected:
 	void DoBluringMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DoSharpenMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
 	void DoSizingMotion(CGifEncoder& ge, vector<string>& chars, HFONT hFont);
-	void DoRectMappingConvertMotion(CRectMappingConverter* prmc, CGifEncoder& ge, vector<string>& chars, HFONT hFont);
+	void DoRectMappingConvertMotion(CRectMappingConverter* prmc, CGifEncoder& ge, vector<string>& chars, HFONT hFont, bool bAntiAliasing = false);
 };
 

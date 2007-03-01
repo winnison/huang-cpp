@@ -150,14 +150,7 @@ void CGifFont::GetOrignalSize(CDC& dc, vector<string>& chars, int& w, int& h)
 	if (m_HasShadow)
 	{
 		h += m_ShadowDis+2;
-		if (m_HasEdge)
-		{
-			w += chars.size()*2+m_ShadowDis;
-		}
-		else
-		{
-			w += m_ShadowDis+2;
-		}
+		w += chars.size()*(2+m_ShadowDis);
 	}
 	else if (m_HasEdge)
 	{
@@ -238,12 +231,12 @@ void CGifFont::AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 		break;
 	case RollingMotion:
 		prmc = new CRollingRectMappingConverter();
-		DoRectMappingConvertMotion(prmc, ge, chars, hFont);
+		DoRectMappingConvertMotion(prmc, ge, chars, hFont, true);
 		delete prmc;
 		break;
 	case WobblyMotion:
 		prmc = new CWobblyRectMappingConverter();
-		DoRectMappingConvertMotion(prmc, ge, chars, hFont);
+		DoRectMappingConvertMotion(prmc, ge, chars, hFont, true);
 		delete prmc;
 		break;
 	}
@@ -457,10 +450,10 @@ int exsize = 0, esize = 0;
 	{
 		AntiAliasing(lpData, width, height, rc, trans);
 	}
-	rc.left = x;
-	rc.top = y;
-	rc.right = x + size.cx + esize;
-	rc.bottom = y + size.cy + esize;
+	//rc.left = x;
+	//rc.top = y;
+	//rc.right = x + size.cx + esize;
+	//rc.bottom = y + size.cy + esize;
 	return rc;
 }
 
@@ -733,16 +726,16 @@ void CGifFont::DoSizingMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFo
 	for (int index=chars.size()-1; index>=0; index--)
 	{
 		
-		if (m_HasShadow)
-		{
-			rs[index].right += m_ShadowDis;
-			rs[index].bottom += m_ShadowDis;
-			if (!m_HasEdge)
-			{
-				rs[index].right += 2;
-				rs[index].bottom += 2;
-			}
-		}
+		//if (m_HasShadow)
+		//{
+		//	rs[index].right += m_ShadowDis;
+		//	rs[index].bottom += m_ShadowDis;
+		//	if (!m_HasEdge)
+		//	{
+		//		rs[index].right += 2;
+		//		rs[index].bottom += 2;
+		//	}
+		//}
 		AlignType at = m_SizingAlign;
 		VAlignType vt = m_SizingVAlign;
 		if (at<0)
@@ -772,7 +765,7 @@ void CGifFont::DoSizingMotion( CGifEncoder& ge, vector<string>& chars, HFONT hFo
 
 
 
-void CGifFont::DoRectMappingConvertMotion(CRectMappingConverter* prmc, CGifEncoder& ge, vector<string>& chars, HFONT hFont)
+void CGifFont::DoRectMappingConvertMotion(CRectMappingConverter* prmc, CGifEncoder& ge, vector<string>& chars, HFONT hFont, bool bAntiAliasing)
 {
 	DIB32COLOR clr, trans = RGB2DIB(m_Transparent);
 	LPBYTE lpData = NULL;
@@ -798,6 +791,10 @@ void CGifFont::DoRectMappingConvertMotion(CRectMappingConverter* prmc, CGifEncod
 		for (int index=chars.size()-1; index>=0; index--)
 		{
 			prmc->RectConvert(lpData, lpData1, w, h, rs[index], trans);
+		}
+		if (bAntiAliasing)
+		{
+			AntiAliasing(lpData1, w, h, rc, trans);
 		}
 		ge.AddFrame(hBm1);
 	}
