@@ -77,7 +77,6 @@ void CRollingRectMappingConverter::Map(double& x, double& y)
 	x-=0.5;
 	y-=0.5;
 	XY2Pie(x, y, a, r);
-	r/=1.3;
 	Pie2XY((M_PI*2)*m_Pos+a, r, x, y);
 	x+=0.5;
 	y+=0.5;
@@ -92,7 +91,6 @@ void CWobblyRectMappingConverter::Map(double& x, double& y)
 	x-=0.5;
 	y-=0.5;
 	XY2Pie(x, y, a, r);
-	r/=1.3;
 	Pie2XY((M_PI*(p-0.25))+a, r, x, y);
 	x+=0.5;
 	y+=0.5;
