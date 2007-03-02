@@ -79,7 +79,7 @@ public:
 		CPaintDC dc(m_hWnd);
 		CRect rc;
 		GetClientRect(&rc);
-		dc.FillSolidRect(&rc, 0xffffff);
+		//dc.FillSolidRect(&rc, 0xffffff);
 		//rc.left += 10;
 		//rc.top += 10;
 
