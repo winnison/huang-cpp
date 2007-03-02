@@ -22,7 +22,7 @@ class CGifFont
 	BEAN(BOOL, HasEdge);
 	BEAN(COLORREF, EdgeColor);
 	//Shadow
-	BEAN(UINT, HasShadow);
+	BEAN(BOOL, HasShadow);
 	BEAN(COLORREF, ShadowColor);
 	BEAN(UINT, ShadowDis);
 
