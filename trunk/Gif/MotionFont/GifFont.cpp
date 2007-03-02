@@ -22,19 +22,19 @@ inline void GetChars(vector<string>& chars, string& text)
 	}
 }
 	/*
-	0	个性化字体版本号			％d		
+	0	个性化字体版本号			%d		
 	-	透明色					无					客户端背景不同有	
-	1	画质						％d		
-	2	帧数						％d		
-	3	帧间隔时间				％d					单位：ms	
-	4	边缘颜色					％d										负值表示没有边缘
-	5	阴影颜色					％d										负值表示没有阴影
-	6	阴影距离					％d		
-	7	变换大小规则				％d		
-	8	变换大小比例				％d					单位：1％	
-	9	变换大小单字对齐			％d %d									负值表示随机
-	10	字体形状					％d		
-	11	字体动画					％d		
+	1	画质						%d		
+	2	帧数						%d		
+	3	帧间隔时间				%d					单位：ms	
+	4	边缘颜色					%d										负值表示没有边缘
+	5	阴影颜色					%d										负值表示没有阴影
+	6	阴影距离					%d		
+	7	变换大小规则				%d		
+	8	变换大小比例				%d					单位：1%	
+	9	变换大小单字对齐			%d %d									负值表示随机
+	10	字体形状					%d		
+	11	字体动画					%d		
 	*/
 
 string CGifFont::GetParamsString()
@@ -50,8 +50,8 @@ string CGifFont::GetParamsString()
 	ADD(m_Quality);
 	ADD(m_FramesCount);
 	ADD(m_Interval);
-	ADD(m_HasEdge?m_EdgeColor:-1);
-	ADD(m_HasShadow?m_ShadowColor:-1);
+	ADD(m_HasEdge?(m_EdgeColor&0x00ffffff):-1);
+	ADD(m_HasShadow?(m_ShadowColor&0x00ffffff):-1);
 	ADD(m_ShadowDis);
 	ADD(m_Sizing);
 	ADD(0.5+m_SizingProportion*100);

@@ -1,7 +1,7 @@
 #include <atlbase.h>
 #include <atlapp.h>
 #include <atlgdi.h>
-#include <atltypes.h>
+#include <atlmisc.h>
 
 #define EMPTYCOLOR 0xffffffff
 #define NETSIZE 256
