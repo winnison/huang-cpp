@@ -96,17 +96,17 @@ public:
 		CPen pen;
 		pen.CreatePen(PS_SOLID, 1, 0xe0e0e0);
 		dc.SelectPen(pen);
-		for (int i=1, y = y1+(cellSize1); i<rowCount; i++)
+		for (int i=0, y = y1; i<=rowCount; i++)
 		{
 			dc.MoveTo(x1, y);
 			dc.LineTo(x2, y);
-			y += cellSize+1;
+			y += cellSize1;
 		}
-		for (int i=1, x = x1+(cellSize1); i<colCount; i++)
+		for (int i=0, x = x1; i<=colCount; i++)
 		{
 			dc.MoveTo(x, y1);
 			dc.LineTo(x, y2);
-			x += cellSize+1;
+			x += cellSize1;
 		}
 		for(int i = 0;i < rowCount;i++)
 		{
@@ -124,7 +124,7 @@ public:
 		ScreenToClient(&pos);
 		pos.y = pos.y/cellSize1*cellSize1;
 		pos.x = pos.x/cellSize1*cellSize1;
-		dc.Draw3dRect(pos.x, pos.y, cellSize1, cellSize1, 0x808080, 0x808080);
+		dc.Draw3dRect(pos.x, pos.y, cellSize+2, cellSize+2, 0x808080, 0x808080);
 		dcMem.SelectBitmap(hBmpOld);
 		return 1;
 	}
