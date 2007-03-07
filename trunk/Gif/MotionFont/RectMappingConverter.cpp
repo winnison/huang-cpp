@@ -95,3 +95,29 @@ void CWobblyRectMappingConverter::Map(double& x, double& y)
 	x+=0.5;
 	y+=0.5;
 }
+
+void CJumperRectMappingConverter::Map(double& x, double& y)
+{
+	double r, a, p = m_Pos+0.75;
+	if (p>1)
+	{
+		p-=1;
+	}
+	if (p<0.5)
+	{
+		p=abs(p-0.25)+0.25;
+		y=(y-1)*p+1;
+		x=(x-0.5)/p/4+0.5;
+	}
+	else
+	{
+		x=(x-0.5)*0.5;
+		y=(y-0.5)*0.5;
+		p = 2*p-1;
+		XY2Pie(x, y, a, r);
+		Pie2XY((M_PI*2)*p+a, r, x, y);
+		x+=0.5;
+
+		y+=0.25+abs(p-0.5);
+	}
+}
