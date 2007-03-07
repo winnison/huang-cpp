@@ -317,55 +317,55 @@ int main(int argc ,char * argv[])
 
 //19 font size
 //20 font family
-	//string file = argv[1], text = argv[2];
+	string file = argv[1], text = argv[2];
 
-	//CGifFont g;
-	//g.SetFontColor(atoi(argv[3]));
-	//g.SetTransparent(atoi(argv[4]));
-	//g.SetQuality(atoi(argv[5]));
-	//g.SetFramesCount(atoi(argv[6]));
-	//g.SetInterval(atoi(argv[7]));
-	//g.SetHasEdge(atoi(argv[8]));
-	//g.SetEdgeColor(atoi(argv[9]));
-	//g.SetHasShadow(atoi(argv[10]));
-	//g.SetShadowColor(atoi(argv[11]));
-	//g.SetShadowDis(atoi(argv[12]));
-	//g.SetSizing((CGifFont::SizingType)atoi(argv[13]));
-	//g.SetSizingAlign((CGifFont::AlignType)atoi(argv[14]));
-	//g.SetSizingVAlign((CGifFont::VAlignType)atoi(argv[15]));
-	//g.SetSizingProportion(atof(argv[16]));
-	//g.SetShape((CGifFont::ShapeType)atoi(argv[17]));
-	//g.SetMotion((CGifFont::MotionType)atoi(argv[18]));
-
-	////string s = g.GetParamsString();
-	////g.SetParamsString(s);
-
-	//CFont font;
-	//font.CreatePointFont(atoi(argv[19])*10, _T(argv[20]));
-	//g.Generate(file, text, font);
-
-char chs[3];
-	CFont font;
-	font.CreatePointFont(200, "ÀŒÃÂ");
 	CGifFont g;
-	string text = _T("÷Ì");
-	g.SetFontColor(0xff0000);
-	g.SetHasShadow(FALSE);
-	g.SetHasEdge(FALSE);
-	for (int i=0; i<11; i++)
-	{
-		for (int j=0; j<8; j++)
-		{
-			string s = _T("");
-			s += itoa(i, chs, 10);
-			s+="_";
-			s += itoa(j, chs, 10);
-			s += ".gif";
-			g.SetMotion((CGifFont::MotionType)i);
-			g.SetShape((CGifFont::ShapeType)j);
-			g.Generate(s, text, font);
-		}
-	}
+	g.SetFontColor(atoi(argv[3]));
+	g.SetTransparent(atoi(argv[4]));
+	g.SetQuality(atoi(argv[5]));
+	g.SetFramesCount(atoi(argv[6]));
+	g.SetInterval(atoi(argv[7]));
+	g.SetHasEdge(atoi(argv[8]));
+	g.SetEdgeColor(atoi(argv[9]));
+	g.SetHasShadow(atoi(argv[10]));
+	g.SetShadowColor(atoi(argv[11]));
+	g.SetShadowDis(atoi(argv[12]));
+	g.SetSizing((CGifFont::SizingType)atoi(argv[13]));
+	g.SetSizingAlign((CGifFont::AlignType)atoi(argv[14]));
+	g.SetSizingVAlign((CGifFont::VAlignType)atoi(argv[15]));
+	g.SetSizingProportion(atof(argv[16]));
+	g.SetShape((CGifFont::ShapeType)atoi(argv[17]));
+	g.SetMotion((CGifFont::MotionType)atoi(argv[18]));
+
+	//string s = g.GetParamsString();
+	//g.SetParamsString(s);
+
+	CFont font;
+	font.CreatePointFont(atoi(argv[19])*10, _T(argv[20]));
+	g.Generate(file, text, font);
+
+//char chs[3];
+//	CFont font;
+//	font.CreatePointFont(200, "ÀŒÃÂ");
+//	CGifFont g;
+//	string text = _T("÷Ì");
+//	g.SetFontColor(0xff0000);
+//	g.SetHasShadow(FALSE);
+//	g.SetHasEdge(FALSE);
+//	for (int i=0; i<11; i++)
+//	{
+//		for (int j=0; j<8; j++)
+//		{
+//			string s = _T("");
+//			s += itoa(i, chs, 10);
+//			s+="_";
+//			s += itoa(j, chs, 10);
+//			s += ".gif";
+//			g.SetMotion((CGifFont::MotionType)i);
+//			g.SetShape((CGifFont::ShapeType)j);
+//			g.Generate(s, text, font);
+//		}
+//	}
 
 	//CStackTaskThread qtt;
 	//for (int i=0; i<10; i++)

@@ -239,6 +239,11 @@ void CGifFont::AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 		DoRectMappingConvertMotion(prmc, ge, chars, hFont, true);
 		delete prmc;
 		break;
+	case JumperMotion:
+		prmc = new CJumperRectMappingConverter();
+		DoRectMappingConvertMotion(prmc, ge, chars, hFont, true);
+		delete prmc;
+		break;
 	}
 }
 void CGifFont::DrawAllChars(CDC& dc, LPBYTE lpData, vector<string>& chars, int x, int y, int width, int height)

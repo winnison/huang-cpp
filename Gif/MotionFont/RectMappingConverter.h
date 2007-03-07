@@ -44,3 +44,9 @@ protected:
 	virtual void Map(double& x, double& y);
 };
 
+class CJumperRectMappingConverter
+	:public CRectMappingConverter
+{
+protected:
+	virtual void Map(double& x, double& y);
+};
