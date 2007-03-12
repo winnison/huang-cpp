@@ -121,3 +121,18 @@ void CJumperRectMappingConverter::Map(double& x, double& y)
 		y+=0.25+abs(p-0.5);
 	}
 }
+void CCircinateRectMappingConverter::Map(double& x, double& y)
+{
+	double p = m_Pos;
+	if (p>0.5)
+	{
+		p = 1-p;
+	}
+	double r, a;
+	x-=0.5;
+	y-=0.5;
+	XY2Pie(x, y, a, r);
+	Pie2XY((M_PI*4)*(p-0.25)*(0.5-r)+a, r, x, y);
+	x+=0.5;
+	y+=0.5;
+}

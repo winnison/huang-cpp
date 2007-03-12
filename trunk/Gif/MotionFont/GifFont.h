@@ -46,8 +46,8 @@ public:
 
 //Motion
 public:
-	enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2, SnowMotion = 3, BluringMotion = 4, SharpenMotion = 5, SizingMotion = 6, HTurnOverMotion = 7, VTurnOverMotion = 8, RollingMotion = 9, WobblyMotion = 10, JumperMotion = 11};
-#define MOTIONCOUNT 12
+	enum MotionType{Nomotion = 0, DisappearingMotion = 1, ShakeMotion = 2, SnowMotion = 3, BluringMotion = 4, SharpenMotion = 5, SizingMotion = 6, HTurnOverMotion = 7, VTurnOverMotion = 8, RollingMotion = 9, WobblyMotion = 10, JumperMotion = 11, CircinateMotion = 12};
+#define MOTIONCOUNT 13
 	BEAN(MotionType, Motion);
 
 	BEAN(int, FramesCount);

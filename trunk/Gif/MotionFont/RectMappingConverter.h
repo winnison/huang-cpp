@@ -50,3 +50,9 @@ class CJumperRectMappingConverter
 protected:
 	virtual void Map(double& x, double& y);
 };
+class CCircinateRectMappingConverter
+	:public CRectMappingConverter
+{
+protected:
+	virtual void Map(double& x, double& y);
+};
