@@ -37,8 +37,8 @@ public:
 //	LRESULT NotifyHandler(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/)
 
 	typedef CGif* CGifRef;
-	CGifRef gfs[11][8];
-	int indecis[11][8];
+	CGifRef gfs[12][8];
+	int indecis[12][8];
 	LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 	{
 		// center the dialog on the screen
@@ -48,7 +48,7 @@ public:
 		CGifDecoder gd;
 		CGif* g;
 		char chs[3];
-		for (int i=0; i<11; i++)
+		for (int i=0; i<12; i++)
 		{
 			for (int j=0; j<8; j++)
 			{
@@ -77,7 +77,7 @@ public:
 	LRESULT OnPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 	{
 		CPaintDC dc(m_hWnd);
-		CRect rc;
+		CRect rc;this->
 		GetClientRect(&rc);
 		//dc.FillSolidRect(&rc, 0xffffff);
 		//rc.left += 10;
@@ -91,7 +91,7 @@ public:
 
 		const int cellSize = 27, cellSize1 = cellSize+1;
 		const int colCount = 8;
-		const int rowCount = 11;
+		const int rowCount = 12;
 		int x1 = rc.left, x2 = x1 + (cellSize+1)*colCount, y1 = rc.top, y2 = y1 + (cellSize+1)*rowCount;
 		CPen pen;
 		pen.CreatePen(PS_SOLID, 1, 0xe0e0e0);
