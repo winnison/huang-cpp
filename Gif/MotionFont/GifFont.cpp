@@ -213,9 +213,9 @@ void CGifFont::AddFrames(CGifEncoder& ge, vector<string>& chars, HFONT hFont)
 	case BluringMotion:
 		DoBluringMotion(ge, chars, hFont);
 		break;
-	case SharpenMotion:
-		DoSharpenMotion(ge, chars, hFont);
-		break;
+	//case SharpenMotion:
+	//	DoSharpenMotion(ge, chars, hFont);
+	//	break;
 	case SizingMotion:
 		DoSizingMotion(ge, chars, hFont);
 		break;
