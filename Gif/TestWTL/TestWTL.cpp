@@ -24,7 +24,7 @@ void GTraceRelease(const char *pszFmt, ...)
 	va_list ptr;
 	va_start(ptr, pszFmt);
 
-	wvsprintf(szBuf,pszFmt,ptr);
+	//wvsprintf(szBuf,pszFmt,ptr);
 	szBuf[nBufSize-1] = 0;	
 	OutputDebugStringA(szBuf);
 

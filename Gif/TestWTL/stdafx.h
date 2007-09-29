@@ -19,3 +19,18 @@ extern CAppModule _Module;
 #include <atlwin.h>
 
 #include <atlmisc.h>
+#include <atlgdi.h>
+
+
+
+
+#include <atlcoll.h>
+
+#define EDIT			8500
+#include <Imm.h>
+#pragma comment(lib, "imm32.lib")
+
+
+#include <vector>
+using namespace std;
+
