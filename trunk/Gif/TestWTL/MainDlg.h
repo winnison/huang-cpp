@@ -2,6 +2,8 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 #include "GifDecoder.h"
+#include "RichEdit.h"
+
 #pragma once
 
 #include "resource.h"
@@ -10,7 +12,7 @@ class CMainDlg : public CDialogImpl<CMainDlg>,
 {
 public:
 	enum { IDD = IDD_MAINDLG };
-
+	CRichEdit m_edit;
 	virtual BOOL PreTranslateMessage(MSG* pMsg)
 	{
 		return CWindow::IsDialogMessage(pMsg);
@@ -25,7 +27,10 @@ public:
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
 		MESSAGE_HANDLER(WM_PAINT, OnPaint)
 		MESSAGE_HANDLER(WM_TIMER,OnTimer)
-		
+		//MESSAGE_HANDLER(WM_LBUTTONDOWN,		OnLButtonDown)
+		//MESSAGE_HANDLER(WM_LBUTTONUP,		OnLButtonUp)
+		//MESSAGE_HANDLER(WM_LBUTTONDBLCLK,	OnLButtonDblClk)
+
 		COMMAND_ID_HANDLER(IDOK, OnOK)
 		COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
 
@@ -35,6 +40,21 @@ public:
 //	LRESULT MessageHandler(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 //	LRESULT CommandHandler(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 //	LRESULT NotifyHandler(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/)
+	//LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	//{
+	//	OutputDebugStringA("OnLButtonDown\n");
+	//	return 1L;
+	//}
+	//LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	//{
+	//	OutputDebugStringA("OnLButtonUp\n");
+	//	return 1L;
+	//}
+	//LRESULT OnLButtonDblClk(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	//{
+	//	OutputDebugStringA("OnLButtonDblClk\n");
+	//	return 1L;
+	//}
 
 	typedef CGif* CGifRef;
 	CGifRef gfs[12][8];
@@ -52,7 +72,7 @@ public:
 		{
 			for (int j=0; j<8; j++)
 			{
-				string s = _T("");
+				string s = "";
 				s += itoa(i, chs, 10);
 				s+="_";
 				s += itoa(j, chs, 10);
@@ -70,6 +90,9 @@ public:
 
 		SetTimer(0,200,NULL);
 
+
+		m_edit.Create(m_hWnd, NULL, NULL,  WS_CHILD | WS_VISIBLE , 0, EDIT);
+		m_edit.MoveWindow(200,200, 100, 100);
 
 		return TRUE;
 	}

@@ -3,7 +3,8 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="TestWTL"
-	ProjectGUID="{7CAE9A72-CA00-4315-89E3-FFA08BF581E8}">
+	ProjectGUID="{7CAE9A72-CA00-4315-89E3-FFA08BF581E8}"
+	RootNamespace="TestWTL">
 	<Platforms>
 		<Platform
 			Name="Win32"/>
@@ -19,10 +20,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG"
+				PreprocessorDefinitions="WIN32;_WINDOWS;STRICT;_DEBUG;_UNICODE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
+				TreatWChar_tAsBuiltInType="TRUE"
 				UsePrecompiledHeader="3"
 				WarningLevel="3"
 				DebugInformationFormat="4"/>
@@ -137,6 +139,12 @@
 				RelativePath=".\maindlg.CPP">
 			</File>
 			<File
+				RelativePath=".\RichEdit.cpp">
+			</File>
+			<File
+				RelativePath=".\RichEditElements.cpp">
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -172,6 +180,12 @@
 			</File>
 			<File
 				RelativePath=".\resource.h">
+			</File>
+			<File
+				RelativePath=".\RichEdit.h">
+			</File>
+			<File
+				RelativePath=".\RichEditElements.h">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">
