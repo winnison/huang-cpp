@@ -188,6 +188,14 @@
 				RelativePath=".\repeat.h"
 				>
 			</File>
+			<File
+				RelativePath=".\repeat1.h"
+				>
+			</File>
+			<File
+				RelativePath=".\repeat2.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
