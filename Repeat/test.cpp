@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "repeat.h"
+#include "repeat1.h"
 using namespace std;
 
 #define SHOW_N(n1) NUMBERN(n1),
@@ -8,40 +9,36 @@ using namespace std;
 #define SHOW_NNN(n1,n2,n3) NUMBERNNN(n1,n2,n3),
 #define SHOW_NNNN(n1,n2,n3,n4) NUMBERNNNN(n1,n2,n3,n4),
 
-#define TYPENAME_DECLARE(n)  typename T##n
-#define ARGUMENT_DECLARE(n)  T##n __arg##n
-#define ARGUMENT_USING(n)  __arg##n
-#define TYPENAME_DECLAREA(n)  typename T##n ,
-#define ARGUMENT_DECLAREA(n)  T##n __arg##n ,
-#define ARGUMENT_USINGA(n)  __arg##n ,
 
-
-#define TYPENAME_DECLARE3(n1,n2,n3)  typename T##n1##n2##n3
-#define ARGUMENT_DECLARE3(n1,n2,n3)  T##n1##n2##n3  __arg##n1##n2##n3
-#define ARGUMENT_USING3(n1,n2,n3)  __arg##n1##n2##n3
-#define TYPENAME_DECLAREA3(n1,n2,n3)  typename T##n1##n2##n3 ,
-#define ARGUMENT_DECLAREA3(n1,n2,n3)  T##n1##n2##n3 __arg##n1##n2##n3 ,
-#define ARGUMENT_USINGA3(n1,n2,n3)  __arg##n1##n2##n3 ,
-#define FIELD_DECLARE3(n1,n2,n3) \
+#define TYPENAME_DECLARE(n1,n2,n3)  typename T##n1##n2##n3
+#define ARGUMENT_DECLARE(n1,n2,n3)  const T##n1##n2##n3  &__arg##n1##n2##n3
+#define ARGUMENT_USING(n1,n2,n3)  __arg##n1##n2##n3
+#define TYPENAME_DECLAREA(n1,n2,n3)  typename T##n1##n2##n3 ,
+#define ARGUMENT_DECLAREA(n1,n2,n3)  const T##n1##n2##n3 &__arg##n1##n2##n3 ,
+#define ARGUMENT_USINGA(n1,n2,n3)  __arg##n1##n2##n3 ,
+#define TYPENAME_DECLAREB(n1,n2,n3)  ,typename T##n1##n2##n3
+#define ARGUMENT_DECLAREB(n1,n2,n3)  ,const T##n1##n2##n3 &__arg##n1##n2##n3
+#define ARGUMENT_USINGB(n1,n2,n3)  ,__arg##n1##n2##n3
+#define FIELD_DECLARE(n1,n2,n3) \
 T##n1##n2##n3 m_##n1##n2##n3;\
 
 
-#define FIELD_ASSIGN3(n1,n2,n3) m_##n1##n2##n3 = __arg##n1##n2##n3;
+#define FIELD_ASSIGN(n1,n2,n3) m_##n1##n2##n3 = __arg##n1##n2##n3;
 
 #define VECTOR_DECLEAR(n1,n2,n3)\
-template< REPEATC_NNN(n1,n2,n3,TYPENAME_DECLARE)>\
+template< REPEATC_NNN(n1,n2,n3,TYPENAME_DECLARE,TYPENAME_DECLAREB)>\
 class Vector##n1##n2##n3\
 {\
 public:\
-	REPEAT_NNN(n1,n2,n3,FIELD_DECLARE3)\
-	Vector##n1##n2##n3( REPEATC_NNN(n1,n2,n3,ARGUMENT_DECLARE))\
+	REPEAT_NNN(n1,n2,n3,FIELD_DECLARE)\
+	Vector##n1##n2##n3( REPEATC_NNN(n1,n2,n3,ARGUMENT_DECLARE,ARGUMENT_DECLAREB))\
 	{\
-		REPEAT_NNN(n1,n2,n3,FIELD_ASSIGN3)\
+		REPEAT_NNN(n1,n2,n3,FIELD_ASSIGN)\
 	};\
 };
 
 
-VECTOR_DECLEAR(0,6,3)
+_1_REP_NNN(1,1,1,VECTOR_DECLEAR)
 
 bool b;
 
