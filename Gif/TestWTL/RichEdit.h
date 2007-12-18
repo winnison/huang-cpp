@@ -66,5 +66,5 @@ public:
 	CRichEditElement* GetElement(int index);
 	void DeleteElement(CRichEditElement* element);
 	void DeleteElement(int index);
-	void InsertElement(CRichEditElement* element);
+	void InsertElement(CRichEditElement* element, int index = -1);
 };
