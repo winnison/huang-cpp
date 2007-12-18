@@ -344,29 +344,69 @@ int main(int argc ,char * argv[])
 	//font.CreatePointFont(atoi(argv[19])*10, _T(argv[20]));
 	//g.Generate(file, text, font);
 
-char chs[3];
-	CFont font;
-	font.CreatePointFont(200, "ֻ־ּו");
-	CGifFont g;
-	string text = _T("‡נ");
-	g.SetFontColor(0xff0000);
-	g.SetHasShadow(FALSE);
-	g.SetHasEdge(FALSE);
-	for (int i=0; i<MOTIONCOUNT; i++)
-	{
-		for (int j=0; j<SHAPECOUNT; j++)
-		{
-			string s = _T("");
-			s += itoa(i, chs, 10);
-			s+="_";
-			s += itoa(j, chs, 10);
-			s += ".gif";
-			g.SetMotion((CGifFont::MotionType)i);
-			g.SetShape((CGifFont::ShapeType)j);
-			g.Generate(s, text, font);
-		}
-	}
 
+	HBITMAP hBmp = LoadPictureFile("1.jpg"), hBmp1, hBmp2;
+	BITMAP bmpInfo;
+	::GetObject(hBmp,sizeof(BITMAP),&bmpInfo);
+	
+CDCHandle dcScreen = GetDC(NULL);
+CDC dc, dc1;
+dc.CreateCompatibleDC(dcScreen);
+dc.SelectBitmap(hBmp);
+dc1.CreateCompatibleDC(dcScreen);
+RECT rc;
+rc.left = 0;
+rc.top = 0;
+rc.right = bmpInfo.bmWidth;
+rc.bottom = bmpInfo.bmHeight;
+
+LPBYTE lpData;
+
+hBmp1 = CreateDIB(dcScreen.m_hDC, bmpInfo.bmWidth, bmpInfo.bmHeight, lpData);
+dc1.SelectBitmap(hBmp1);
+dc1.BitBlt(0,0,rc.right,rc.bottom,dc,0,0,SRCCOPY);
+RectToEllipse(lpData, bmpInfo.bmWidth, bmpInfo.bmHeight, rc, 0xffffff);
+SaveBmp(hBmp1, "1e.bmp");
+hBmp1 = CreateDIB(dcScreen.m_hDC, bmpInfo.bmWidth, bmpInfo.bmHeight, lpData);
+dc1.SelectBitmap(hBmp1);
+dc1.BitBlt(0,0,rc.right,rc.bottom,dc,0,0,SRCCOPY);
+RectToTriangle(lpData, bmpInfo.bmWidth, bmpInfo.bmHeight, rc, 0xffffff);
+SaveBmp(hBmp1, "1t.bmp");
+hBmp1 = CreateDIB(dcScreen.m_hDC, bmpInfo.bmWidth, bmpInfo.bmHeight, lpData);
+dc1.SelectBitmap(hBmp1);
+dc1.BitBlt(0,0,rc.right,rc.bottom,dc,0,0,SRCCOPY);
+RectToDiamond(lpData, bmpInfo.bmWidth, bmpInfo.bmHeight, rc, 0xffffff);
+SaveBmp(hBmp1, "1d.bmp");
+hBmp1 = CreateDIB(dcScreen.m_hDC, bmpInfo.bmWidth, bmpInfo.bmHeight, lpData);
+dc1.SelectBitmap(hBmp1);
+dc1.BitBlt(0,0,rc.right,rc.bottom,dc,0,0,SRCCOPY);
+RectToSShape(lpData, bmpInfo.bmWidth, bmpInfo.bmHeight, rc, 0xffffff);
+SaveBmp(hBmp1, "1s.bmp");
+
+
+//char chs[3];
+//	CFont font;
+//	font.CreatePointFont(200, "ֻ־ּו");
+//	CGifFont g;
+//	string text = _T("‡נ");
+//	g.SetFontColor(0xff0000);
+//	g.SetHasShadow(FALSE);
+//	g.SetHasEdge(FALSE);
+//	for (int i=0; i<MOTIONCOUNT; i++)
+//	{
+//		for (int j=0; j<SHAPECOUNT; j++)
+//		{
+//			string s = _T("");
+//			s += itoa(i, chs, 10);
+//			s+="_";
+//			s += itoa(j, chs, 10);
+//			s += ".gif";
+//			g.SetMotion((CGifFont::MotionType)i);
+//			g.SetShape((CGifFont::ShapeType)j);
+//			g.Generate(s, text, font);
+//		}
+//	}
+//
 	//CStackTaskThread qtt;
 	//for (int i=0; i<10; i++)
 	//{

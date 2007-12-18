@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "repeat.h"
+#include "repeat0.h"
 #include "repeat1.h"
 using namespace std;
 
@@ -8,6 +9,7 @@ using namespace std;
 #define SHOW_NN(n1,n2) NUMBERNN(n1,n2),
 #define SHOW_NNN(n1,n2,n3) NUMBERNNN(n1,n2,n3),
 #define SHOW_NNNN(n1,n2,n3,n4) NUMBERNNNN(n1,n2,n3,n4),
+#define _0_SHOW_NNNN(n1,n2,n3,n4) _0_NUMBERNNNN(n1,n2,n3,n4),
 
 
 #define TYPENAME_DECLARE(n1,n2,n3)  typename T##n1##n2##n3
@@ -88,78 +90,79 @@ void check1(int *p, int n)
 
 int main()
 {
+	int a[] = {_0_REPEAT_0_NNNN(9,9,9,9,_0_SHOW_NNNN) -1};
 	b = false;
-#define TEST_N(n)\
-	int N##n [] = {REPEAT_N(n,SHOW_N) -1};\
-	check( N##n , n);\
-	int _N##n [] = {REPEAT_0_N(n,SHOW_N) -1};\
-	check0(_N##n);\
-	check1(_N##n,n);
-
-	printf("N started...\n");
-//_1_REP_N(9,TEST_N)
-
-#define TEST_NN(n1,n2)\
-	int NN##n1##n2 [] = {REPEAT_NN(n1,n2,SHOW_NN) -1};\
-	check(NN##n1##n2,NUMBERNN(n1,n2));\
-	int _NN##n1##n2 [] = {REPEAT_0_NN(n1,n2,SHOW_NN) -1};\
-	check0(_NN##n1##n2);\
-	check1(_NN##n1##n2,NUMBERNN(n1,n2));
-
-printf("NN started...\n");
-TEST_NN(0,0)
-TEST_NN(0,1)
-TEST_NN(0,9)
-TEST_NN(1,0)
-TEST_NN(1,1)
-TEST_NN(1,8)
-TEST_NN(5,6)
-TEST_NN(8,9)
-TEST_NN(9,0)
-TEST_NN(9,1)
-TEST_NN(9,9)
-
-#define TEST_NNN(n1,n2,n3)\
-	int NNN##n1##n2##n3 [] = {REPEAT_NNN(n1,n2,n3,SHOW_NNN) -1};\
-	check(NNN##n1##n2##n3,NUMBERNNN(n1,n2,n3));\
-	int _NNN##n1##n2##n3 [] = {REPEAT_0_NNN(n1,n2,n3,SHOW_NNN) -1};\
-	check0(_NNN##n1##n2##n3);\
-	check1(_NNN##n1##n2##n3,NUMBERNNN(n1,n2,n3));
-
-printf("NNN started...\n");
-TEST_NNN(0,0,0)
-TEST_NNN(0,0,1)
-TEST_NNN(0,0,9)
-TEST_NNN(0,1,0)
-TEST_NNN(0,1,1)
-TEST_NNN(0,1,8)
-TEST_NNN(0,5,6)
-TEST_NNN(0,8,9)
-TEST_NNN(0,9,0)
-TEST_NNN(0,9,1)
-TEST_NNN(0,9,9)
-TEST_NNN(1,0,0)
-TEST_NNN(1,0,1)
-TEST_NNN(1,0,9)
-TEST_NNN(1,1,0)
-TEST_NNN(1,1,1)
-TEST_NNN(1,1,9)
-TEST_NNN(1,3,6)
-TEST_NNN(1,9,9)
-TEST_NNN(2,0,0)
-TEST_NNN(5,6,7)
-TEST_NNN(8,9,9)
-TEST_NNN(9,0,0)
-TEST_NNN(9,0,1)
-TEST_NNN(9,0,9)
-TEST_NNN(9,1,0)
-TEST_NNN(9,1,1)
-TEST_NNN(9,1,9)
-TEST_NNN(9,2,7)
-TEST_NNN(9,8,9)
-TEST_NNN(9,9,0)
-TEST_NNN(9,9,1)
-TEST_NNN(9,9,9)
+//#define TEST_N(n)\
+//	int N##n [] = {REPEAT_N(n,SHOW_N) -1};\
+//	check( N##n , n);\
+//	int _N##n [] = {REPEAT_0_N(n,SHOW_N) -1};\
+//	check0(_N##n);\
+//	check1(_N##n,n);
+//
+//	printf("N started...\n");
+////_1_REP_N(9,TEST_N)
+//
+//#define TEST_NN(n1,n2)\
+//	int NN##n1##n2 [] = {REPEAT_NN(n1,n2,SHOW_NN) -1};\
+//	check(NN##n1##n2,NUMBERNN(n1,n2));\
+//	int _NN##n1##n2 [] = {REPEAT_0_NN(n1,n2,SHOW_NN) -1};\
+//	check0(_NN##n1##n2);\
+//	check1(_NN##n1##n2,NUMBERNN(n1,n2));
+//
+//printf("NN started...\n");
+//TEST_NN(0,0)
+//TEST_NN(0,1)
+//TEST_NN(0,9)
+//TEST_NN(1,0)
+//TEST_NN(1,1)
+//TEST_NN(1,8)
+//TEST_NN(5,6)
+//TEST_NN(8,9)
+//TEST_NN(9,0)
+//TEST_NN(9,1)
+//TEST_NN(9,9)
+//
+//#define TEST_NNN(n1,n2,n3)\
+//	int NNN##n1##n2##n3 [] = {REPEAT_NNN(n1,n2,n3,SHOW_NNN) -1};\
+//	check(NNN##n1##n2##n3,NUMBERNNN(n1,n2,n3));\
+//	int _NNN##n1##n2##n3 [] = {REPEAT_0_NNN(n1,n2,n3,SHOW_NNN) -1};\
+//	check0(_NNN##n1##n2##n3);\
+//	check1(_NNN##n1##n2##n3,NUMBERNNN(n1,n2,n3));
+//
+//printf("NNN started...\n");
+//TEST_NNN(0,0,0)
+//TEST_NNN(0,0,1)
+//TEST_NNN(0,0,9)
+//TEST_NNN(0,1,0)
+//TEST_NNN(0,1,1)
+//TEST_NNN(0,1,8)
+//TEST_NNN(0,5,6)
+//TEST_NNN(0,8,9)
+//TEST_NNN(0,9,0)
+//TEST_NNN(0,9,1)
+//TEST_NNN(0,9,9)
+//TEST_NNN(1,0,0)
+//TEST_NNN(1,0,1)
+//TEST_NNN(1,0,9)
+//TEST_NNN(1,1,0)
+//TEST_NNN(1,1,1)
+//TEST_NNN(1,1,9)
+//TEST_NNN(1,3,6)
+//TEST_NNN(1,9,9)
+//TEST_NNN(2,0,0)
+//TEST_NNN(5,6,7)
+//TEST_NNN(8,9,9)
+//TEST_NNN(9,0,0)
+//TEST_NNN(9,0,1)
+//TEST_NNN(9,0,9)
+//TEST_NNN(9,1,0)
+//TEST_NNN(9,1,1)
+//TEST_NNN(9,1,9)
+//TEST_NNN(9,2,7)
+//TEST_NNN(9,8,9)
+//TEST_NNN(9,9,0)
+//TEST_NNN(9,9,1)
+//TEST_NNN(9,9,9)
 
 //#define TEST_NNNN(n1,n2,n3,n4)\
 //	int NNNN##n1##n2##n3##n4 [] = {REPEAT_NNNN(n1,n2,n3,n4,SHOW_NNNN) -1};\

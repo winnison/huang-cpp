@@ -41,7 +41,39 @@ HBITMAP CRichEdit::CreateCaretBitmap(int width, int height)
 
 LRESULT CRichEdit::OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) 
 { 
-	SetFocus();
+	CPaintDC _dc(m_hWnd);
+	HFONT f = _dc.GetCurrentFont();
+
+	LPCSTR s = "ab阿afd所发\n送sf不ab阿afd所发送sf不ab阿afd所发送sf不ab阿afd所发送sf不ab阿afd所发送sf不";
+	WCHAR ss[200], ss1[200];
+	int a = MultiByteToWideChar(CP_ACP, 0, s, strlen(s)+1, ss, 200);
+	int b = lstrlen(ss);
+	lstrcpyn(ss1, ss, 4);
+	CRichEditText text(ss, f, 0xff00);
+
+	CRichEditLine line, line2, line3;
+	int index = 0;
+	int width = 80;
+	CRichEditTextSegment * seg;
+
+
+	seg = text.CreateSegment(index, width);
+	line.InsertRectangle(seg);
+
+	seg = text.CreateSegment(index, width);
+	line2.InsertRectangle(seg);
+
+	seg = text.CreateSegment(index, width);
+	line3.InsertRectangle(seg);
+
+	line.m_y = 0;
+	line2.m_y = line.m_cy;
+	line3.m_y = line2.m_y + line2.m_cy;
+
+	line.Draw(_dc, 10, 10);
+	line2.Draw(_dc, 10, 10);
+	line3.Draw(_dc, 10, 10);
+
 	bHandled = TRUE;
 	return 1L;
 };
@@ -66,13 +98,18 @@ LRESULT CRichEdit::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	CPaintDC _dc(m_hWnd);
 	CBrush *pb = new CBrush();
 	pb->CreateSolidBrush(0xff);
+	_dc.SetBkColor(0xff);
 	_dc.FillRect(&rcClient, pb->m_hBrush);
-	LPCSTR s = "ab阿不";
-	WCHAR ss[100], ss1[100];
-	int a = MultiByteToWideChar(CP_ACP, 0, s, strlen(s)+1, ss, 100);
-	int b = lstrlen(ss);
-	lstrcpyn(ss1, ss, 4);
-	_dc.DrawText(ss, 6, &rcClient, DT_CALCRECT | DT_TOP| DT_LEFT |DT_EXPANDTABS | DT_NOPREFIX);
+	//LPCSTR s = "ab阿不";
+	//WCHAR ss[100], ss1[100];
+	//int a = MultiByteToWideChar(CP_ACP, 0, s, strlen(s)+1, ss, 100);
+	//int b = lstrlen(ss);
+	//lstrcpyn(ss1, ss, 4);
+	//_dc.DrawText(ss, 6, &rcClient, DT_CALCRECT | DT_TOP| DT_LEFT |DT_EXPANDTABS | DT_NOPREFIX);
+
+	HFONT f = _dc.GetCurrentFont();
+
+
 	bHandled = TRUE;
 	return 1L;
 };

@@ -1,46 +1,21 @@
-#ifndef _0__REPEAT_H_
-#define _0__REPEAT_H_
+#ifndef _REPEAT0_H_
+#define _REPEAT0_H_
 
-#define _0_NUMBERN( n ) n
+#define REPEAT_N( n , Fn) 										_0_REPEAT_N( n , Fn )
+#define REPEAT_0_N( n , Fn ) 									Fn( 0 ) _0_REPEAT_N( n , Fn )
+#define REPEATC_N( n , Fn1 , Fn ) 								_0_REPEATC_N( n , Fn1 , Fn )
 
-#define _0_NUMBER0( n ) _0_NUMBERN( n )
-#define _0_NUMBER1( n ) 1##n
-#define _0_NUMBER2( n ) 2##n
-#define _0_NUMBER3( n ) 3##n
-#define _0_NUMBER4( n ) 4##n
-#define _0_NUMBER5( n ) 5##n
-#define _0_NUMBER6( n ) 6##n
-#define _0_NUMBER7( n ) 7##n
-#define _0_NUMBER8( n ) 8##n
-#define _0_NUMBER9( n ) 9##n
+#define REPEAT_NN( n1 , n2 , Fnn ) 								_0_REPEAT_NN( n1 , n2 , Fnn )
+#define REPEAT_0_NN( n1 , n2 , Fnn ) 							Fnn( 0 , 0 ) _0_REPEAT_NN( n1 , n2 , Fnn )
+#define REPEATC_NN( n1 , n2 , Fnn1 , Fnn ) 						_0_REPEATC_NN( n1 , n2 , Fnn1 , Fnn )
 
-#define _0_NUMBERNN( n1 , n2 ) _0_NUMBER##n1( n2 )
+#define REPEAT_NNN( n1 , n2 , n3 , Fnnn ) 						_0_REPEAT_NNN( n1 , n2 , n3 , Fnnn )
+#define REPEAT_0_NNN( n1 , n2 , n3 , Fnnn ) 					Fnnn( 0 , 0 , 0 ) _0_REPEAT_NNN( n1 , n2 , n3 , Fnnn )
+#define REPEATC_NNN( n1 , n2 , n3 , Fnnn1 , Fnnn ) 				_0_REPEATC_NNN( n1 , n2 , n3 , Fnnn1 , Fnnn )
 
-#define _0__NUMBER0( n1 , n2 ) _0_NUMBERNN( n1 , n2 )
-#define _0__NUMBER1( n1 , n2 ) 1##n1##n2
-#define _0__NUMBER2( n1 , n2 ) 2##n1##n2
-#define _0__NUMBER3( n1 , n2 ) 3##n1##n2
-#define _0__NUMBER4( n1 , n2 ) 4##n1##n2
-#define _0__NUMBER5( n1 , n2 ) 5##n1##n2
-#define _0__NUMBER6( n1 , n2 ) 6##n1##n2
-#define _0__NUMBER7( n1 , n2 ) 7##n1##n2
-#define _0__NUMBER8( n1 , n2 ) 8##n1##n2
-#define _0__NUMBER9( n1 , n2 ) 9##n1##n2
-
-#define _0_NUMBERNNN( n1 , n2 , n3 ) _0__NUMBER##n1( n2 , n3 )
-
-#define _0___NUMBER0( n1 , n2 , n3 ) _0_NUMBERNNN( n1 , n2 , n3 )
-#define _0___NUMBER1( n1 , n2 , n3 ) 1##n1##n2##n3
-#define _0___NUMBER2( n1 , n2 , n3 ) 2##n1##n2##n3
-#define _0___NUMBER3( n1 , n2 , n3 ) 3##n1##n2##n3
-#define _0___NUMBER4( n1 , n2 , n3 ) 4##n1##n2##n3
-#define _0___NUMBER5( n1 , n2 , n3 ) 5##n1##n2##n3
-#define _0___NUMBER6( n1 , n2 , n3 ) 6##n1##n2##n3
-#define _0___NUMBER7( n1 , n2 , n3 ) 7##n1##n2##n3
-#define _0___NUMBER8( n1 , n2 , n3 ) 8##n1##n2##n3
-#define _0___NUMBER9( n1 , n2 , n3 ) 9##n1##n2##n3
-
-#define _0_NUMBERNNNN( n1 , n2 , n3 , n4 ) _0___NUMBER##n1( n2 , n3 , n4 )
+#define REPEAT_NNNN( n1 , n2 , n3 , n4 , Fnnnn ) 				_0_REPEAT_NNNN( n1 , n2 , n3 , n4 , Fnnnn )
+#define REPEAT_0_NNNN( n1 , n2 , n3 , n4 , Fnnnn ) 				Fnnnn( 0 , 0 , 0 , 0 ) _0_REPEAT_NNNN( n1 , n2 , n3 , n4 , Fnnnn )
+#define REPEATC_NNNN( n1 , n2 , n3 , n4 , Fnnnn1 , Fnnnn ) 		_0_REPEATC_NNNN( n1 , n2 , n3 , n4 , Fnnnn1 , Fnnnn )
 
 #define _0_REPEAT_ZEROTEST0( a , b ) a
 #define _0_REPEAT_ZEROTEST1( a , b ) b
@@ -65,8 +40,6 @@
 #define _0_REPEAT9( Fn ) _0_REPEAT8( Fn ) Fn( 9 )
 
 #define _0_REPEAT_N( n , Fn ) _0_REPEAT##n( Fn )
-#define _0_REPEAT_0_N( n , Fn ) Fn( 0 ) _0_REPEAT##n( Fn )
-#define _0_REPEAT_0_9( Fn ) Fn( 0 ) _0_REPEAT9( Fn )
 
 #define _0_REPEATC0( Fn1 , Fn )
 #define _0_REPEATC1( Fn1 , Fn ) Fn1( 1 )
@@ -80,7 +53,6 @@
 #define _0_REPEATC9( Fn1 , Fn ) _0_REPEATC8( Fn1 , Fn ) Fn( 9 )
 
 #define _0_REPEATC_N( n , Fn1 , Fn ) _0_REPEATC##n( Fn1 , Fn )
-#define _0_REPEATC_0_N( n , Fn0 , Fn ) Fn0( 0 ) _0_REPEAT##n( Fn )
 
 #define _0__REPEAT0( Fn )
 #define _0__REPEAT1( Fn ) Fn( 1 )
@@ -94,8 +66,6 @@
 #define _0__REPEAT9( Fn ) _0__REPEAT8( Fn ) Fn( 9 )
 
 #define _0__REPEAT_N( n , Fn ) _0__REPEAT##n( Fn )
-#define _0__REPEAT_0_N( n , Fn ) Fn( 0 ) _0__REPEAT##n( Fn )
-#define _0__REPEAT_0_9( Fn ) Fn( 0 )_0_ _0__REPEAT9( Fn )
 
 #define _0_REPEATX0( Fxn , X )
 #define _0_REPEATX1( Fxn , X )				Fxn( X , 1 )
@@ -124,7 +94,6 @@
 #define _0_REPEATXC9( Fxn1 , Fxn , X ) _0_REPEATXC8( Fxn1 , Fxn , X ) Fxn( X , 9 )
 
 #define _0_REPEATXC_N( n , Fxn1 , Fxn , X ) _0_REPEATXC##n( Fxn , X )
-#define _0_REPEATXC_0_N( n , Fxn0 , Fxn , X ) Fxn0( X , 0 ) _0_REPEATX##n( Fxn , X )
 
 #define _0__REPEATX0( Fxn , X )
 #define _0__REPEATX1( Fxn , X )				  Fxn( X , 1 )
@@ -154,23 +123,11 @@
 		 , \
 		_0_REPEATX_N( 9 , Fnn , 0 ) _0_I_REPEATX##n1( _0_REPEATX_0_9 , Fnn ) _0_REPEATX_0_N( n2 , Fnn , n1 )\
 	 )
-#define _0_REPEAT_0_NN( n1 , n2 , Fnn ) \
-	_0_REPEAT_ZEROTEST##n1( \
-		_0_REPEATX_0_N( n2 , Fnn , 0 )\
-		 , \
-		_0_REPEATX_0_N( 9 , Fnn , 0 ) _0_I_REPEATX##n1( _0_REPEATX_0_9 , Fnn ) _0_REPEATX_0_N( n2 , Fnn , n1 )\
-	 )
 #define _0_REPEATC_NN( n1 , n2 , Fnn1 , Fnn ) \
 	_0_REPEAT_ZEROTEST##n1( \
 		_0_REPEATXC_N( n2 , Fnn1 , Fnn , 0 )\
 		 , \
 		_0_REPEATXC_N( 9 , Fnn1 , Fnn , 0 ) _0_I_REPEATX##n1( _0_REPEATX_0_9 , Fnn ) _0_REPEATX_0_N( n2 , Fnn , n1 )\
-	 )
-#define _0_REPEATC_0_NN( n1 , n2 , Fnn0 , Fnn ) \
-	_0_REPEAT_ZEROTEST##n1( \
-		_0_REPEATXC_0_N( n2 , Fnn0 , Fnn , 0 )\
-		 , \
-		_0_REPEATXC_0_N( 9 , Fnn0 , Fnn , 0 ) _0_I_REPEATX##n1( _0_REPEATX_0_9 , Fnn ) _0_REPEATX_0_N( n2 , Fnn , n1 )\
 	 )
 
 #define _0_REPEATXX0( Fxxn , X1 , X2 )
@@ -200,7 +157,6 @@
 #define _0_REPEATXXC9( Fxxn1 , Fxxn , X1 , X2 ) _0_REPEATXXC8( Fxxn1 , Fxxn , X1 , X2 ) Fxxn( X1 , X2 , 9 )
 
 #define _0_REPEATXXC_N( n , Fxxn1 , Fxxn , X1 , X2 ) _0_REPEATXXC##n( Fxxn1 , Fxxn , X1 , X2 )
-#define _0_REPEATXXC_0_N( n , Fxxn1 , Fxxn , X1 , X2 ) Fxxn1( X1 , X2 , 0 ) _0_REPEATXX##n( Fxxn , X1 , X2 )
 
 #define _0__REPEATXX0( Fxxn , X1 , X2 )
 #define _0__REPEATXX1( Fxxn , X1 , X2 )					  Fxxn( X1 , X2 , 1 )
@@ -214,7 +170,6 @@
 #define _0__REPEATXX9( Fxxn , X1 , X2 ) _0__REPEATXX8( Fxxn , X1 , X2 ) Fxxn( X1 , X2 , 9 )
 
 #define _0__REPEATXX_N( n , Fxxn , X1 , X2 ) _0__REPEATXX##n( Fxxn , X1 , X2 )
-#define _0__REPEATXX_0_N( n , Fxxn , X1 , X2 ) Fxxn( X1 , X2 , 0 ) _0__REPEATXX##n( Fxxn , X1 , X2 )
 #define _0__REPEATXX_0_9( Fxxn , X1 , X2 ) Fxxn( X1 , X2 , 0 ) _0__REPEATXX9( Fxxn , X1 , X2 )
 
 #define _0___REPEATXX0( Fxxn , X1 , X2 )
@@ -227,10 +182,6 @@
 #define _0___REPEATXX7( Fxxn , X1 , X2 ) _0___REPEATXX6( Fxxn , X1 , X2 ) Fxxn( X1 , X2 , 7 )
 #define _0___REPEATXX8( Fxxn , X1 , X2 ) _0___REPEATXX7( Fxxn , X1 , X2 ) Fxxn( X1 , X2 , 8 )
 #define _0___REPEATXX9( Fxxn , X1 , X2 ) _0___REPEATXX8( Fxxn , X1 , X2 ) Fxxn( X1 , X2 , 9 )
-
-#define _0___REPEATXX_N( n , Fxxn , X1 , X2 ) _0___REPEATXX##n( Fxxn , X1 , X2 )
-#define _0___REPEATXX_0_N( n , Fxxn , X1 , X2 ) Fxxn( X1 , X2 , 0 ) _0___REPEATXX##n( Fxxn , X1 , X2 )
-#define _0___REPEATXX_0_9( Fxxn , X1 , X2 ) Fxxn( X1 , X2 , 0 ) _0___REPEATXX9( Fxxn , X1 , X2 )
 
 #define _0_I_REPEATXX0( Fxxn , X1 , X2 ) 
 #define _0_I_REPEATXX1( Fxxn , X1 , X2 ) _0___REPEATXX0( Fxxn , X1 , X2 )
@@ -258,21 +209,6 @@
 			_0_REPEATXX_0_N( 9 , Fnnn , n1 , 0 )  _0_I_REPEATXX##n2( _0_REPEATXX_0_9 , Fnnn , n1 ) _0_REPEATXX_0_N( n3 , Fnnn , n1 , n2 )\
 		 )\
 	 )
-#define _0_REPEAT_0_NNN( n1 , n2 , n3 , Fnnn )\
-	_0_REPEAT_ZEROTEST##n1( \
-		_0_REPEAT_ZEROTEST##n2( \
-			_0_REPEATXX_0_N( n3 , Fnnn , 0 , 0 )\
-			 , \
-			_0_REPEATXX_0_N( 9 , Fnnn , 0 , 0 ) _0_I_REPEATXX##n2( _0_REPEATXX_0_9 , Fnnn , 0 ) _0_REPEATXX_0_N( n3 , Fnnn , 0 , n2 )\
-		 )\
-		 , \
-		_0_REPEATXX_0_N( 9 , Fnnn , 0 , 0 ) _0__REPEATXX9( _0_REPEATXX_0_9 , Fnnn , 0 ) _0_I_REPEATXX##n1( _0__REPEATXX_0_9 , _0_REPEATXX_0_9 , Fnnn ) \
-		_0_REPEAT_ZEROTEST##n2( \
-			_0_REPEATXX_0_N( n3 , Fnnn , n1 , 0 )\
-			 , \
-			_0_REPEATXX_0_N( 9 , Fnnn , n1 , 0 ) _0_I_REPEATXX##n2( _0_REPEATXX_0_9 , Fnnn , n1 ) _0_REPEATXX_0_N( n3 , Fnnn , n1 , n2 )\
-		 )\
-	 )
 #define _0_REPEATC_NNN( n1 , n2 , n3 , Fnnn1 , Fnnn )\
 	_0_REPEAT_ZEROTEST##n1( \
 		_0_REPEAT_ZEROTEST##n2( \
@@ -288,22 +224,6 @@
 			_0_REPEATXX_0_N( 9 , Fnnn , n1 , 0 )  _0_I_REPEATXX##n2( _0_REPEATXX_0_9 , Fnnn , n1 ) _0_REPEATXX_0_N( n3 , Fnnn , n1 , n2 )\
 		 )\
 	 )
-#define _0_REPEATC_0_NNN( n1 , n2 , n3 , Fnnn1 , Fnnn )\
-	_0_REPEAT_ZEROTEST##n1( \
-		_0_REPEAT_ZEROTEST##n2( \
-			_0_REPEATXXC_0_N( n3 , Fnnn1 , Fnnn , 0 , 0 )\
-			 , \
-			_0_REPEATXXC_0_N( 9 , Fnnn1 , Fnnn , 0 , 0 ) _0_I_REPEATXX##n2( _0_REPEATXX_0_9 , Fnnn , 0 ) _0_REPEATXX_0_N( n3 , Fnnn , 0 , n2 )\
-		 )\
-		 , \
-		_0_REPEATXXC_0_N( 9 , Fnnn1 , Fnnn , 0 , 0 ) _0__REPEATXX9( _0_REPEATXX_0_9 , Fnnn , 0 ) _0_I_REPEATXX##n1( _0__REPEATXX_0_9 , _0_REPEATXX_0_9 , Fnnn ) \
-		_0_REPEAT_ZEROTEST##n2( \
-			_0_REPEATXX_0_N( n3 , Fnnn , n1 , 0 )\
-			 , \
-			_0_REPEATXX_0_N( 9 , Fnnn , n1 , 0 ) _0_I_REPEATXX##n2( _0_REPEATXX_0_9 , Fnnn , n1 ) _0_REPEATXX_0_N( n3 , Fnnn , n1 , n2 )\
-		 )\
-	 )
-
 
 #define _0_REPEATXXX0( Fxxxn , X1 , X2 , X3 )
 #define _0_REPEATXXX1( Fxxxn , X1 , X2 , X3 )						  Fxxxn( X1 , X2 , X3 , 1 )
@@ -332,7 +252,6 @@
 #define _0_REPEATXXXC9( Fxxxn1 , Fxxxn , X1 , X2 , X3 ) _0_REPEATXXXC8( Fxxxn1 , Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 9 )
 
 #define _0_REPEATXXXC_N( n , Fxxxn1 , Fxxxn , X1 , X2 , X3 ) _0_REPEATXXXC##n( Fxxxn , X1 , X2 , X3 )
-#define _0_REPEATXXXC_0_N( n , Fxxxn1 , Fxxxn , X1 , X2 , X3 ) Fxxxn1( X1 , X2 , X3 , 0 ) _0_REPEATXXX##n( Fxxxn , X1 , X2 , X3 )
 
 #define _0__REPEATXXX0( Fxxxn , X1 , X2 , X3 ) 
 #define _0__REPEATXXX1( Fxxxn , X1 , X2 , X3 )							Fxxxn( X1 , X2 , X3 , 1 )
@@ -346,7 +265,6 @@
 #define _0__REPEATXXX9( Fxxxn , X1 , X2 , X3 ) _0__REPEATXXX8( Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 9 )
 
 #define _0__REPEATXXX_N( n , Fxxxn , X1 , X2 , X3 ) _0__REPEATXXX##n( Fxxxn , X1 , X2 , X3 )
-#define _0__REPEATXXX_0_N( n , Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 0 ) _0__REPEATXXX##n( Fxxxn , X1 , X2 , X3 )
 #define _0__REPEATXXX_0_9( Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 0 ) _0__REPEATXXX9( Fxxxn , X1 , X2 , X3 )
 
 #define _0___REPEATXXX0( Fxxxn , X1 , X2 , X3 )	
@@ -361,7 +279,6 @@
 #define _0___REPEATXXX9( Fxxxn , X1 , X2 , X3 ) _0___REPEATXXX8( Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 9 )
 
 #define _0___REPEATXXX_N( n , Fxxxn , X1 , X2 , X3 ) _0___REPEATXXX##n( Fxxxn , X1 , X2 , X3 )
-#define _0___REPEATXXX_0_N( n , Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 0 ) _0___REPEATXXX##n( Fxxxn , X1 , X2 , X3 )
 #define _0___REPEATXXX_0_9( Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 0 ) _0___REPEATXXX9( Fxxxn , X1 , X2 , X3 )
 
 #define _0____REPEATXXX0( Fxxxn , X1 , X2 , X3 )	
@@ -374,10 +291,6 @@
 #define _0____REPEATXXX7( Fxxxn , X1 , X2 , X3 ) _0____REPEATXXX6( Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 7 )
 #define _0____REPEATXXX8( Fxxxn , X1 , X2 , X3 ) _0____REPEATXXX7( Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 8 )
 #define _0____REPEATXXX9( Fxxxn , X1 , X2 , X3 ) _0____REPEATXXX8( Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 9 )
-
-#define _0____REPEATXXX_N( n , Fxxxn , X1 , X2 , X3 ) _0____REPEATXXX##n( Fxxxn , X1 , X2 , X3 )
-#define _0____REPEATXXX_0_N( n , Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 0 ) _0____REPEATXXX##n( Fxxxn , X1 , X2 , X3 )
-#define _0____REPEATXXX_0_9( Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 0 ) _0____REPEATXXX9( Fxxxn , X1 , X2 , X3 )
 
 #define _0_I_REPEATXXX0( Fxxxn , X1 , X2 , X3 ) 
 #define _0_I_REPEATXXX1( Fxxxn , X1 , X2 , X3 ) _0____REPEATXXX0( Fxxxn , X1 , X2 , X3 )
@@ -408,39 +321,6 @@
 		 )\
 		 , \
 		_0_REPEATXXX_N( 9 , Fnnnn , 0 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , 0 , 0 ) _0___REPEATXXX9( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , 0 ) _0_I_REPEATXXX##n1( _0___REPEATXXX_0_9 , _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn )\
-		_0_REPEAT_ZEROTEST##n2( \
-			_0_REPEAT_ZEROTEST##n3( \
-				_0_REPEATXXX_0_N( n4 , Fnnnn , n1 , 0 , 0 )\
-				 , \
-				_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _0_I_REPEATXXX##n3( _0_REPEATXXX_0_9 , Fnnnn , n1 , 0 ) _0_REPEATXXX_0_N( n4 , Fnnnn , n1 , 0 , n3 )\
-			 )\
-			 , \
-			_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , n1 , 0 , 0 ) _0_I_REPEATXXX##n2( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , n1 )\
-			_0_REPEAT_ZEROTEST##n3( \
-				_0_REPEATXXX_0_N( n4 , Fnnnn , n1 , n2 , 0 )\
-				 , \
-				_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , n2 , 0 ) _0_I_REPEATXXX##n3( _0_REPEATXXX_0_9 , Fnnnn , n1 , n2 ) _0_REPEATXXX_0_N( n4 , Fnnnn , n1 , n2 , n3 )\
-			 )\
-		 )\
-	 )
-#define _0_REPEAT_0_NNNN( n1 , n2 , n3 , n4 , Fnnnn )\
-	_0_REPEAT_ZEROTEST##n1( \
-		_0_REPEAT_ZEROTEST##n2( \
-			_0_REPEAT_ZEROTEST##n3( \
-				_0_REPEATXXX_0_N( n4 , Fnnnn , 0 , 0 , 0 )\
-				 , \
-				_0_REPEATXXX_0_N( 9 , Fnnnn , 0 , 0 , 0 ) _0_I_REPEATXXX##n3( _0_REPEATXXX_0_9 , Fnnnn , 0 , 0 ) _0_REPEATXXX_0_N( n4 , Fnnnn , 0 , 0 , n3 )\
-			 )\
-			 , \
-			_0_REPEATXXX_0_N( 9 , Fnnnn , 0 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , 0 , 0 ) _0_I_REPEATXXX##n2( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , 0 )\
-			_0_REPEAT_ZEROTEST##n3( \
-				_0_REPEATXXX_0_N( n4 , Fnnnn , 0 , n2 , 0 )\
-				 , \
-				_0_REPEATXXX_0_N( 9 , Fnnnn , 0 , n2 , 0 ) _0_I_REPEATXXX##n3( _0_REPEATXXX_0_9 , Fnnnn , 0 , n2 ) _0_REPEATXXX_0_N( n4 , Fnnnn , 0 , n2 , n3 )\
-			 )\
-		 )\
-		 , \
-		_0_REPEATXXX_0_N( 9 , Fnnnn , 0 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , 0 , 0 ) _0___REPEATXXX9( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , 0 ) _0_I_REPEATXXX##n1( _0___REPEATXXX_0_9 , _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn )\
 		_0_REPEAT_ZEROTEST##n2( \
 			_0_REPEAT_ZEROTEST##n3( \
 				_0_REPEATXXX_0_N( n4 , Fnnnn , n1 , 0 , 0 )\
@@ -489,38 +369,5 @@
 			 )\
 		 )\
 	 )
-#define _0_REPEATC_0_NNNN( n1 , n2 , n3 , n4 , Fnnnn1 , Fnnnn )\
-	_0_REPEAT_ZEROTEST##n1( \
-		_0_REPEAT_ZEROTEST##n2( \
-			_0_REPEAT_ZEROTEST##n3( \
-				_0_REPEATXXXC_0_N( n4 , Fnnnn1 , Fnnnn , 0 , 0 , 0 )\
-				 , \
-				_0_REPEATXXXC_0_N( 9 , Fnnnn1 , Fnnnn , 0 , 0 , 0 ) _0_I_REPEATXXX##n3( _0_REPEATXXX_0_9 , Fnnnn , 0 , 0 ) _0_REPEATXXX_0_N( n4 , Fnnnn , 0 , 0 , n3 )\
-			 )\
-			 , \
-			_0_REPEATXXXC_0_N( 9 , Fnnnn1 , Fnnnn , 0 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , 0 , 0 ) _0_I_REPEATXXX##n2( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , 0 )\
-			_0_REPEAT_ZEROTEST##n3( \
-				_0_REPEATXXX_0_N( n4 , Fnnnn , 0 , n2 , 0 )\
-				 , \
-				_0_REPEATXXX_0_N( 9 , Fnnnn , 0 , n2 , 0 ) _0_I_REPEATXXX##n3( _0_REPEATXXX_0_9 , Fnnnn , 0 , n2 ) _0_REPEATXXX_0_N( n4 , Fnnnn , 0 , n2 , n3 )\
-			 )\
-		 )\
-		 , \
-		_0_REPEATXXXC_0_N( 9 , Fnnnn1 , Fnnnn , 0 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , 0 , 0 ) _0___REPEATXXX9( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , 0 ) _0_I_REPEATXXX##n1( _0___REPEATXXX_0_9 , _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn )\
-		_0_REPEAT_ZEROTEST##n2( \
-			_0_REPEAT_ZEROTEST##n3( \
-				_0_REPEATXXX_0_N( n4 , Fnnnn , n1 , 0 , 0 )\
-				 , \
-				_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _0_I_REPEATXXX##n3( _0_REPEATXXX_0_9 , Fnnnn , n1 , 0 ) _0_REPEATXXX_0_N( n4 , Fnnnn , n1 , 0 , n3 )\
-			 )\
-			 , \
-			_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , n1 , 0 , 0 ) _0_I_REPEATXXX##n2( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , n1 )\
-			_0_REPEAT_ZEROTEST##n3( \
-				_0_REPEATXXX_0_N( n4 , Fnnnn , n1 , n2 , 0 )\
-				 , \
-				_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , n2 , 0 ) _0_I_REPEATXXX##n3( _0_REPEATXXX_0_9 , Fnnnn , n1 , n2 ) _0_REPEATXXX_0_N( n4 , Fnnnn , n1 , n2 , n3 )\
-			 )\
-		 )\
-	 )
 
-#endif //_REPEAT_H_
+#endif
