@@ -1,5 +1,4 @@
-#ifndef _REPEAT0_H_
-#define _REPEAT0_H_
+#ifndef REPEAT_N
 
 #define REPEAT_N( n , Fn) 										_0_REPEAT_N( n , Fn )
 #define REPEAT_0_N( n , Fn ) 									Fn( 0 ) _0_REPEAT_N( n , Fn )
@@ -251,7 +250,7 @@
 #define _0_REPEATXXXC8( Fxxxn1 , Fxxxn , X1 , X2 , X3 ) _0_REPEATXXXC7( Fxxxn1 , Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 8 )
 #define _0_REPEATXXXC9( Fxxxn1 , Fxxxn , X1 , X2 , X3 ) _0_REPEATXXXC8( Fxxxn1 , Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 9 )
 
-#define _0_REPEATXXXC_N( n , Fxxxn1 , Fxxxn , X1 , X2 , X3 ) _0_REPEATXXXC##n( Fxxxn , X1 , X2 , X3 )
+#define _0_REPEATXXXC_N( n , Fxxxn1 , Fxxxn , X1 , X2 , X3 ) _0_REPEATXXXC##n(Fxxxn1, Fxxxn , X1 , X2 , X3 )
 
 #define _0__REPEATXXX0( Fxxxn , X1 , X2 , X3 ) 
 #define _0__REPEATXXX1( Fxxxn , X1 , X2 , X3 )							Fxxxn( X1 , X2 , X3 , 1 )
@@ -328,7 +327,7 @@
 				_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _0_I_REPEATXXX##n3( _0_REPEATXXX_0_9 , Fnnnn , n1 , 0 ) _0_REPEATXXX_0_N( n4 , Fnnnn , n1 , 0 , n3 )\
 			 )\
 			 , \
-			_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , n1 , 0 , 0 ) _0_I_REPEATXXX##n2( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , n1 )\
+			_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , n1 , 0 ) _0_I_REPEATXXX##n2( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , n1 )\
 			_0_REPEAT_ZEROTEST##n3( \
 				_0_REPEATXXX_0_N( n4 , Fnnnn , n1 , n2 , 0 )\
 				 , \
@@ -361,7 +360,7 @@
 				_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _0_I_REPEATXXX##n3( _0_REPEATXXX_0_9 , Fnnnn , n1 , 0 ) _0_REPEATXXX_0_N( n4 , Fnnnn , n1 , 0 , n3 )\
 			 )\
 			 , \
-			_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , n1 , 0 , 0 ) _0_I_REPEATXXX##n2( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , n1 )\
+			_0_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _0__REPEATXXX9( _0_REPEATXXX_0_9 , Fnnnn , n1 , 0 ) _0_I_REPEATXXX##n2( _0__REPEATXXX_0_9 , _0_REPEATXXX_0_9 , Fnnnn , n1 )\
 			_0_REPEAT_ZEROTEST##n3( \
 				_0_REPEATXXX_0_N( n4 , Fnnnn , n1 , n2 , 0 )\
 				 , \
