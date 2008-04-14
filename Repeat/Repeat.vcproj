@@ -175,7 +175,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\test.cpp"
+				RelativePath=".\main.cpp"
 				>
 			</File>
 		</Filter>
@@ -185,7 +185,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\repeat.h"
+				RelativePath=".\number0.h"
+				>
+			</File>
+			<File
+				RelativePath=".\number1.h"
+				>
+			</File>
+			<File
+				RelativePath=".\number2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\repeat0.h"
 				>
 			</File>
 			<File

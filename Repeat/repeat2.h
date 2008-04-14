@@ -1,5 +1,4 @@
-#ifndef _REPEAT2_H_
-#define _REPEAT2_H_
+#ifndef __REPEAT_N
 
 #define __REPEAT_N( n , Fn) 									_2_REPEAT_N( n , Fn )
 #define __REPEAT_0_N( n , Fn ) 									Fn( 0 ) _2_REPEAT_N( n , Fn )
@@ -251,7 +250,7 @@
 #define _2_REPEATXXXC8( Fxxxn1 , Fxxxn , X1 , X2 , X3 ) _2_REPEATXXXC7( Fxxxn1 , Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 8 )
 #define _2_REPEATXXXC9( Fxxxn1 , Fxxxn , X1 , X2 , X3 ) _2_REPEATXXXC8( Fxxxn1 , Fxxxn , X1 , X2 , X3 ) Fxxxn( X1 , X2 , X3 , 9 )
 
-#define _2_REPEATXXXC_N( n , Fxxxn1 , Fxxxn , X1 , X2 , X3 ) _2_REPEATXXXC##n( Fxxxn , X1 , X2 , X3 )
+#define _2_REPEATXXXC_N( n , Fxxxn1 , Fxxxn , X1 , X2 , X3 ) _2_REPEATXXXC##n( Fxxxn1, Fxxxn , X1 , X2 , X3 )
 
 #define _2__REPEATXXX0( Fxxxn , X1 , X2 , X3 ) 
 #define _2__REPEATXXX1( Fxxxn , X1 , X2 , X3 )							Fxxxn( X1 , X2 , X3 , 1 )
@@ -328,7 +327,7 @@
 				_2_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _2_I_REPEATXXX##n3( _2_REPEATXXX_0_9 , Fnnnn , n1 , 0 ) _2_REPEATXXX_0_N( n4 , Fnnnn , n1 , 0 , n3 )\
 			 )\
 			 , \
-			_2_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _2__REPEATXXX9( _2_REPEATXXX_0_9 , Fnnnn , n1 , 0 , 0 ) _2_I_REPEATXXX##n2( _2__REPEATXXX_0_9 , _2_REPEATXXX_0_9 , Fnnnn , n1 )\
+			_2_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _2__REPEATXXX9( _2_REPEATXXX_0_9 , Fnnnn , n1 , 0 ) _2_I_REPEATXXX##n2( _2__REPEATXXX_0_9 , _2_REPEATXXX_0_9 , Fnnnn , n1 )\
 			_2_REPEAT_ZEROTEST##n3( \
 				_2_REPEATXXX_0_N( n4 , Fnnnn , n1 , n2 , 0 )\
 				 , \
@@ -361,7 +360,7 @@
 				_2_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _2_I_REPEATXXX##n3( _2_REPEATXXX_0_9 , Fnnnn , n1 , 0 ) _2_REPEATXXX_0_N( n4 , Fnnnn , n1 , 0 , n3 )\
 			 )\
 			 , \
-			_2_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _2__REPEATXXX9( _2_REPEATXXX_0_9 , Fnnnn , n1 , 0 , 0 ) _2_I_REPEATXXX##n2( _2__REPEATXXX_0_9 , _2_REPEATXXX_0_9 , Fnnnn , n1 )\
+			_2_REPEATXXX_0_N( 9 , Fnnnn , n1 , 0 , 0 ) _2__REPEATXXX9( _2_REPEATXXX_0_9 , Fnnnn , n1 , 0 ) _2_I_REPEATXXX##n2( _2__REPEATXXX_0_9 , _2_REPEATXXX_0_9 , Fnnnn , n1 )\
 			_2_REPEAT_ZEROTEST##n3( \
 				_2_REPEATXXX_0_N( n4 , Fnnnn , n1 , n2 , 0 )\
 				 , \
